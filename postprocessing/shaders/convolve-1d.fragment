@@ -1,23 +1,18 @@
 #ifdef GL_ES
-#define LOWP lowp
-#define MED mediump
-precision mediump float;
+	#define PRECISION mediump
+	precision PRECISION float;
 #else
-#define LOWP
-#define MED
+	#define PRECISION
 #endif
 
 #ifndef LENGTH
 #error Please define a LENGTH
 #endif
 
-// passed in at shader compile-time!
-//#define LENGTH  5
-
 varying vec2 v_texCoords;
-uniform MED sampler2D u_texture0;
-uniform MED vec2 SampleOffsets[LENGTH];
-uniform MED float SampleWeights[LENGTH];
+uniform PRECISION sampler2D u_texture0;
+uniform PRECISION vec2 SampleOffsets[LENGTH];
+uniform PRECISION float SampleWeights[LENGTH];
 
 void main()
 {

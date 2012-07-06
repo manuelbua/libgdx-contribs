@@ -1,5 +1,8 @@
 #ifdef GL_ES
-precision mediump float;
+	#define PRECISION mediump
+	precision PRECISION float;
+#else
+	#define PRECISION
 #endif
 
 uniform sampler2D u_texture0;

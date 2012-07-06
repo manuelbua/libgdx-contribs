@@ -1,14 +1,12 @@
 #ifdef GL_ES
-#define LOWP lowp
-#define MED mediump
-precision mediump float;
+	#define PRECISION mediump
+	precision PRECISION float;
 #else
-#define LOWP
-#define MED
+	#define PRECISION
 #endif
 
-uniform MED sampler2D u_texture0;
-uniform MED sampler2D u_texture1;
+uniform PRECISION sampler2D u_texture0;
+uniform PRECISION sampler2D u_texture1;
 uniform float Src1Intensity;
 uniform float Src2Intensity;
 uniform float Src1Saturation;
@@ -32,29 +30,6 @@ vec3 adjustSaturation(vec3 color, float saturation)
 	//vec3 grey = vec3((color.r+color.g+color.b)*0.333);
 	return mix(grey, color, saturation);
 }
-
-// w/ vignette
-//void main()
-//{
-	//// lookup base and blurred
-	//vec4 src1 = texture2D(u_texture0, v_texCoords);
-	//vec4 src2 = texture2D(u_texture1, v_texCoords);
-
-	//// adjust color saturation and intensity
-	//src1.rgb = adjustSaturation(src1.rgb,Src1Saturation) * Src1Intensity;
-	//src2.rgb = adjustSaturation(src2.rgb,Src2Saturation) * Src2Intensity;
-
-	//// darken the base image in areas where ther's a lot of bloom
-	//// to prevent things looking excessively burned-out
-	////original *= (1.0 - clamp(bloom, 0.0, 1.0));
-	//src1 *= (1.0 - src2);
-
-	//// combine
-	//vec4 comb = src1 + src2;
-	//vec2 dist = v_texCoords ;
-	//dist.x = 1.0 - dot(dist,dist);
-	//gl_FragColor = comb * clamp( pow(dist.x, 3.25), 0.0, 1.0 );
-//}
 
 void main()
 {

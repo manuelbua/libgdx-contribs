@@ -1,5 +1,8 @@
 #ifdef GL_ES
-precision mediump float;
+	#define PRECISION mediump
+	precision PRECISION float;
+#else
+	#define PRECISION
 #endif
 
 uniform vec3 tint;// = vec3(0.8,1.0,0.7);
@@ -46,7 +49,7 @@ void main(void)
 	vec3 col;
 
 	// use fract since Tegra2 seems to NOT support
-	// GL_REPEAT on FBOs..
+	// GL_REPEAT on FBOs.. WTF?
 	col.r = texture2D(u_texture0,fract(vec2(uv.x+offset,-uv.y))).x;
 	col.g = texture2D(u_texture0,fract(vec2(uv.x+0.000,-uv.y))).y;
 	col.b = texture2D(u_texture0,fract(vec2(uv.x-offset,-uv.y))).z;

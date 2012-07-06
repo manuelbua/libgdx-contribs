@@ -1,12 +1,11 @@
 #ifdef GL_ES
-#define LOWP lowp
-#define MED mediump
-precision mediump float;
+	#define PRECISION mediump
+	precision PRECISION float;
 #else
-#define LOWP
-#define MED
+	#define PRECISION
 #endif
-uniform MED sampler2D u_texture0;
+
+uniform PRECISION sampler2D u_texture0;
 uniform float treshold;
 uniform float tresholdInvTx;
 varying vec2 v_texCoords;
