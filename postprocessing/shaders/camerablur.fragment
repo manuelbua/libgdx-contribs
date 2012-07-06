@@ -1,0 +1,71 @@
+#ifdef GL_ES
+	#define PRECISION mediump
+	precision PRECISION float;
+#else
+	#define PRECISION
+#endif
+
+
+uniform PRECISION sampler2D u_texture0;	// scene
+uniform PRECISION sampler2D u_texture1;	// depthmap
+uniform PRECISION mat4 invMVP;
+uniform PRECISION mat4 prevMVP;
+
+varying vec2 v_texCoords;
+
+float unpack(vec4 packedZValue)
+{
+	const vec4 unpackFactors = vec4( 1.0 / (256.0 * 256.0 * 256.0), 1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0 );
+	return dot(packedZValue,unpackFactors);
+}
+
+void main() {
+	float depth = unpack( texture2D(u_texture1, v_texCoords) );
+
+	// H is the viewport position at this pixel in the range -1 to 1.
+	vec4 H = vec4((v_texCoords.x*2.0) - 1.0, ((v_texCoords.y)*2.0)-1.0, depth, 1.0);
+
+	// Transform by the view-projection inverse.
+	vec4 D = invMVP * H;
+
+	// Divide by w to get the world position.
+	vec4 worldPos = D / D.w;
+
+	// Current viewport position
+	vec4 currPos = H;
+
+	// Use the world position, and transform by the previous view-projection matrix.
+	vec4 prevPos = (prevMVP * worldPos);
+
+	// Convert to nonhomogeneous points [-1,1] by dividing by w.
+	prevPos /= prevPos.w;
+
+	// Use this frame's position and last frame's to compute the pixel velocity.
+	vec2 velocity = ((prevPos - currPos)*0.005).xy;
+
+	//prevPos.xy = prevPos.xy * 0.5 + 0.5f;
+	//velocity = prevPos.xy - v_texCoords;
+
+	// blur pass
+	const int NumPasses = 8;
+
+	//vec2 texCoord = v_texCoords;
+	//vec4 result = texture2D(u_texture0, texCoord);
+	//texCoord += velocity;
+	//for(int i=1; i<NumPasses; ++i, texCoord += velocity) {
+		//result += texture2D(u_texture0, texCoord);
+	//}
+
+	vec4 result = vec4(0.0);
+	for (int i = 0; i < NumPasses; ++i) {
+		// get offset in range [-0.5, 0.5]:
+		float scale = (float(i) / float(NumPasses) - 0.5);
+		vec2 offset = scale * velocity;
+
+		// sample & add to result:
+		result += texture(u_texture0, v_texCoords + offset);
+	}
+
+	gl_FragColor = result/float(NumPasses);
+	//gl_FragColor = depth;
+}

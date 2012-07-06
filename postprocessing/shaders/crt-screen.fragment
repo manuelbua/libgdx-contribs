@@ -1,0 +1,65 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform vec3 tint;// = vec3(0.8,1.0,0.7);
+uniform float time;
+uniform float offset;// = 0.003;
+
+#ifdef ENABLE_BARREL_DISTORTION
+	uniform float Distortion;// = 0.3
+	uniform float zoom;
+#endif
+
+uniform sampler2D u_texture0;
+varying vec2 v_texCoords;
+
+const vec4 Zero = vec4(0.0,0.0,0.0,1.0);
+
+#ifdef ENABLE_BARREL_DISTORTION
+
+	vec2 barrelDistortion(vec2 coord)
+	{
+		vec2 cc = coord - 0.5;
+		float dist = dot(cc, cc) * Distortion;
+		return (coord + cc * (1.0 + dist) * dist);
+	}
+
+#endif
+
+void main(void)
+{
+	vec2 uv = v_texCoords;
+	uv.y = 1.0 - uv.y;
+
+#ifdef ENABLE_BARREL_DISTORTION
+    uv = barrelDistortion(uv);
+    uv = 0.5 + (uv-0.5)*(zoom);
+
+    if(uv.s<0.0 || uv.s>1.0 || uv.t<0.0 || uv.t >1.0) {
+        gl_FragColor = Zero;
+        return;
+    }
+#endif
+
+	vec3 oricol = texture2D(u_texture0,vec2(uv.x,1.0-uv.y)).xyz;
+	vec3 col;
+
+	// use fract since Tegra2 seems to NOT support
+	// GL_REPEAT on FBOs..
+	col.r = texture2D(u_texture0,fract(vec2(uv.x+offset,-uv.y))).x;
+	col.g = texture2D(u_texture0,fract(vec2(uv.x+0.000,-uv.y))).y;
+	col.b = texture2D(u_texture0,fract(vec2(uv.x-offset,-uv.y))).z;
+
+	col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);
+
+	col *= 0.5 + 0.5*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);
+
+	col *= tint;
+
+	col *= 0.9+0.1*sin(10.0*time-uv.y*1000.0);
+
+	col *= 0.97+0.03*sin(110.0*time);
+
+	gl_FragColor = vec4(col,1.0);
+}

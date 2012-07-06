@@ -1,0 +1,72 @@
+#ifdef GL_ES
+	#define PRECISION mediump
+	precision PRECISION float;
+#else
+	#define PRECISION
+#endif
+
+uniform PRECISION sampler2D u_texture0;
+uniform float VignetteIntensity;
+uniform float VignetteX;
+uniform float VignetteY;
+uniform float CenterX;
+uniform float CenterY;
+
+varying vec2 v_texCoords;
+
+
+#ifdef CONTROL_SATURATION
+	uniform float Saturation;
+	uniform float SaturationMul;
+	const vec3 GRAYSCALE = vec3(0.3, 0.59, 0.11);
+
+	// 0 = totally desaturated
+	// 1 = saturation unchanged
+	// higher = increase saturation
+	//const float BaseSat = 1;
+	//const float BloomSat = 1;
+
+	vec3 adjustSaturation(vec3 color, float saturation) {
+		vec3 grey = vec3(dot(color, GRAYSCALE));
+		//vec3 grey = vec3((color.r+color.g+color.b)*0.333);	// simple
+		return mix(grey, color, saturation);	// correct
+	}
+#endif
+
+
+
+#ifdef ENABLE_PIXEL_LUT
+	uniform PRECISION sampler2D u_texture1;
+	uniform float LutIntensity;
+	uniform float LutIndex;
+
+	vec3 do_lookup( vec3 color ) {
+		vec3 curveColor;
+
+		// for a texture with an height of 20px (1px-height for each gradient mapping)
+		curveColor.r = texture2D( u_texture1, vec2(color.r, LutIndex * 0.05 + 0.025) ).r;
+		curveColor.g = texture2D( u_texture1, vec2(color.g, LutIndex * 0.05 + 0.025) ).g;
+		curveColor.b = texture2D( u_texture1, vec2(color.b, LutIndex * 0.05 + 0.025) ).b;
+
+		return mix(color,curveColor,LutIntensity);
+	}
+#endif
+
+void main() {
+	vec3 rgb = texture2D(u_texture0, v_texCoords).xyz;
+	float d = distance(v_texCoords, vec2(CenterX, CenterY));
+	float factor = smoothstep(VignetteX, VignetteY, d);
+	rgb = rgb*factor + rgb*(1.0-factor) * (1.0-VignetteIntensity);
+
+#ifdef CONTROL_SATURATION
+	rgb = adjustSaturation(rgb,Saturation) * SaturationMul;
+#endif
+
+
+// TODO move out to a generic "gradientmapping shader" instead
+#ifdef ENABLE_PIXEL_LUT
+	rgb = do_lookup(rgb);
+#endif
+
+	gl_FragColor = vec4(rgb,1);
+}
