@@ -1,0 +1,5 @@
+*/bin
+*.so
+*.log
+*.class
+pom.xml
