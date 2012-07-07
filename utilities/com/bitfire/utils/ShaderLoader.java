@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 public final class ShaderLoader {
+	public static String BasePath = "";
 
 	public static ShaderProgram fromFile( String vertexFileName, String fragmentFileName ) {
 		return ShaderLoader.fromFile( vertexFileName, fragmentFileName, "" );
@@ -11,8 +12,8 @@ public final class ShaderLoader {
 
 	public static ShaderProgram fromFile( String vertexFileName, String fragmentFileName, String defines ) {
 		Gdx.app.log( "ShaderLoader", "Compiling " + vertexFileName + " | " + fragmentFileName + "..." );
-		String vertexShaderSrc = Gdx.files.internal( "data/shaders/" + vertexFileName + ".vertex" ).readString();
-		String fragmentShaderSrc = Gdx.files.internal( "data/shaders/" + fragmentFileName + ".fragment" ).readString();
+		String vertexShaderSrc = Gdx.files.internal( BasePath + vertexFileName + ".vertex" ).readString();
+		String fragmentShaderSrc = Gdx.files.internal( BasePath + fragmentFileName + ".fragment" ).readString();
 		return ShaderLoader.fromString( vertexShaderSrc, fragmentShaderSrc, vertexFileName, fragmentFileName, defines );
 	}
 

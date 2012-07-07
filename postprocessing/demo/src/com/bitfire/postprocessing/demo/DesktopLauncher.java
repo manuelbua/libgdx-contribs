@@ -1,3 +1,4 @@
+package com.bitfire.postprocessing.demo;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
