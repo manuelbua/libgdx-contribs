@@ -22,7 +22,7 @@ public final class PostProcessor implements Disposable {
 	private final PingPongBuffer composite;
 	private TextureWrap compositeWrapU;
 	private TextureWrap compositeWrapV;
-	private final ItemsManager<PostProcessorEffect> manager = new ItemsManager<PostProcessorEffect>();
+	private final ItemsManager<PostProcessorEffect> effectsManager = new ItemsManager<PostProcessorEffect>();
 	private final Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );
 	private final Color clearColor = Color.CLEAR;
 	private int clearBits = GL10.GL_COLOR_BUFFER_BIT;
@@ -81,7 +81,7 @@ public final class PostProcessor implements Disposable {
 	/** Frees owned resources. */
 	@Override
 	public void dispose() {
-		manager.dispose();
+		effectsManager.dispose();
 
 		// cleanup managed buffers, if any
 		for( int i = 0; i < buffers.size; i++ ) {
@@ -116,12 +116,12 @@ public final class PostProcessor implements Disposable {
 	 * applied in a FIFO fashion, the first added
 	 * is the first being applied. */
 	public void addEffect( PostProcessorEffect effect ) {
-		manager.add( effect );
+		effectsManager.add( effect );
 	}
 
 	/** Removes the specified effect from the effect chain. */
 	public void removeEffect( PostProcessorEffect effect ) {
-		manager.remove( effect );
+		effectsManager.remove( effect );
 	}
 
 	/** Returns the internal framebuffer format, computed from the
@@ -168,6 +168,8 @@ public final class PostProcessor implements Disposable {
 	 *         chain or
 	 *         this instance is not enabled or capturing is already started. */
 	public boolean capture() {
+		hasCaptured = false;
+
 		if( enabled && !capturing ) {
 			if( buildEnabledEffectsList() == 0 ) {
 				// no enabled effects
@@ -177,7 +179,6 @@ public final class PostProcessor implements Disposable {
 			}
 
 			capturing = true;
-			hasCaptured = false;
 			composite.begin();
 			composite.capture();
 
@@ -195,6 +196,8 @@ public final class PostProcessor implements Disposable {
 	 *
 	 * @return true or false, whether or not capturing has been initiated. */
 	public boolean captureNoClear() {
+		hasCaptured = false;
+
 		if( enabled && !capturing ) {
 			if( buildEnabledEffectsList() == 0 ) {
 				// no enabled effects
@@ -204,7 +207,6 @@ public final class PostProcessor implements Disposable {
 			}
 
 			capturing = true;
-			hasCaptured = false;
 			composite.begin();
 			composite.capture();
 			return true;
@@ -245,7 +247,7 @@ public final class PostProcessor implements Disposable {
 			buffers.get( i ).rebind();
 		}
 
-		Array<PostProcessorEffect> items = manager.items;
+		Array<PostProcessorEffect> items = effectsManager.items;
 		for( int i = 0; i < items.size; i++ ) {
 			items.get( i ).rebind();
 		}
@@ -292,7 +294,7 @@ public final class PostProcessor implements Disposable {
 	private int buildEnabledEffectsList() {
 		enabledEffects.clear();
 
-		Array<PostProcessorEffect> items = manager.items;
+		Array<PostProcessorEffect> items = effectsManager.items;
 		for( int i = 0; i < items.size; i++ ) {
 			PostProcessorEffect effect = items.get( i );
 			if( effect.isEnabled() ) {
