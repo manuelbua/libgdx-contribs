@@ -101,6 +101,11 @@ public final class PostProcessor implements Disposable {
 		return enabled;
 	}
 
+	/** If called before capturing it will indicate if the next capture call will succeeds or not. */
+	public boolean isReady() {
+		return (enabled && !capturing);
+	}
+
 	/** Sets whether or not the post-processor should be enabled */
 	public void setEnabled( boolean enabled ) {
 		this.enabled = enabled;
