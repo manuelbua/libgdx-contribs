@@ -3,6 +3,7 @@ package com.bitfire.postprocessing;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -286,6 +287,9 @@ public final class PostProcessor implements Disposable {
 
 			// render with null dest (to screen)
 			items.get( count - 1 ).render( composite.getResultBuffer(), dest );
+
+			// ensure default texture unit #0 is active
+			Gdx.gl.glActiveTexture( GL20.GL_TEXTURE0 );
 		} else {
 			Gdx.app.log( "PostProcessor", "No post-processor effects enabled, aborting render" );
 		}
