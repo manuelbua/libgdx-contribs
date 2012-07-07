@@ -48,11 +48,11 @@ public final class Zoomer extends PostProcessorEffect {
 		if( doRadial ) {
 			radialBlur.setStrength( strength );
 
-			if( strength == 0 && isEnabled() ) {
-				setEnabled( false );
-			} else if( strength != 0 && !isEnabled() ) {
-				setEnabled( true );
-			}
+//			if( strength == 0 && isEnabled() ) {
+//				setEnabled( false );
+//			} else if( strength != 0 && !isEnabled() ) {
+//				setEnabled( true );
+//			}
 		}
 	}
 
