@@ -33,6 +33,8 @@ public final class PostProcessor implements Disposable {
 	private boolean capturing = false;
 	private boolean hasCaptured = false;
 
+	private PostProcessListener listener = null;
+
 	// maintains a per-frame updated list of enabled effects
 	private Array<PostProcessorEffect> enabledEffects = new Array<PostProcessorEffect>( 5 );
 
@@ -101,7 +103,8 @@ public final class PostProcessor implements Disposable {
 		return enabled;
 	}
 
-	/** If called before capturing it will indicate if the next capture call will succeeds or not. */
+	/** If called before capturing it will indicate if the next capture call will
+	 * succeeds or not. */
 	public boolean isReady() {
 		return (enabled && !capturing);
 	}
@@ -114,6 +117,12 @@ public final class PostProcessor implements Disposable {
 	/** Returns the number of the currently enabled effects */
 	public int getEnabledEffectsCount() {
 		return enabledEffects.size;
+	}
+
+	/** Sets the listener that will receive events triggered by the PostProcessor
+	 * rendering pipeline. */
+	public void setListener( PostProcessListener listener ) {
+		this.listener = listener;
 	}
 
 	/** Adds the specified effect to the effect chain and transfer ownership
@@ -288,6 +297,10 @@ public final class PostProcessor implements Disposable {
 
 				// complete
 				composite.end();
+			}
+
+			if( listener != null ) {
+				listener.beforeRenderToScreen();
 			}
 
 			// render with null dest (to screen)
