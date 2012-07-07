@@ -1,9 +1,12 @@
 package com.bitfire.postprocessing.effects;
 
+import java.nio.ByteBuffer;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.utils.BufferUtils;
 import com.bitfire.postprocessing.PingPongBuffer;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorEffect;
@@ -70,7 +73,9 @@ public final class Bloom extends PostProcessorEffect {
 
 	private Settings settings;
 
+	private ByteBuffer prevBlendState;
 	private boolean blending = false;
+	private int sfactor, dfactor;
 
 	public Bloom( int fboWidth, int fboHeight ) {
 		pingPongBuffer = new PingPongBuffer( fboWidth, fboHeight, PostProcessor.getFramebufferFormat(), false );
@@ -78,6 +83,7 @@ public final class Bloom extends PostProcessorEffect {
 		blur = new Blur( fboWidth, fboHeight );
 		threshold = new Threshold();
 		combine = new Combine();
+		prevBlendState = BufferUtils.newByteBuffer(32);
 
 		setSettings( new Settings( "default", 2, 0.277f, 1f, .85f, 1.1f, .85f ) );
 	}
@@ -110,8 +116,14 @@ public final class Bloom extends PostProcessorEffect {
 		threshold.setTreshold( gamma );
 	}
 
-	public void setBlending( boolean blending ) {
-		this.blending = blending;
+	public void enableBlending( int sfactor, int dfactor) {
+		this.blending = true;
+		this.sfactor = sfactor;
+		this.dfactor = dfactor;
+	}
+
+	public void disableBlending() {
+		this.blending = false;
 	}
 
 	public void setBlurType( BlurType type ) {
@@ -148,9 +160,11 @@ public final class Bloom extends PostProcessorEffect {
 	public void render( final FrameBuffer src, final FrameBuffer dest ) {
 		Texture texsrc = src.getColorBufferTexture();
 
-		Gdx.gl.glDisable( GL10.GL_BLEND );
-		Gdx.gl.glDisable( GL10.GL_DEPTH_TEST );
-		Gdx.gl.glDepthMask( false );
+		Gdx.gl20.glGetBooleanv( GL20.GL_BLEND, prevBlendState );
+		boolean blendingWasEnabled = (prevBlendState.get() == 1);
+		prevBlendState.clear();
+
+		Gdx.gl.glDisable( GL20.GL_BLEND );
 
 		pingPongBuffer.begin();
 		{
@@ -163,9 +177,12 @@ public final class Bloom extends PostProcessorEffect {
 		}
 		pingPongBuffer.end();
 
+		if( blendingWasEnabled ) {
+			Gdx.gl.glEnable( GL20.GL_BLEND );
+		}
+
 		if( blending ) {
-			Gdx.gl.glEnable( GL10.GL_BLEND );
-			Gdx.gl.glBlendFunc( GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA );
+			Gdx.gl.glBlendFunc( sfactor, dfactor );
 		}
 
 		// mix original scene and blurred threshold, modulate via
