@@ -11,7 +11,8 @@ public final class Vignetting extends Filter<Vignetting> {
 	private Texture texLut;
 	private boolean dolut, dosat;
 	private float lutintensity;
-	private float lutindex;	// uses float to avoid casting in shader code
+	private int lutindex;
+	private float lutStep, lutStepOffset;
 	private float centerX, centerY;
 
 	public enum Param implements Parameter {
@@ -25,6 +26,8 @@ public final class Vignetting extends Filter<Vignetting> {
 		SaturationMul("SaturationMul",0),
 		LutIntensity("LutIntensity",0),
 		LutIndex("LutIndex",0),
+		LutStep("LutStep",0),
+		LutStepOffset("LutStepOffset",0),
 		CenterX("CenterX",0),
 		CenterY("CenterY",0)
 		;
@@ -54,7 +57,7 @@ public final class Vignetting extends Filter<Vignetting> {
 				: "#define ENABLE_GRADIENT_MAPPING") ) );
 		dolut = false;
 		dosat = controlSaturation;
-		lutindex = 0;
+		lutindex = -1;
 		lutintensity = 1f;
 		rebind();
 		setCoords( 0.8f, 0.25f );
@@ -105,7 +108,11 @@ public final class Vignetting extends Filter<Vignetting> {
 		dolut = (texLut != null);
 
 		if( dolut ) {
-			setParam( Param.TexLUT, u_texture1 );
+			lutStep = 1f / (float)texture.getHeight();
+			lutStepOffset = lutStep / 2f;	// center texel
+			setParams( Param.TexLUT, u_texture1 );
+			setParams( Param.LutStep, lutStep );
+			setParams( Param.LutStepOffset, lutStepOffset ).endParams();
 		}
 	}
 
@@ -178,6 +185,9 @@ public final class Vignetting extends Filter<Vignetting> {
 		setParams( Param.LutIndex, lutindex );
 		setParams( Param.TexLUT, u_texture1 );
 		setParams( Param.LutIntensity, lutintensity );
+		setParams( Param.LutStep, lutStep );
+		setParams( Param.LutStepOffset, lutStepOffset );
+
 
 		if( dosat ) {
 			setParams( Param.Saturation, saturation );

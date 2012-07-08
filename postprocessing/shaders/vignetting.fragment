@@ -38,15 +38,19 @@ varying vec2 v_texCoords;
 #ifdef ENABLE_GRADIENT_MAPPING
 	uniform PRECISION sampler2D u_texture1;
 	uniform float LutIntensity;
-	uniform float LutIndex;
+	uniform int LutIndex;
+	uniform float LutStep;
+	uniform float LutStepOffset;
 
 	vec3 do_lookup( vec3 color ) {
 		vec3 curveColor;
 
+		float idx = float(LutIndex);
+
 		// for a texture with an height of 20px (1px-height for each gradient mapping)
-		curveColor.r = texture2D( u_texture1, vec2(color.r, LutIndex * 0.05 + 0.025) ).r;
-		curveColor.g = texture2D( u_texture1, vec2(color.g, LutIndex * 0.05 + 0.025) ).g;
-		curveColor.b = texture2D( u_texture1, vec2(color.b, LutIndex * 0.05 + 0.025) ).b;
+		curveColor.r = texture2D( u_texture1, vec2(color.r, idx * LutStep + LutStepOffset) ).r;
+		curveColor.g = texture2D( u_texture1, vec2(color.g, idx * LutStep + LutStepOffset) ).g;
+		curveColor.b = texture2D( u_texture1, vec2(color.b, idx * LutStep + LutStepOffset) ).b;
 
 		return mix(color,curveColor,LutIntensity);
 	}
@@ -64,7 +68,12 @@ void main() {
 
 
 #ifdef ENABLE_GRADIENT_MAPPING
-	rgb = do_lookup(rgb);
+	// theoretically, this conditional though still a branch instruction
+	// should be able to shave some cycles instead of blindly performing
+	// 3 lookups+mix with a 0 intensity... still, i don't like this
+	if( LutIndex > -1 ) {
+		rgb = do_lookup(rgb);
+	}
 #endif
 
 	gl_FragColor = vec4(rgb,1);
