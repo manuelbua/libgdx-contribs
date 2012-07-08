@@ -7,10 +7,10 @@ public class DesktopLauncher {
 	public static void main( String[] argv ) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "PostProcessing Demo";
-		config.width = 800;
-		config.height = 480;
+		config.width = 1280;
+		config.height = 800;
 		config.samples = 0;
-		config.depth = 16;
+		config.depth = 0;
 		config.vSyncEnabled = true;
 		config.useCPUSynch = false;
 		config.useGL20 = true;
