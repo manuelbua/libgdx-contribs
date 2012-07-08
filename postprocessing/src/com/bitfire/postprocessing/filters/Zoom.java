@@ -40,6 +40,7 @@ public final class Zoom extends Filter<Zoom> {
 		setZoom( 1f );
 	}
 
+	/** Specify the zoom origin, in normalized screen coordinates. */
 	public void setOrigin( float x, float y ) {
 		this.x = x;
 		this.y = y;

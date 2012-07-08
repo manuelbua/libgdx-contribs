@@ -59,6 +59,7 @@ public final class Vignette extends PostProcessorEffect {
 		vignetting.setLutIndex( value );
 	}
 
+	/** Specify the center, in screen coordinates. */
 	public void setCenter( float x, float y ) {
 		vignetting.setCenter( x * oneOnW, 1f - y * oneOnH );
 	}

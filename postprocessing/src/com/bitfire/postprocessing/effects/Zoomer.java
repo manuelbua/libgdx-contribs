@@ -33,6 +33,7 @@ public final class Zoomer extends PostProcessorEffect {
 		doRadial = false;
 	}
 
+	/** Specify the zoom origin, in screen coordinates. */
 	public void setOrigin( Vector2 o ) {
 		userOriginX = o.x;
 		userOriginY = o.y;
@@ -44,6 +45,7 @@ public final class Zoomer extends PostProcessorEffect {
 		}
 	}
 
+	/** Specify the zoom origin, in screen coordinates. */
 	public void setOrigin( float x, float y ) {
 		userOriginX = x;
 		userOriginY = y;
@@ -58,12 +60,6 @@ public final class Zoomer extends PostProcessorEffect {
 	public void setBlurStrength( float strength ) {
 		if( doRadial ) {
 			radialBlur.setStrength( strength );
-
-//			if( strength == 0 && isEnabled() ) {
-//				setEnabled( false );
-//			} else if( strength != 0 && !isEnabled() ) {
-//				setEnabled( true );
-//			}
 		}
 	}
 

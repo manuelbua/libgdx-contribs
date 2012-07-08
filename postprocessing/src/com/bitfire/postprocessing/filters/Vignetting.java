@@ -117,6 +117,7 @@ public final class Vignetting extends Filter<Vignetting> {
 		}
 	}
 
+	/** Specify the center, in normalized screen coordinates. */
 	public void setCenter( float x, float y ) {
 		this.centerX = x;
 		this.centerY = y;
