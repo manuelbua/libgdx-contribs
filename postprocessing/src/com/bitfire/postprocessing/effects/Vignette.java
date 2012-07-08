@@ -104,6 +104,10 @@ public final class Vignette extends PostProcessorEffect {
 		return vignetting.getSaturationMul();
 	}
 
+	public boolean isGradientMappingEnabled() {
+		return vignetting.isGradientMappingEnabled();
+	}
+
 	@Override
 	public void rebind() {
 		vignetting.rebind();

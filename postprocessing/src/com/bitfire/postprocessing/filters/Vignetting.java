@@ -50,10 +50,12 @@ public final class Vignetting extends Filter<Vignetting> {
 	}
 
 	public Vignetting( boolean controlSaturation ) {
-		super( ShaderLoader.fromFile( "screenspace", "vignetting", (controlSaturation ? "#define CONTROL_SATURATION\n#define ENABLE_PIXEL_LUT"
-				: "#define ENABLE_PIXEL_LUT") ) );
+		super( ShaderLoader.fromFile( "screenspace", "vignetting", (controlSaturation ? "#define CONTROL_SATURATION\n#define ENABLE_GRADIENT_MAPPING"
+				: "#define ENABLE_GRADIENT_MAPPING") ) );
 		dolut = false;
 		dosat = controlSaturation;
+		lutindex = 0;
+		lutintensity = 1f;
 		rebind();
 		setCoords( 0.8f, 0.25f );
 		setCenter( 0.5f, 0.5f );
@@ -97,6 +99,7 @@ public final class Vignetting extends Filter<Vignetting> {
 		setParam( Param.VignetteY, y );
 	}
 
+	/** Sets the texture with which gradient mapping will be performed. */
 	public void setLut( Texture texture ) {
 		texLut = texture;
 		dolut = (texLut != null);
@@ -108,16 +111,12 @@ public final class Vignetting extends Filter<Vignetting> {
 
 	public void setLutIntensity( float value ) {
 		lutintensity = value;
-		if( dolut ) {
-			setParam( Param.LutIntensity, lutintensity );
-		}
+		setParam( Param.LutIntensity, lutintensity );
 	}
 
 	public void setLutIndex( int index ) {
 		lutindex = index;
-		if( dolut ) {
-			setParam( Param.LutIndex, lutindex );
-		}
+		setParam( Param.LutIndex, lutindex );
 	}
 
 	/** Specify the center, in normalized screen coordinates. */
@@ -168,15 +167,17 @@ public final class Vignetting extends Filter<Vignetting> {
 		return saturationMul;
 	}
 
+	public boolean isGradientMappingEnabled() {
+		return dolut;
+	}
+
 	@Override
 	public void rebind() {
 		setParams( Param.Texture0, u_texture0 );
 
-		if( dolut ) {
-			setParams( Param.LutIndex, lutindex );
-			setParams( Param.TexLUT, u_texture1 );
-			setParams( Param.LutIntensity, lutintensity );
-		}
+		setParams( Param.LutIndex, lutindex );
+		setParams( Param.TexLUT, u_texture1 );
+		setParams( Param.LutIntensity, lutintensity );
 
 		if( dosat ) {
 			setParams( Param.Saturation, saturation );
