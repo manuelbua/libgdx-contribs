@@ -35,7 +35,7 @@ varying vec2 v_texCoords;
 
 
 
-#ifdef ENABLE_PIXEL_LUT
+#ifdef ENABLE_GRADIENT_MAPPING
 	uniform PRECISION sampler2D u_texture1;
 	uniform float LutIntensity;
 	uniform float LutIndex;
@@ -63,7 +63,7 @@ void main() {
 #endif
 
 
-#ifdef ENABLE_PIXEL_LUT
+#ifdef ENABLE_GRADIENT_MAPPING
 	rgb = do_lookup(rgb);
 #endif
 
