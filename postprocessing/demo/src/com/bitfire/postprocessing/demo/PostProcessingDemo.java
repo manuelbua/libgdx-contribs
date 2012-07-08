@@ -16,12 +16,14 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ActorEvent;
+import com.badlogic.gdx.scenes.scene2d.ActorListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -52,6 +54,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 	InputMultiplexer plex;
 	Table uiContainer;
 	Label singleMessage, fps;
+	Window wndSettings;
 
 	@Override
 	public void create() {
@@ -107,17 +110,37 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		NinePatchDrawable tback = new NinePatchDrawable( np );
 
 		uiContainer = ResourceFactory.newTable();
-		uiContainer.setSize( width, 150 );
-		uiContainer.defaults().pad( 5, 25, 5, 0 ).align( Align.top );
-		uiContainer.setY( height - uiContainer.getHeight() + 13 );
+		// uiContainer.setSize( width, 150 );
+		uiContainer.setFillParent( true );
+		uiContainer.defaults().pad( 5, 5, 5, 5 ).align( Align.top );
+		// uiContainer.setY( height - uiContainer.getHeight() + 13 );
 		uiContainer.left();
-		uiContainer.setBackground( tback );
+		// uiContainer.setBackground( tback );
+
+		uiContainer.padTop( 20 );
+
+		wndSettings = ResourceFactory.newWindow( "Settings" );
+		wndSettings.setWidth( 520 );
+		wndSettings.setHeight( 380 );
+		wndSettings.setPosition( 10, height - wndSettings.getHeight() - 10 );
+		wndSettings.add( uiContainer );
+		wndSettings.setColor( 0.3f, 0.3f, 0.3f, 1f );
+		wndSettings.addListener( new ActorListener() {
+			@Override
+			public void enter( ActorEvent event, float x, float y, int pointer, Actor fromActor ) {
+				wndSettings.setColor( 0.3f, 0.3f, 0.3f, 1f );
+			}
+
+			@Override
+			public void exit( ActorEvent event, float x, float y, int pointer, Actor toActor ) {
+				wndSettings.setColor( 0.3f, 0.3f, 0.3f, 0.5f );
+			}
+		} );
+		ui.addActor( wndSettings );
 
 		//
 		// global
 		//
-
-		Table tGlobal = ResourceFactory.newTable();
 
 		// post-processing
 		final CheckBox cbPost = ResourceFactory.newCheckBox( " Post-processing", post.isEnabled(), new ClickListener() {
@@ -152,7 +175,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		} );
 
 		// background affected by post-processing
-		final CheckBox cbBackgroundAffected = ResourceFactory.newCheckBox( " Background affected\n by post-processing", backgroundAffected, new ClickListener() {
+		final CheckBox cbBackgroundAffected = ResourceFactory.newCheckBox( " Background affected by post-processing", backgroundAffected, new ClickListener() {
 			@Override
 			public void clicked( ActorEvent event, float x, float y ) {
 				CheckBox source = (CheckBox)event.getTarget();
@@ -172,9 +195,11 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		sbBackground.setSelection( DefaultBackground );
 		forceUpdateDefaultSelection.add( sbBackground );
 
-		tGlobal.add( cbPost ).colspan( 2 ).left();
+		Table tGlobal = ResourceFactory.newTable();
+		tGlobal.padRight( 10 );
+		tGlobal.add( cbPost ).colspan( 2 ).center();
 		tGlobal.row();
-		tGlobal.add( ResourceFactory.newLabel( "Choose\nbackground " ) );
+		tGlobal.add( ResourceFactory.newLabel( "Choose background " ) );
 		tGlobal.add( sbBackground );
 		tGlobal.row();
 		tGlobal.add( cbBackgroundAffected ).colspan( 2 ).left();
@@ -184,7 +209,6 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		//
 		// bloom
 		//
-		Table tBloom = ResourceFactory.newTable();
 		final CheckBox cbBloom = ResourceFactory.newCheckBox( " Bloom", post.bloom.isEnabled(), new ClickListener() {
 			@Override
 			public void clicked( ActorEvent event, float x, float y ) {
@@ -233,6 +257,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 			}
 		} );
 
+		Table tBloom = ResourceFactory.newTable();
 		tBloom.add( cbBloom ).colspan( 2 ).center();
 		tBloom.row();
 		tBloom.add( ResourceFactory.newLabel( "threshold " ) ).left();
@@ -253,7 +278,6 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		//
 		// curvature
 		//
-		Table tCurvature = ResourceFactory.newTable();
 		final CheckBox cbCurvature = ResourceFactory.newCheckBox( " Curvature", post.curvature.isEnabled(), new ClickListener() {
 			@Override
 			public void clicked( ActorEvent event, float x, float y ) {
@@ -278,6 +302,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 			}
 		} );
 
+		Table tCurvature = ResourceFactory.newTable();
 		tCurvature.add( cbCurvature ).colspan( 2 ).center();
 		tCurvature.row();
 		tCurvature.add( ResourceFactory.newLabel( "Distortion " ) ).left();
@@ -289,7 +314,6 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		//
 		// crt emulation
 		//
-		Table tCrt = ResourceFactory.newTable();
 		final CheckBox cbCrt = ResourceFactory.newCheckBox( " Old CRT emulation", post.crt.isEnabled(), new ClickListener() {
 			@Override
 			public void clicked( ActorEvent event, float x, float y ) {
@@ -336,6 +360,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 			}
 		} );
 
+		Table tCrt = ResourceFactory.newTable();
 		tCrt.add( cbCrt ).colspan( 2 ).center();
 		tCrt.row();
 		tCrt.add( ResourceFactory.newLabel( "Color offset " ) ).left();
@@ -353,7 +378,6 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		//
 		// vignetting + gradient mapping
 		//
-		Table tVignette = ResourceFactory.newTable();
 		final CheckBox cbVignette = ResourceFactory.newCheckBox( " Vignetting", post.vignette.isEnabled(), new ClickListener() {
 			@Override
 			public void clicked( ActorEvent event, float x, float y ) {
@@ -425,12 +449,13 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 			}
 		} );
 
+		Table tVignette = ResourceFactory.newTable();
 		tVignette.add( cbVignette ).colspan( 2 ).center();
 		tVignette.row();
 		tVignette.add( ResourceFactory.newLabel( "Intensity " ) ).left();
 		tVignette.add( slVignetteI );
 		tVignette.row();
-		tVignette.add( cbGradientMapping ).colspan( 2 ).left();
+		tVignette.add( cbGradientMapping ).colspan( 2 ).center();
 		tVignette.row();
 		tVignette.add( ResourceFactory.newLabel( "Choose map " ) ).left();
 		tVignette.add( sbGradientMap );
@@ -438,7 +463,6 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		//
 		// zoomer
 		//
-		Table tZoomer = ResourceFactory.newTable();
 		final CheckBox cbZoomer = ResourceFactory.newCheckBox( " Zoomer", post.zoomer.isEnabled(), new ClickListener() {
 			@Override
 			public void clicked( ActorEvent event, float x, float y ) {
@@ -470,6 +494,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 			}
 		} );
 
+		Table tZoomer = ResourceFactory.newTable();
 		tZoomer.add( cbZoomer );
 		tZoomer.row();
 		tZoomer.add( cbZoomerDoBlur );
@@ -477,12 +502,14 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		// lay out tables
 		uiContainer.add( tGlobal );
 		uiContainer.add( tBloom );
+		uiContainer.row();
 		uiContainer.add( tCurvature );
 		uiContainer.add( tCrt );
+		uiContainer.row();
 		uiContainer.add( tVignette );
 		uiContainer.add( tZoomer );
 
-		ui.addActor( uiContainer );
+		// ui.addActor( uiContainer );
 
 		// fire a change event on selected SelectBoxes to
 		// update the default selection and initialize with
@@ -529,7 +556,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 
 		// circling offset
 		circleOffset.x = halfWidth + (angleAmplitude * 8) * MathUtils.sin( angle * MathUtils.degreesToRadians );
-		circleOffset.y = halfHeight + (angleAmplitude * 3) * MathUtils.cos( angle * MathUtils.degreesToRadians );
+		circleOffset.y = halfHeight + (angleAmplitude * 5) * MathUtils.cos( angle * MathUtils.degreesToRadians );
 
 		// angle
 		angle += angleSpeed * delta;
@@ -551,6 +578,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		}
 
 		post.crt.setTime( elapsedSecs );
+		ui.act( Gdx.graphics.getDeltaTime() );
 	}
 
 	private void draw() {
@@ -578,9 +606,9 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 
 			if( drawSprite ) {
 				if( animateBadSmile ) {
-					badlogic.setPosition( circleOffset.x - badlogic.getWidth() / 2, circleOffset.y - badlogic.getHeight() / 2 + uiContainer.getHeight() / 2 );
+					badlogic.setPosition( circleOffset.x - badlogic.getWidth() / 2, circleOffset.y - badlogic.getHeight() / 2 );
 				} else {
-					badlogic.setPosition( halfWidth - badlogic.getWidth() / 2, halfHeight - badlogic.getHeight() / 2 + uiContainer.getHeight() / 2 );
+					badlogic.setPosition( halfWidth - badlogic.getWidth() / 2, halfHeight - badlogic.getHeight() / 2 );
 				}
 
 				badlogic.draw( batch );
