@@ -55,6 +55,9 @@ public final class Vignetting extends Filter<Vignetting> {
 		dolut = false;
 		dosat = controlSaturation;
 		rebind();
+		setCoords( 0.8f, 0.25f );
+		setCenter( 0.5f, 0.5f );
+		setIntensity( 1f );
 	}
 
 	public void setIntensity( float intensity ) {

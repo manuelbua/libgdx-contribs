@@ -63,7 +63,6 @@ void main() {
 #endif
 
 
-// TODO move out to a generic "gradientmapping shader" instead
 #ifdef ENABLE_PIXEL_LUT
 	rgb = do_lookup(rgb);
 #endif

@@ -106,7 +106,18 @@ public final class PostProcessor implements Disposable {
 	/** If called before capturing it will indicate if the next capture call will
 	 * succeeds or not. */
 	public boolean isReady() {
-		return (enabled && !capturing);
+		boolean hasEffects = false;
+
+		Array<PostProcessorEffect> items = effectsManager.items;
+		for( int i = 0; i < items.size; i++ ) {
+			PostProcessorEffect effect = items.get( i );
+			if( effect.isEnabled() ) {
+				hasEffects = true;
+				break;
+			}
+		}
+
+		return (enabled && !capturing && hasEffects);
 	}
 
 	/** Sets whether or not the post-processor should be enabled */
