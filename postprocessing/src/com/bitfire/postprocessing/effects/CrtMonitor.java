@@ -110,22 +110,6 @@ public final class CrtMonitor extends PostProcessorEffect {
 	}
 
 	// getters
-	public float getSource1Intensity() {
-		return combine.getSource1Intensity();
-	}
-
-	public float getSource2Intensity() {
-		return combine.getSource2Intensity();
-	}
-
-	public float getSource1Saturation() {
-		return combine.getSource1Saturation();
-	}
-
-	public float getSource2Saturation() {
-		return combine.getSource2Saturation();
-	}
-
 	public float getOffset() {
 		return crt.getOffset();
 	}
