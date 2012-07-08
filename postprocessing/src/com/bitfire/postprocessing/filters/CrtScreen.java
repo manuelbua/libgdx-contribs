@@ -54,6 +54,7 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		setTint( 0.8f, 1.0f, 0.7f );
 		setDistortion( 0.3f );
 		setZoom( 1f );
+		setOffset( 0.003f );
 	}
 
 	public void setTime( float time ) {
@@ -92,6 +93,18 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		}
 	}
 
+	public float getOffset() {
+		return offset;
+	}
+
+	public float getZoom() {
+		return zoom;
+	}
+
+	public Color getTint() {
+		return tint;
+	}
+
 	@Override
 	protected void onBeforeRender() {
 		inputTexture.bind( u_texture0 );
@@ -101,6 +114,7 @@ public final class CrtScreen extends Filter<CrtScreen> {
 	public void rebind() {
 		setParams( Param.Texture0, u_texture0 );
 		setParams( Param.Time, time );
+		setParams( Param.Offset, offset );
 
 		vtint.set( tint.r, tint.g, tint.b );
 		setParams( Param.Tint, vtint );

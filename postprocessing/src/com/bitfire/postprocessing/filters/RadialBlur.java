@@ -1,6 +1,5 @@
 package com.bitfire.postprocessing.filters;
 
-import com.badlogic.gdx.Gdx;
 import com.bitfire.utils.ShaderLoader;
 
 public final class RadialBlur extends Filter<RadialBlur> {
@@ -75,8 +74,8 @@ public final class RadialBlur extends Filter<RadialBlur> {
 	public void setOrigin( float x, float y ) {
 		this.x = x;
 		this.y = y;
-		setParams( Param.OffsetX, x / (float)Gdx.graphics.getWidth() );
-		setParams( Param.OffsetY, 1f - (y / (float)Gdx.graphics.getHeight()) );
+		setParams( Param.OffsetX, x );
+		setParams( Param.OffsetY, y );
 		endParams();
 	}
 
@@ -86,8 +85,24 @@ public final class RadialBlur extends Filter<RadialBlur> {
 	}
 
 	public void setZoom( float zoom ) {
-		this.zoom = 1f / zoom;
+		this.zoom = zoom;
 		setParam( Param.Zoom, this.zoom );
+	}
+
+	public float getZoom() {
+		return zoom;
+	}
+
+	public float getOriginX() {
+		return x;
+	}
+
+	public float getOriginY() {
+		return y;
+	}
+
+	public float getStrength() {
+		return strength;
 	}
 
 	@Override
@@ -98,12 +113,11 @@ public final class RadialBlur extends Filter<RadialBlur> {
 	@Override
 	public void rebind() {
 		setParams( Param.Texture, u_texture0 );
-		// setParams( Param.OneOnBlurLen, 1f / (float)blur_len );
 		setParams( Param.BlurDiv, this.strength / (float)blur_len );
 
 		// being explicit (could call setOrigin that will call endParams)
-		setParams( Param.OffsetX, x / (float)Gdx.graphics.getWidth() );
-		setParams( Param.OffsetY, 1f - (y / (float)Gdx.graphics.getHeight()) );
+		setParams( Param.OffsetX, x );
+		setParams( Param.OffsetY, y );
 
 		setParams( Param.Zoom, zoom );
 

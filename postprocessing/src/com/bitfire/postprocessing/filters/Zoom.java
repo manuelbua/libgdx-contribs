@@ -1,6 +1,5 @@
 package com.bitfire.postprocessing.filters;
 
-import com.badlogic.gdx.Gdx;
 import com.bitfire.utils.ShaderLoader;
 
 public final class Zoom extends Filter<Zoom> {
@@ -42,21 +41,33 @@ public final class Zoom extends Filter<Zoom> {
 	}
 
 	public void setOrigin( float x, float y ) {
-		this.x = x / (float)Gdx.graphics.getWidth();
-		this.y = 1f - (y / (float)Gdx.graphics.getHeight());
+		this.x = x;
+		this.y = y;
 		setParams( Param.OffsetX, this.x );
 		setParams( Param.OffsetY, this.y );
 		endParams();
 	}
 
 	public void setZoom( float zoom ) {
-		this.zoom = 1f / zoom;
+		this.zoom = zoom;
 		setParam( Param.Zoom, this.zoom );
+	}
+
+	public float getZoom() {
+		return zoom;
+	}
+
+	public float getOriginX() {
+		return x;
+	}
+
+	public float getOriginY() {
+		return y;
 	}
 
 	@Override
 	public void rebind() {
-		// reimplement super for batching every parameter
+		// reimplement super to batch every parameter
 		setParams( Param.Texture, u_texture0 );
 		setParams( Param.OffsetX, x );
 		setParams( Param.OffsetY, y );

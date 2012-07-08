@@ -49,6 +49,14 @@ public final class RadialDistortion extends Filter<RadialDistortion> {
 		setParam( Param.Zoom, this.zoom );
 	}
 
+	public float getDistortion() {
+		return distortion;
+	}
+
+	public float getZoom() {
+		return zoom;
+	}
+
 	@Override
 	protected void onBeforeRender() {
 		inputTexture.bind( u_texture0 );

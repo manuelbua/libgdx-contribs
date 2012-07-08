@@ -62,35 +62,35 @@ public abstract class Filter<T> {
 	 * a batch-ready version of this fuction see and use setParams instead. */
 
 	// int
-	public void setParam( Parameter param, int value ) {
+	protected void setParam( Parameter param, int value ) {
 		program.begin();
 		program.setUniformi( param.mnemonic(), value );
 		program.end();
 	}
 
 	// float
-	public void setParam( Parameter param, float value ) {
+	protected void setParam( Parameter param, float value ) {
 		program.begin();
 		program.setUniformf( param.mnemonic(), value );
 		program.end();
 	}
 
 	// vec2
-	public void setParam( Parameter param, Vector2 value ) {
+	protected void setParam( Parameter param, Vector2 value ) {
 		program.begin();
 		program.setUniformf( param.mnemonic(), value );
 		program.end();
 	}
 
 	// vec3
-	public void setParam( Parameter param, Vector3 value ) {
+	protected void setParam( Parameter param, Vector3 value ) {
 		program.begin();
 		program.setUniformf( param.mnemonic(), value );
 		program.end();
 	}
 
 	// mat3
-	public T setParam( Parameter param, Matrix3 value ) {
+	protected T setParam( Parameter param, Matrix3 value ) {
 		program.begin();
 		program.setUniformMatrix( param.mnemonic(), value );
 		program.end();
@@ -98,7 +98,7 @@ public abstract class Filter<T> {
 	}
 
 	// mat4
-	public T setParam( Parameter param, Matrix4 value ) {
+	protected T setParam( Parameter param, Matrix4 value ) {
 		program.begin();
 		program.setUniformMatrix( param.mnemonic(), value );
 		program.end();
@@ -106,7 +106,7 @@ public abstract class Filter<T> {
 	}
 
 	// float[], vec2[], vec3[], vec4[]
-	public T setParamv( Parameter param, float[] values, int offset, int length ) {
+	protected T setParamv( Parameter param, float[] values, int offset, int length ) {
 		program.begin();
 
 		switch( param.arrayElementSize() ) {
@@ -133,7 +133,7 @@ public abstract class Filter<T> {
 	 * When you are finished building the batch you shall signal it by invoking endParams(). */
 
 	// float
-	public T setParams( Parameter param, float value ) {
+	protected T setParams( Parameter param, float value ) {
 		if( !programBegan ) {
 			programBegan = true;
 			program.begin();
@@ -143,7 +143,7 @@ public abstract class Filter<T> {
 	}
 
 	// int version
-	public T setParams( Parameter param, int value ) {
+	protected T setParams( Parameter param, int value ) {
 		if( !programBegan ) {
 			programBegan = true;
 			program.begin();
@@ -153,7 +153,7 @@ public abstract class Filter<T> {
 	}
 
 	// vec2 version
-	public T setParams( Parameter param, Vector2 value ) {
+	protected T setParams( Parameter param, Vector2 value ) {
 		if( !programBegan ) {
 			programBegan = true;
 			program.begin();
@@ -163,7 +163,7 @@ public abstract class Filter<T> {
 	}
 
 	// vec3 version
-	public T setParams( Parameter param, Vector3 value ) {
+	protected T setParams( Parameter param, Vector3 value ) {
 		if( !programBegan ) {
 			programBegan = true;
 			program.begin();
@@ -173,7 +173,7 @@ public abstract class Filter<T> {
 	}
 
 	// mat3
-	public T setParams( Parameter param, Matrix3 value ) {
+	protected T setParams( Parameter param, Matrix3 value ) {
 		if( !programBegan ) {
 			programBegan = true;
 			program.begin();
@@ -183,7 +183,7 @@ public abstract class Filter<T> {
 	}
 
 	// mat4
-	public T setParams( Parameter param, Matrix4 value ) {
+	protected T setParams( Parameter param, Matrix4 value ) {
 		if( !programBegan ) {
 			programBegan = true;
 			program.begin();
@@ -193,7 +193,7 @@ public abstract class Filter<T> {
 	}
 
 	// float[], vec2[], vec3[], vec4[]
-	public T setParamsv( Parameter param, float[] values, int offset, int length ) {
+	protected T setParamsv( Parameter param, float[] values, int offset, int length ) {
 		if( !programBegan ) {
 			programBegan = true;
 			program.begin();
@@ -219,7 +219,7 @@ public abstract class Filter<T> {
 	}
 
 	/** Should be called after any one or more setParams method calls. */
-	public void endParams() {
+	protected void endParams() {
 		if( programBegan ) {
 			program.end();
 			programBegan = false;

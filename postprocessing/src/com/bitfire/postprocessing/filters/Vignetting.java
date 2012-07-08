@@ -11,7 +11,7 @@ public final class Vignetting extends Filter<Vignetting> {
 	private Texture texLut;
 	private boolean dolut, dosat;
 	private float lutintensity;
-	private float lutindex;
+	private float lutindex;	// uses float to avoid casting in shader code
 	private float centerX, centerY;
 
 	public enum Param implements Parameter {
@@ -117,11 +117,51 @@ public final class Vignetting extends Filter<Vignetting> {
 		}
 	}
 
-	public void setCenter( float x, float y, float w, float h ) {
-		this.centerX = x / w;
-		this.centerY = 1f - (y / h);
+	public void setCenter( float x, float y ) {
+		this.centerX = x;
+		this.centerY = y;
 		setParams( Param.CenterX, centerX );
 		setParams( Param.CenterY, centerY ).endParams();
+	}
+
+	public float getCenterX() {
+		return centerX;
+	}
+
+	public float getCenterY() {
+		return centerY;
+	}
+
+	public int getLutIndex() {
+		return (int)lutindex;
+	}
+
+	public float getLutIntensity() {
+		return lutintensity;
+	}
+
+	public Texture getLut() {
+		return texLut;
+	}
+
+	public float getX() {
+		return x;
+	}
+
+	public float getY() {
+		return y;
+	}
+
+	public float getIntensity() {
+		return intensity;
+	}
+
+	public float getSaturation() {
+		return saturation;
+	}
+
+	public float getSaturationMul() {
+		return saturationMul;
 	}
 
 	@Override

@@ -9,9 +9,12 @@ import com.bitfire.postprocessing.filters.Vignetting;
 public final class Vignette extends PostProcessorEffect {
 	private Vignetting vignetting;
 	public boolean controlSaturation;
+	private float oneOnW, oneOnH;
 
 	public Vignette( boolean controlSaturation ) {
 		this.controlSaturation = controlSaturation;
+		oneOnW = 1f / (float)Gdx.graphics.getWidth();
+		oneOnH = 1f / (float)Gdx.graphics.getHeight();
 		vignetting = new Vignetting( controlSaturation );
 	}
 
@@ -57,7 +60,47 @@ public final class Vignette extends PostProcessorEffect {
 	}
 
 	public void setCenter( float x, float y ) {
-		vignetting.setCenter( x, y, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() );
+		vignetting.setCenter( x * oneOnW, 1f - y * oneOnH );
+	}
+
+	public float getIntensity() {
+		return vignetting.getIntensity();
+	}
+
+	public float getLutIntensity() {
+		return vignetting.getLutIntensity();
+	}
+
+	public int getLutIndex() {
+		return vignetting.getLutIndex();
+	}
+
+	public Texture getLut() {
+		return vignetting.getLut();
+	}
+
+	public float getCenterX() {
+		return vignetting.getCenterX();
+	}
+
+	public float getCenterY() {
+		return vignetting.getCenterY();
+	}
+
+	public float getCoordsX() {
+		return vignetting.getX();
+	}
+
+	public float getCoordsY() {
+		return vignetting.getY();
+	}
+
+	public float getSaturation() {
+		return vignetting.getSaturation();
+	}
+
+	public float getSaturationMul() {
+		return vignetting.getSaturationMul();
 	}
 
 	@Override

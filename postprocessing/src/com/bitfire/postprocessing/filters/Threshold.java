@@ -43,6 +43,10 @@ public final class Threshold extends Filter<Threshold> {
 		setParams( Param.ThresholdInvTx, 1f / (1 - gamma) ).endParams();
 	}
 
+	public float getThreshold() {
+		return gamma;
+	}
+
 	@Override
 	protected void onBeforeRender() {
 		inputTexture.bind( u_texture0 );

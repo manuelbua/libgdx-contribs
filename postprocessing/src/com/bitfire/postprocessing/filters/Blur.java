@@ -64,10 +64,6 @@ public final class Blur extends MultipassFilter {
 		}
 	}
 
-	public void upload() {
-		computeBlurWeightings();
-	}
-
 	public void setPasses( int passes ) {
 		this.passes = passes;
 	}
@@ -81,6 +77,19 @@ public final class Blur extends MultipassFilter {
 	public void setAmount( float amount ) {
 		this.amount = amount;
 		computeBlurWeightings();
+	}
+
+	public int getPasses() {
+		return passes;
+	}
+
+	public BlurType getType() {
+		return type;
+	}
+
+	// not all blur types support custom amounts at this time
+	public float getAmount() {
+		return amount;
 	}
 
 	@Override

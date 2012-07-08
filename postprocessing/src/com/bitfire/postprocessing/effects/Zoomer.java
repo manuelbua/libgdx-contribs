@@ -1,5 +1,6 @@
 package com.bitfire.postprocessing.effects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.bitfire.postprocessing.PostProcessorEffect;
@@ -11,11 +12,15 @@ public final class Zoomer extends PostProcessorEffect {
 	private boolean doRadial = false;
 	private RadialBlur radialBlur = null;
 	private Zoom zoom = null;
+	private float oneOnW, oneOnH;
+	private float userOriginX, userOriginY;
 
 	/** Creating a Zoomer specifying the radial blur quality will enable radial blur */
 	public Zoomer( RadialBlur.Quality quality ) {
 		radialBlur = new RadialBlur( quality );
 		zoom = null;
+		oneOnW = 1f / (float)Gdx.graphics.getWidth();
+		oneOnH = 1f / (float)Gdx.graphics.getHeight();
 
 		doRadial = true;
 	}
@@ -29,18 +34,24 @@ public final class Zoomer extends PostProcessorEffect {
 	}
 
 	public void setOrigin( Vector2 o ) {
+		userOriginX = o.x;
+		userOriginY = o.y;
+
 		if( doRadial ) {
-			radialBlur.setOrigin( o.x, o.y );
+			radialBlur.setOrigin( o.x * oneOnW, 1f - o.y * oneOnH );
 		} else {
-			zoom.setOrigin( o.x, o.y );
+			zoom.setOrigin( o.x * oneOnW, 1f - o.y * oneOnH );
 		}
 	}
 
 	public void setOrigin( float x, float y ) {
+		userOriginX = x;
+		userOriginY = y;
+
 		if( doRadial ) {
-			radialBlur.setOrigin( x, y );
+			radialBlur.setOrigin( x * oneOnW, 1f - y * oneOnH );
 		} else {
-			zoom.setOrigin( x, y );
+			zoom.setOrigin( x * oneOnW, 1f - y * oneOnH );
 		}
 	}
 
@@ -58,10 +69,34 @@ public final class Zoomer extends PostProcessorEffect {
 
 	public void setZoom( float zoom ) {
 		if( doRadial ) {
-			radialBlur.setZoom( zoom );
+			radialBlur.setZoom( 1f / zoom );
 		} else {
-			this.zoom.setZoom( zoom );
+			this.zoom.setZoom( 1f / zoom );
 		}
+	}
+
+	public float getZoom() {
+		if( doRadial ) {
+			return 1f / radialBlur.getZoom();
+		} else {
+			return 1f / zoom.getZoom();
+		}
+	}
+
+	public float getBlurStrength() {
+		if( doRadial ) {
+			return radialBlur.getStrength();
+		}
+
+		return -1;
+	}
+
+	public float getOriginX() {
+		return userOriginX;
+	}
+
+	public float getOriginY() {
+		return userOriginY;
 	}
 
 	@Override

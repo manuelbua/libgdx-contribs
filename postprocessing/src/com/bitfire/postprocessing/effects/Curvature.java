@@ -24,6 +24,14 @@ public final class Curvature extends PostProcessorEffect {
 		distort.setZoom( zoom );
 	}
 
+	public float getDistortion() {
+		return distort.getDistortion();
+	}
+
+	public float getZoom() {
+		return distort.getZoom();
+	}
+
 	@Override
 	public void rebind() {
 		distort.rebind();
