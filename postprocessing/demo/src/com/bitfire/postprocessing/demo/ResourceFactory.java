@@ -1,18 +1,16 @@
-/*******************************************************************************
- * Copyright 2012 bmanuel
- * 
+/******************************************************************************* Copyright 2012 bmanuel
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * limitations under the License. ******************************************************************************/
 
 package com.bitfire.postprocessing.demo;
 
@@ -74,23 +72,41 @@ public final class ResourceFactory {
 
 	// ui
 
+	public static Slider newSlider( float min, float max, float step, float value ) {
+		return newSlider( min, max, step, value, null );
+	}
+
 	public static Slider newSlider( float min, float max, float step, float value, ChangeListener listener ) {
 		Slider s = new Slider( min, max, step, UISkin );
 		s.setValue( value );
-		s.addListener( listener );
+		if( listener != null ) {
+			s.addListener( listener );
+		}
 		return s;
+	}
+
+	public static CheckBox newCheckBox( String text, boolean checked ) {
+		return newCheckBox( text, checked, null );
 	}
 
 	public static CheckBox newCheckBox( String text, boolean checked, ClickListener listener ) {
 		CheckBox cb = new CheckBox( text, UISkin );
 		cb.setChecked( checked );
-		cb.addListener( listener );
+		if( listener != null ) {
+			cb.addListener( listener );
+		}
 		return cb;
+	}
+
+	public static SelectBox newSelectBox( Object[] items ) {
+		return newSelectBox( items, null );
 	}
 
 	public static SelectBox newSelectBox( Object[] items, ChangeListener listener ) {
 		SelectBox sb = new SelectBox( items, UISkin );
-		sb.addListener( listener );
+		if( listener != null ) {
+			sb.addListener( listener );
+		}
 		return sb;
 	}
 
@@ -107,9 +123,15 @@ public final class ResourceFactory {
 		return t;
 	}
 
+	public static TextButton newButton( String text ) {
+		return newButton( text, null );
+	}
+
 	public static TextButton newButton( String text, ClickListener listener ) {
 		TextButton b = new TextButton( text, UISkin );
-		b.addListener( listener );
+		if( listener != null ) {
+			b.addListener( listener );
+		}
 		return b;
 	}
 

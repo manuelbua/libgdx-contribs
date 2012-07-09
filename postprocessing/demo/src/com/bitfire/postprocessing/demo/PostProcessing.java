@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 bmanuel
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,8 @@ public final class PostProcessing implements Disposable, PostProcessListener {
 	public Zoomer zoomer;
 	public CrtMonitor crt;
 	public Vignette vignette;
-	public boolean blending;
+	public boolean blending, zoomRadialBlur;
+	public float zoomAmount, zoomFactor;
 
 	public PostProcessing() {
 		boolean isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
@@ -98,11 +99,26 @@ public final class PostProcessing implements Disposable, PostProcessListener {
 		postProcessor.setEnabled( enabled );
 	}
 
+	public void update(float elapsedSecs) {
+		float smoothing = 1.5f;
+		zoomFactor = lerp( zoomFactor * smoothing, zoomAmount / smoothing, 0.1f ) * 0.5f;
+		zoomer.setZoom( 1f + 4.0f * zoomFactor );
+		if( zoomRadialBlur ) {
+			zoomer.setBlurStrength( -0.1f * zoomFactor );
+		}
+
+		crt.setTime( elapsedSecs );
+	}
+
 	@Override
 	public void beforeRenderToScreen() {
 		if( blending ) {
 			Gdx.gl20.glEnable( GL20.GL_BLEND );
 			Gdx.gl20.glBlendFunc( GL20.GL_SRC_COLOR, GL20.GL_SRC_ALPHA );
 		}
+	}
+
+	private static float lerp( float prev, float curr, float alpha ) {
+		return curr * alpha + prev * (1f - alpha);
 	}
 }

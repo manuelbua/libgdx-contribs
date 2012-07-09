@@ -1,0 +1,575 @@
+package com.bitfire.postprocessing.demo;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ActorEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.Array;
+
+public final class UI {
+	public Stage stage;
+	public Label singleMessage, fps;
+	public TopPanelAnimator panelAnimator;
+	Sprite background;
+	public boolean drawBackground, backgroundAffected, drawSprite, panelShown, usePanelAnimator;
+
+	static final boolean DebugUI = false;
+	static final int DefaultBackground = 2;
+	static final int DefaultGradientMap = 0;
+	PostProcessing post;
+	Array<SelectBox> forceUpdateDefaultSelection = new Array<SelectBox>();
+
+	public UI( InputMultiplexer inputMultiplexer, PostProcessing postProcessing, boolean panelAutoShow ) {
+		float width = Gdx.graphics.getWidth();
+		float height = Gdx.graphics.getHeight();
+
+		ResourceFactory.DebugUI = DebugUI;
+
+		post = postProcessing;
+		drawBackground = true;
+		drawSprite = false;
+		backgroundAffected = true;
+		usePanelAnimator = panelAutoShow;
+		post.zoomRadialBlur = true;
+
+		stage = new Stage();
+		inputMultiplexer.addProcessor( stage );
+
+		// selectable screen background
+		background = ResourceFactory.newSprite( "bgnd.jpg" );
+		background.setSize( width, height );
+
+		// panel background
+		NinePatch np = new NinePatch( ResourceFactory.newTexture( "brushed.png", false ), 0, 0, 0, 0 );
+		np.setColor( new Color( 0.3f, 0.3f, 0.3f, 1f ) );
+		NinePatchDrawable npBack = new NinePatchDrawable( np );
+
+		// build the top panel and its widgets
+		Table topPanel = buildTopPanel( npBack, width, height );
+		topPanel.add( buildGlobalSettingsWidgets() );
+		topPanel.add( buildBloomWidgets() );
+		topPanel.add( buildCurvatureWidgets() );
+		topPanel.add( buildCrtEmulationWidgets() );
+		topPanel.add( buildVignettingWidgets() );
+
+		Table tZoomer = buildZoomerWidgets();
+
+		final float yWhenShown = height - topPanel.getHeight() + 13;
+		final float yWhenHidden = height - 60 + 13;
+
+		if( usePanelAnimator ) {
+			panelAnimator = new TopPanelAnimator( topPanel, new Rectangle( 10, 5, width - 20, 40 ), yWhenShown, yWhenHidden );
+			topPanel.setY( yWhenHidden );
+		} else {
+			topPanel.setY( yWhenShown );
+			panelShown = true;
+		}
+
+		if( !usePanelAnimator ) {
+			topPanel.add( tZoomer ).expandX();
+
+			tZoomer.row();
+			tZoomer.add( buildPanelActionButtons( topPanel, yWhenShown, yWhenHidden ) ).align( Align.right );
+		} else {
+			topPanel.add( tZoomer ).expandX();
+		}
+
+		Table bottomPanel = buildBottomPanel( npBack, width, height );
+		bottomPanel.add( ResourceFactory.newLabel( "Press \"Q\" or \"Esc\" to quit" ) );
+
+		// fps label
+		fps = ResourceFactory.newLabel( "fps: " );
+		bottomPanel.add( fps ).width( 200 ).padLeft( 50 );
+
+		// general-purpose single message
+		singleMessage = ResourceFactory.newLabel( "" );
+		bottomPanel.add( singleMessage ).expandX().right();
+
+		stage.addActor( topPanel );
+		stage.addActor( bottomPanel );
+
+		stage.addListener( new ClickListener() {
+			@Override
+			public void clicked( ActorEvent event, float x, float y ) {
+				Gdx.app.log( "", "stage" );
+			}
+		} );
+
+		// fire a change event on selected SelectBoxes to
+		// update the default selection and initialize with
+		// the default values
+		for( int i = 0; i < forceUpdateDefaultSelection.size; i++ ) {
+			forceUpdateDefaultSelection.get( i ).fire( new ChangeListener.ChangeEvent() );
+
+			if( usePanelAnimator ) {
+				forceUpdateDefaultSelection.get( i ).addListener( new ClickListener() {
+					@Override
+					public void clicked( ActorEvent event, float x, float y ) {
+						Gdx.app.log( "", "test" );
+						event.setBubbles( false );
+						event.cancel();
+						event.handle();
+						// panelAnimator.suspend();
+					}
+				} );
+
+				forceUpdateDefaultSelection.get( i ).addListener( new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						// panelAnimator.resume();
+					}
+				} );
+			}
+		}
+	}
+
+	private Table buildTopPanel( NinePatchDrawable back, float width, float height ) {
+
+		Table p = ResourceFactory.newTable();
+		p.setSize( width, 155 );
+		p.defaults().pad( 5, 25, 5, 0 ).align( Align.top );
+		p.left();
+		p.setBackground( back );
+
+		return p;
+	}
+
+	private Table buildGlobalSettingsWidgets() {
+		// post-processing
+		final CheckBox cbPost = ResourceFactory.newCheckBox( " Post-processing", post.isEnabled(), new ClickListener() {
+			@Override
+			public void clicked( ActorEvent event, float x, float y ) {
+				CheckBox source = (CheckBox)event.getTarget();
+				post.setEnabled( source.isChecked() );
+			}
+		} );
+
+		final SelectBox sbBackground = ResourceFactory.newSelectBox(
+				new String[] { "None ", "Scratches ", "Mountains ", "Lake " }, new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						SelectBox source = (SelectBox)event.getTarget();
+						drawBackground = true;
+
+						switch( source.getSelectionIndex() ) {
+						case 0:
+							drawBackground = false;
+							break;
+						case 1:
+							background.setTexture( ResourceFactory.newTexture( "bgnd.jpg", false ) );
+							break;
+						case 2:
+							background.setTexture( ResourceFactory.newTexture( "bgnd2.jpg", false ) );
+							break;
+						case 3:
+							background.setTexture( ResourceFactory.newTexture( "bgnd3.jpg", false ) );
+							break;
+						}
+					}
+				} );
+
+		// background affected by post-processing
+		final CheckBox cbBackgroundAffected = ResourceFactory.newCheckBox( " Background affected\n by post-processing",
+				backgroundAffected, new ClickListener() {
+					@Override
+					public void clicked( ActorEvent event, float x, float y ) {
+						CheckBox source = (CheckBox)event.getTarget();
+						backgroundAffected = source.isChecked();
+					}
+				} );
+
+		// sprite
+		final CheckBox cbSprite = ResourceFactory.newCheckBox( " Show sprite", drawSprite, new ClickListener() {
+			@Override
+			public void clicked( ActorEvent event, float x, float y ) {
+				CheckBox source = (CheckBox)event.getTarget();
+				drawSprite = source.isChecked();
+			}
+		} );
+
+		sbBackground.setSelection( DefaultBackground );
+		forceUpdateDefaultSelection.add( sbBackground );
+
+		Table t = ResourceFactory.newTable();
+		t.add( cbPost ).colspan( 2 ).left();
+		t.row();
+		t.add( ResourceFactory.newLabel( "Choose\nbackground " ) );
+		t.add( sbBackground );
+		t.row();
+		t.add( cbBackgroundAffected ).colspan( 2 ).left();
+		t.row();
+		t.add( cbSprite ).colspan( 2 ).left();
+
+		return t;
+	}
+
+	private Table buildBloomWidgets() {
+		final CheckBox cbBloom = ResourceFactory.newCheckBox( " Bloom", post.bloom.isEnabled(), new ClickListener() {
+			@Override
+			public void clicked( ActorEvent event, float x, float y ) {
+				CheckBox source = (CheckBox)event.getTarget();
+				post.bloom.setEnabled( source.isChecked() );
+			}
+		} );
+
+		final Slider slBloomThreshold = ResourceFactory.newSlider( 0, 1, 0.01f, post.bloom.getThreshold(), new ChangeListener() {
+			@Override
+			public void changed( ChangeEvent event, Actor actor ) {
+				Slider source = (Slider)event.getTarget();
+				post.bloom.setThreshold( source.getValue() );
+			}
+		} );
+
+		final Slider slBloomBaseI = ResourceFactory.newSlider( 0, 2, 0.01f, post.bloom.getBaseIntensity(), new ChangeListener() {
+			@Override
+			public void changed( ChangeEvent event, Actor actor ) {
+				Slider source = (Slider)event.getTarget();
+				post.bloom.setBaseIntesity( source.getValue() );
+			}
+		} );
+
+		final Slider slBloomBaseS = ResourceFactory.newSlider( 0, 2, 0.01f, post.bloom.getBaseSaturation(), new ChangeListener() {
+			@Override
+			public void changed( ChangeEvent event, Actor actor ) {
+				Slider source = (Slider)event.getTarget();
+				post.bloom.setBaseSaturation( source.getValue() );
+			}
+		} );
+
+		final Slider slBloomBloomI = ResourceFactory.newSlider( 0, 2, 0.01f, post.bloom.getBloomIntensity(),
+				new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						Slider source = (Slider)event.getTarget();
+						post.bloom.setBloomIntesity( source.getValue() );
+					}
+				} );
+
+		final Slider slBloomBloomS = ResourceFactory.newSlider( 0, 2, 0.01f, post.bloom.getBloomSaturation(),
+				new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						Slider source = (Slider)event.getTarget();
+						post.bloom.setBloomSaturation( source.getValue() );
+					}
+				} );
+
+		Table t = ResourceFactory.newTable();
+		t.add( cbBloom ).colspan( 2 ).center();
+		t.row();
+		t.add( ResourceFactory.newLabel( "threshold " ) ).left();
+		t.add( slBloomThreshold );
+		t.row();
+		t.add( ResourceFactory.newLabel( "base int " ) ).left();
+		t.add( slBloomBaseI );
+		t.row();
+		t.add( ResourceFactory.newLabel( "base sat " ) ).left();
+		t.add( slBloomBaseS );
+		t.row();
+		t.add( ResourceFactory.newLabel( "bloom int " ) ).left();
+		t.add( slBloomBloomI );
+		t.row();
+		t.add( ResourceFactory.newLabel( "bloom sat " ) ).left();
+		t.add( slBloomBloomS );
+
+		return t;
+	}
+
+	private Table buildCurvatureWidgets() {
+		final CheckBox cbCurvature = ResourceFactory.newCheckBox( " Curvature", post.curvature.isEnabled(), new ClickListener() {
+			@Override
+			public void clicked( ActorEvent event, float x, float y ) {
+				CheckBox source = (CheckBox)event.getTarget();
+				post.curvature.setEnabled( source.isChecked() );
+			}
+		} );
+
+		final Slider slCurvatureDist = ResourceFactory.newSlider( 0, 2, 0.01f, post.curvature.getDistortion(),
+				new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						Slider source = (Slider)event.getTarget();
+						post.curvature.setDistortion( source.getValue() );
+					}
+				} );
+
+		final Slider slCurvatureZoom = ResourceFactory.newSlider( 0, 2, 0.01f, 2f - post.curvature.getZoom(),
+				new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						Slider source = (Slider)event.getTarget();
+						post.curvature.setZoom( 2f - source.getValue() );
+					}
+				} );
+
+		Table t = ResourceFactory.newTable();
+		t.add( cbCurvature ).colspan( 2 ).center();
+		t.row();
+		t.add( ResourceFactory.newLabel( "Distortion " ) ).left();
+		t.add( slCurvatureDist );
+		t.row();
+		t.add( ResourceFactory.newLabel( "Zoom " ) ).left();
+		t.add( slCurvatureZoom );
+
+		return t;
+	}
+
+	private Table buildCrtEmulationWidgets() {
+		final CheckBox cbCrt = ResourceFactory.newCheckBox( " Old CRT emulation", post.crt.isEnabled(), new ClickListener() {
+			@Override
+			public void clicked( ActorEvent event, float x, float y ) {
+				CheckBox source = (CheckBox)event.getTarget();
+				post.crt.setEnabled( source.isChecked() );
+			}
+		} );
+
+		final Slider slCrtColorOffset = ResourceFactory.newSlider( 0, 0.01f, 0.001f, post.crt.getOffset(), new ChangeListener() {
+			@Override
+			public void changed( ChangeEvent event, Actor actor ) {
+				Slider source = (Slider)event.getTarget();
+				post.crt.setOffset( source.getValue() );
+			}
+		} );
+
+		final Slider slCrtTintR = ResourceFactory.newSlider( 0, 1f, 0.01f, post.crt.getTint().r, new ChangeListener() {
+			@Override
+			public void changed( ChangeEvent event, Actor actor ) {
+				Slider source = (Slider)event.getTarget();
+				Color tint = post.crt.getTint();
+				tint.r = source.getValue();
+				post.crt.setTint( tint );
+			}
+		} );
+
+		final Slider slCrtTintG = ResourceFactory.newSlider( 0, 1f, 0.01f, post.crt.getTint().g, new ChangeListener() {
+			@Override
+			public void changed( ChangeEvent event, Actor actor ) {
+				Slider source = (Slider)event.getTarget();
+				Color tint = post.crt.getTint();
+				tint.g = source.getValue();
+				post.crt.setTint( tint );
+			}
+		} );
+
+		final Slider slCrtTintB = ResourceFactory.newSlider( 0, 1f, 0.01f, post.crt.getTint().b, new ChangeListener() {
+			@Override
+			public void changed( ChangeEvent event, Actor actor ) {
+				Slider source = (Slider)event.getTarget();
+				Color tint = post.crt.getTint();
+				tint.b = source.getValue();
+				post.crt.setTint( tint );
+			}
+		} );
+
+		Table t = ResourceFactory.newTable();
+		t.add( cbCrt ).colspan( 2 ).center();
+		t.row();
+		t.add( ResourceFactory.newLabel( "Color offset " ) ).left();
+		t.add( slCrtColorOffset );
+		t.row();
+		t.add( ResourceFactory.newLabel( "Tint (R) " ) ).left();
+		t.add( slCrtTintR );
+		t.row();
+		t.add( ResourceFactory.newLabel( "Tint (G) " ) ).left();
+		t.add( slCrtTintG );
+		t.row();
+		t.add( ResourceFactory.newLabel( "Tint (B) " ) ).left();
+		t.add( slCrtTintB );
+
+		return t;
+	}
+
+	private Table buildVignettingWidgets() {
+		final CheckBox cbVignette = ResourceFactory.newCheckBox( " Vignetting", post.vignette.isEnabled(), new ClickListener() {
+			@Override
+			public void clicked( ActorEvent event, float x, float y ) {
+				CheckBox source = (CheckBox)event.getTarget();
+				post.vignette.setEnabled( source.isChecked() );
+			}
+		} );
+
+		final Slider slVignetteI = ResourceFactory.newSlider( 0, 1f, 0.01f, post.vignette.getIntensity(), new ChangeListener() {
+			@Override
+			public void changed( ChangeEvent event, Actor actor ) {
+				Slider source = (Slider)event.getTarget();
+				post.vignette.setIntensity( source.getValue() );
+			}
+		} );
+
+		final SelectBox sbGradientMap = ResourceFactory.newSelectBox( new String[] { "Cross processing ", "Sunset ", "Mars",
+				"Vivid ", "Greenland ", "Cloudy ", "Muddy " }, new ChangeListener() {
+			@Override
+			public void changed( ChangeEvent event, Actor actor ) {
+				if( post.vignette.isGradientMappingEnabled() ) {
+					SelectBox source = (SelectBox)event.getTarget();
+					switch( source.getSelectionIndex() ) {
+					case 0:
+						post.vignette.setLutIndex( 16 );
+						break;
+					case 1:
+						post.vignette.setLutIndex( 5 );
+						break;
+					case 2:
+						post.vignette.setLutIndex( 7 );
+						break;
+					case 3:
+						post.vignette.setLutIndex( 6 );
+						break;
+					case 4:
+						post.vignette.setLutIndex( 8 );
+						break;
+					case 5:
+						post.vignette.setLutIndex( 3 );
+						break;
+					case 6:
+						post.vignette.setLutIndex( 0 );
+						break;
+					}
+				}
+			}
+		} );
+
+		sbGradientMap.setSelection( DefaultGradientMap );
+		forceUpdateDefaultSelection.add( sbGradientMap );
+
+		final CheckBox cbGradientMapping = ResourceFactory.newCheckBox( " Perform gradient mapping",
+				post.vignette.isGradientMappingEnabled(), new ClickListener() {
+					@Override
+					public void clicked( ActorEvent event, float x, float y ) {
+						CheckBox source = (CheckBox)event.getTarget();
+						if( source.isChecked() ) {
+							post.vignette.setLut( ResourceFactory.newTexture( "gradient-mapping.png", false ) );
+							sbGradientMap.fire( new ChangeListener.ChangeEvent() );
+						} else {
+							post.vignette.setLut( null );
+							post.vignette.setLutIndex( -1 );
+						}
+					}
+				} );
+
+		Table t = ResourceFactory.newTable();
+		t.add( cbVignette ).colspan( 2 ).center();
+		t.row();
+		t.add( ResourceFactory.newLabel( "Intensity " ) ).left();
+		t.add( slVignetteI );
+		t.row();
+		t.add( cbGradientMapping ).padTop( 10 ).colspan( 2 ).center();
+		t.row();
+		t.add( ResourceFactory.newLabel( "Choose map " ) ).left();
+		t.add( sbGradientMap ).padTop( 10 );
+
+		return t;
+	}
+
+	private Table buildZoomerWidgets() {
+		final CheckBox cbZoomer = ResourceFactory.newCheckBox( " Zoomer", post.zoomer.isEnabled(), new ClickListener() {
+			@Override
+			public void clicked( ActorEvent event, float x, float y ) {
+				CheckBox source = (CheckBox)event.getTarget();
+				post.zoomer.setEnabled( source.isChecked() );
+				if( post.isEnabled() ) {
+					if( post.zoomer.isEnabled() ) {
+						post.zoomAmount = 0;
+						post.zoomFactor = 0;
+						singleMessage.setText( "Use the mousewheel to zoom in/out" );
+					} else {
+						singleMessage.setText( "" );
+					}
+				}
+			}
+		} );
+
+		final CheckBox cbZoomerDoBlur = ResourceFactory.newCheckBox( " Radial blur", post.zoomRadialBlur, new ClickListener() {
+			@Override
+			public void clicked( ActorEvent event, float x, float y ) {
+				CheckBox source = (CheckBox)event.getTarget();
+				if( source.isChecked() ) {
+					post.zoomRadialBlur = true;
+				} else {
+					post.zoomer.setBlurStrength( 0 );
+					post.zoomRadialBlur = false;
+				}
+			}
+		} );
+
+		Table t = ResourceFactory.newTable();
+		t.add( cbZoomer );
+		t.row();
+		t.add( cbZoomerDoBlur );
+
+		return t;
+	}
+
+	private Table buildPanelActionButtons( final Table topPanel, final float yWhenShown, final float yWhenHidden ) {
+		TextButton btnShowHide = ResourceFactory.newButton( "Show/hide panel", new ClickListener() {
+			@Override
+			public void clicked( ActorEvent event, float x, float y ) {
+				if( !panelShown ) {
+					topPanel.addAction( Actions.moveTo( topPanel.getX(), yWhenShown, 0.5f, Interpolation.exp10 ) );
+					topPanel.addAction( Actions.alpha( 1f, 0.5f, Interpolation.exp10 ) );
+					panelShown = true;
+				} else {
+					topPanel.addAction( Actions.moveTo( topPanel.getX(), yWhenHidden, 0.5f, Interpolation.exp10 ) );
+					topPanel.addAction( Actions.alpha( 0.5f, 0.5f, Interpolation.exp10 ) );
+					panelShown = false;
+				}
+			}
+		} );
+
+		Table t = ResourceFactory.newTable();
+		t.row().padTop( 55 );
+		t.add( btnShowHide );
+
+		return t;
+	}
+
+	private Table buildBottomPanel( NinePatchDrawable back, float width, float height ) {
+		Table t = ResourceFactory.newTable();
+		t.setSize( width, 130 );
+		t.defaults().pad( 10, 15, 0, 15 ).align( Align.top ).expandY();
+		t.setY( -98 );
+		t.left();
+		t.setBackground( back );
+
+		return t;
+	}
+
+	public void update( float deltaTimeSecs ) {
+		stage.act( deltaTimeSecs );
+		fps.setText( "fps: " + Gdx.graphics.getFramesPerSecond() );
+		if( usePanelAnimator ) {
+			panelAnimator.update();
+		}
+	}
+
+	public void draw() {
+		stage.draw();
+
+		if( DebugUI ) {
+			Table.drawDebug( stage );
+		}
+	}
+
+	public void mouseMoved( int x, int y ) {
+		if( usePanelAnimator ) {
+			panelAnimator.mouseMoved( x, y );
+		}
+	}
+}
