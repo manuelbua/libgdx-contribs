@@ -43,7 +43,7 @@ public class ItemsManager<T extends Disposable> implements Disposable {
 			return;
 		}
 
-		if( owned.get(index) ) {
+		if( owned.get( index ) ) {
 			items.get( index ).dispose();
 		}
 

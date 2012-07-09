@@ -1,3 +1,19 @@
+/*******************************************************************************
+ * Copyright 2012 bmanuel
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
 package com.bitfire.postprocessing.effects;
 
 import java.nio.ByteBuffer;
@@ -29,8 +45,8 @@ public final class Bloom extends PostProcessorEffect {
 		public final float baseIntensity;
 		public final float baseSaturation;
 
-		public Settings( String name, BlurType blurType, int blurPasses, float blurAmount, float bloomThreshold, float baseIntensity, float baseSaturation,
-				float bloomIntensity, float bloomSaturation ) {
+		public Settings( String name, BlurType blurType, int blurPasses, float blurAmount, float bloomThreshold,
+				float baseIntensity, float baseSaturation, float bloomIntensity, float bloomSaturation ) {
 			this.name = name;
 			this.blurType = blurType;
 			this.blurPasses = blurPasses;
@@ -44,8 +60,10 @@ public final class Bloom extends PostProcessorEffect {
 		}
 
 		// simple blur
-		public Settings( String name, int blurPasses, float bloomThreshold, float baseIntensity, float baseSaturation, float bloomIntensity, float bloomSaturation ) {
-			this( name, BlurType.Gaussian5x5b, blurPasses, 0, bloomThreshold, baseIntensity, baseSaturation, bloomIntensity, bloomSaturation );
+		public Settings( String name, int blurPasses, float bloomThreshold, float baseIntensity, float baseSaturation,
+				float bloomIntensity, float bloomSaturation ) {
+			this( name, BlurType.Gaussian5x5b, blurPasses, 0, bloomThreshold, baseIntensity, baseSaturation, bloomIntensity,
+					bloomSaturation );
 		}
 
 		public Settings( Settings other ) {
@@ -80,7 +98,7 @@ public final class Bloom extends PostProcessorEffect {
 		blur = new Blur( fboWidth, fboHeight );
 		threshold = new Threshold();
 		combine = new Combine();
-		prevBlendState = BufferUtils.newByteBuffer(32);
+		prevBlendState = BufferUtils.newByteBuffer( 32 );
 
 		setSettings( new Settings( "default", 2, 0.277f, 1f, .85f, 1.1f, .85f ) );
 	}
@@ -113,7 +131,7 @@ public final class Bloom extends PostProcessorEffect {
 		threshold.setTreshold( gamma );
 	}
 
-	public void enableBlending( int sfactor, int dfactor) {
+	public void enableBlending( int sfactor, int dfactor ) {
 		this.blending = true;
 		this.sfactor = sfactor;
 		this.dfactor = dfactor;

@@ -1,3 +1,19 @@
+/*******************************************************************************
+ * Copyright 2012 bmanuel
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
 package com.bitfire.postprocessing;
 
 import com.badlogic.gdx.Gdx;
@@ -13,10 +29,9 @@ import com.bitfire.utils.ItemsManager;
 
 /** Provides a way to capture the rendered scene to an off-screen buffer
  * and to apply a chain of effects on it before rendering to screen.
- *
- * Effects can be added or removed via {@link #addEffect(PostProcessorEffect)}
- * and {@link #removeEffect(PostProcessorEffect)}.
- *
+ * 
+ * Effects can be added or removed via {@link #addEffect(PostProcessorEffect)} and {@link #removeEffect(PostProcessorEffect)}.
+ * 
  * @author bmanuel */
 public final class PostProcessor implements Disposable {
 	private static Format fbFormat;
@@ -49,7 +64,8 @@ public final class PostProcessor implements Disposable {
 		this( fboWidth, fboHeight, useDepth, useAlphaChannel, use32Bits, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
 	}
 
-	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits, TextureWrap u, TextureWrap v ) {
+	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits,
+			TextureWrap u, TextureWrap v ) {
 		if( use32Bits ) {
 			if( useAlphaChannel ) {
 				fbFormat = Format.RGBA8888;
@@ -186,9 +202,8 @@ public final class PostProcessor implements Disposable {
 	}
 
 	/** Starts capturing the scene, clears the buffer with the clear
-	 * color specified by {@link #setClearColor(Color)} or
-	 * {@link #setClearColor(float r, float g, float b, float a)}.
-	 *
+	 * color specified by {@link #setClearColor(Color)} or {@link #setClearColor(float r, float g, float b, float a)}.
+	 * 
 	 * @return true or false, whether or not capturing has been initiated.
 	 *         Capturing will fail in case there are no enabled effects in the
 	 *         chain or
@@ -219,7 +234,7 @@ public final class PostProcessor implements Disposable {
 
 	/** Starts capturing the scene as {@link #capture()}, but
 	 * <strong>without</strong> clearing the screen.
-	 *
+	 * 
 	 * @return true or false, whether or not capturing has been initiated. */
 	public boolean captureNoClear() {
 		hasCaptured = false;

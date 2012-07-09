@@ -29,7 +29,8 @@ public final class ShaderLoader {
 			Gdx.app.exit();
 		} else {
 			if( defines != null && defines.length() > 0 ) {
-				Gdx.app.log( "ShaderLoader", vertexName + "/" + fragmentName + " compiled w/ (" + defines.replace( "\n", ", " ) + ")" );
+				Gdx.app.log( "ShaderLoader", vertexName + "/" + fragmentName + " compiled w/ (" + defines.replace( "\n", ", " )
+						+ ")" );
 			} else {
 				Gdx.app.log( "ShaderLoader", vertexName + "/" + fragmentName + " compiled!" );
 			}
