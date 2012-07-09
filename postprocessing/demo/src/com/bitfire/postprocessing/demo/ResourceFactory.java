@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.LongMap;
@@ -91,9 +91,10 @@ public final class ResourceFactory {
 		return t;
 	}
 
-	public static Window newWindow( String title ) {
-		Window w = new Window( title, UISkin );
-		return w;
+	public static TextButton newButton( String text, ClickListener listener ) {
+		TextButton b = new TextButton( text, UISkin );
+		b.addListener( listener );
+		return b;
 	}
 
 	public static void dispose() {

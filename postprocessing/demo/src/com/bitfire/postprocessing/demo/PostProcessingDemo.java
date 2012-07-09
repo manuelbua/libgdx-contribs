@@ -12,18 +12,20 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ActorEvent;
-import com.badlogic.gdx.scenes.scene2d.ActorListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -37,6 +39,10 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 	private static final int DefaultGradientMap = 0;
 	private static final boolean DebugUI = false;
 
+	// FIXME need to work out better event handling for this! Some widgets
+	// will capture mouseMove events, need testing with a capture listener instead.
+	private static final boolean UsePanelAnimator = false;
+
 	Stage ui;
 	SpriteBatch batch;
 	Sprite badlogic;
@@ -46,7 +52,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 	boolean animateBadSmile;
 	float zoomAmount, zoomFactor;
 	long startMs;
-	boolean drawBackground, backgroundAffected, drawSprite, zoomRadialBlur;
+	boolean drawBackground, backgroundAffected, drawSprite, zoomRadialBlur, panelShown;
 	Sprite background;
 	Texture gradientMapping;
 	Vector2 circleOffset = new Vector2();
@@ -54,7 +60,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 	InputMultiplexer plex;
 	Table uiContainer;
 	Label singleMessage, fps;
-	Window wndSettings;
+	TopPanelAnimator panelAnimator;
 
 	@Override
 	public void create() {
@@ -110,33 +116,25 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		NinePatchDrawable tback = new NinePatchDrawable( np );
 
 		uiContainer = ResourceFactory.newTable();
-		// uiContainer.setSize( width, 150 );
-		uiContainer.setFillParent( true );
-		uiContainer.defaults().pad( 5, 5, 5, 5 ).align( Align.top );
-		// uiContainer.setY( height - uiContainer.getHeight() + 13 );
+		uiContainer.setSize( width, 155 );
+		uiContainer.defaults().pad( 5, 25, 5, 0 ).align( Align.top );
 		uiContainer.left();
-		// uiContainer.setBackground( tback );
+		uiContainer.setBackground( tback );
 
-		uiContainer.padTop( 20 );
+		//
+		// panel animator
+		//
 
-		wndSettings = ResourceFactory.newWindow( "Settings" );
-		wndSettings.setWidth( 520 );
-		wndSettings.setHeight( 380 );
-		wndSettings.setPosition( 10, height - wndSettings.getHeight() - 10 );
-		wndSettings.add( uiContainer );
-		wndSettings.setColor( 0.3f, 0.3f, 0.3f, 1f );
-		wndSettings.addListener( new ActorListener() {
-			@Override
-			public void enter( ActorEvent event, float x, float y, int pointer, Actor fromActor ) {
-				wndSettings.setColor( 0.3f, 0.3f, 0.3f, 1f );
-			}
+		final float yShown = height - uiContainer.getHeight() + 13;
+		final float yHidden = height - 51 + 13;
 
-			@Override
-			public void exit( ActorEvent event, float x, float y, int pointer, Actor toActor ) {
-				wndSettings.setColor( 0.3f, 0.3f, 0.3f, 0.5f );
-			}
-		} );
-		ui.addActor( wndSettings );
+		if( UsePanelAnimator ) {
+			panelAnimator = new TopPanelAnimator( uiContainer, new Rectangle( 10, 10, width - 20, 40 ), yShown, yHidden );
+			uiContainer.setY( yHidden );
+		} else {
+			uiContainer.setY( yShown );
+			panelShown = true;
+		}
 
 		//
 		// global
@@ -175,7 +173,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		} );
 
 		// background affected by post-processing
-		final CheckBox cbBackgroundAffected = ResourceFactory.newCheckBox( " Background affected by post-processing", backgroundAffected, new ClickListener() {
+		final CheckBox cbBackgroundAffected = ResourceFactory.newCheckBox( " Background affected\n by post-processing", backgroundAffected, new ClickListener() {
 			@Override
 			public void clicked( ActorEvent event, float x, float y ) {
 				CheckBox source = (CheckBox)event.getTarget();
@@ -196,10 +194,9 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		forceUpdateDefaultSelection.add( sbBackground );
 
 		Table tGlobal = ResourceFactory.newTable();
-		tGlobal.padRight( 10 );
-		tGlobal.add( cbPost ).colspan( 2 ).center();
+		tGlobal.add( cbPost ).colspan( 2 ).left();
 		tGlobal.row();
-		tGlobal.add( ResourceFactory.newLabel( "Choose background " ) );
+		tGlobal.add( ResourceFactory.newLabel( "Choose\nbackground " ) );
 		tGlobal.add( sbBackground );
 		tGlobal.row();
 		tGlobal.add( cbBackgroundAffected ).colspan( 2 ).left();
@@ -455,7 +452,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		tVignette.add( ResourceFactory.newLabel( "Intensity " ) ).left();
 		tVignette.add( slVignetteI );
 		tVignette.row();
-		tVignette.add( cbGradientMapping ).colspan( 2 ).center();
+		tVignette.add( cbGradientMapping ).colspan( 2 ).left();
 		tVignette.row();
 		tVignette.add( ResourceFactory.newLabel( "Choose map " ) ).left();
 		tVignette.add( sbGradientMap );
@@ -499,17 +496,53 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		tZoomer.row();
 		tZoomer.add( cbZoomerDoBlur );
 
+		//
+		// show/hide panel buttons
+		//
+		TextButton btnShow = ResourceFactory.newButton( "Show panel", new ClickListener() {
+			@Override
+			public void clicked( ActorEvent event, float x, float y ) {
+				if( !panelShown ) {
+					uiContainer.addAction( Actions.moveTo( uiContainer.getX(), yShown, 0.5f, Interpolation.exp10 ) );
+					panelShown = true;
+				}
+			}
+		} );
+
+		TextButton btnHide = ResourceFactory.newButton( "Hide panel", new ClickListener() {
+			@Override
+			public void clicked( ActorEvent event, float x, float y ) {
+				if( panelShown ) {
+					uiContainer.addAction( Actions.moveTo( uiContainer.getX(), yHidden, 0.5f, Interpolation.exp10 ) );
+					panelShown = false;
+				}
+			}
+		} );
+
+		if( !UsePanelAnimator ) {
+			Table tButtons = ResourceFactory.newTable();
+			tButtons.add( btnHide ).width( 80 ).height( 20 );
+			tButtons.row();
+			tButtons.add( btnShow ).width( 80 ).height( 20 );
+
+			tZoomer.row().padTop( 40 );
+			tZoomer.add( tButtons ).align( Align.right );
+		}
+
 		// lay out tables
 		uiContainer.add( tGlobal );
 		uiContainer.add( tBloom );
-		uiContainer.row();
 		uiContainer.add( tCurvature );
 		uiContainer.add( tCrt );
-		uiContainer.row();
 		uiContainer.add( tVignette );
-		uiContainer.add( tZoomer );
 
-		// ui.addActor( uiContainer );
+		if( !UsePanelAnimator ) {
+			uiContainer.add( tZoomer ).expandX();
+		} else {
+			uiContainer.add( tZoomer );
+		}
+
+		ui.addActor( uiContainer );
 
 		// fire a change event on selected SelectBoxes to
 		// update the default selection and initialize with
@@ -564,8 +597,12 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 			angle -= 360;
 		}
 
-		// info label
+		// UI
+		ui.act( Gdx.graphics.getDeltaTime() );
 		fps.setText( "fps: " + Gdx.graphics.getFramesPerSecond() );
+		if( UsePanelAnimator ) {
+			panelAnimator.update();
+		}
 
 		// animate post-processing effects
 		if( !animateBadSmile ) {
@@ -672,7 +709,13 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 
 	@Override
 	public boolean mouseMoved( int x, int y ) {
-		post.zoomer.setOrigin( x, y );
+		if( post.zoomer.isEnabled() ) {
+			post.zoomer.setOrigin( x, y );
+		}
+
+		if( UsePanelAnimator ) {
+			panelAnimator.mouseMoved( x, y );
+		}
 		return false;
 	}
 
