@@ -617,7 +617,6 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		}
 
 		post.crt.setTime( elapsedSecs );
-		ui.act( Gdx.graphics.getDeltaTime() );
 	}
 
 	private void draw() {
