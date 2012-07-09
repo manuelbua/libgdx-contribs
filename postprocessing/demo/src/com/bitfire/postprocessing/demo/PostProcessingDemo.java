@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 bmanuel
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,11 +16,19 @@
 
 package com.bitfire.postprocessing.demo;
 
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+
+import org.lwjgl.opengl.Display;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -78,6 +86,44 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 	Table panelContainer;
 	Label singleMessage, fps;
 	TopPanelAnimator panelAnimator;
+
+	public static void main( String[] argv ) {
+		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.title = "PostProcessing Demo";
+		config.width = 1280;
+		config.height = 800;
+		config.samples = 0;
+		config.depth = 0;
+		config.vSyncEnabled = true;
+		config.useCPUSynch = false;
+		config.useGL20 = true;
+		config.fullscreen = false;
+
+		new LwjglApplication( new PostProcessingDemo(), config );
+
+		// move the window to the right screen
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice primary = env.getDefaultScreenDevice();
+		GraphicsDevice[] devices = env.getScreenDevices();
+		GraphicsDevice target = null;
+
+		// search for the first target screen
+		for( int i = 0; i < devices.length; i++ ) {
+			boolean isPrimary = (primary == devices[i]);
+			if( !isPrimary ) {
+				target = devices[i];
+				break;
+			}
+		}
+
+		if( target != null ) {
+			DisplayMode pmode = primary.getDisplayMode();
+			DisplayMode tmode = target.getDisplayMode();
+
+			Display.setLocation( pmode.getWidth() + (tmode.getWidth() - config.width) / 2,
+					(tmode.getHeight() - config.height) / 2 );
+		}
+	}
 
 	@Override
 	public void create() {
