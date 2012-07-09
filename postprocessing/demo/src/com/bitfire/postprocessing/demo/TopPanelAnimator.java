@@ -11,8 +11,8 @@ public class TopPanelAnimator {
 		ShowingPanel, HidingPanel, Idle
 	}
 
-	private static final float InHotZoneSecondsBeforeShowing = 0.25f;
-	private static final float OutHotZoneSecondsBeforeHiding = 1f;
+	private static final float InHotZoneSecondsBeforeShowing = 0f;
+	private static final float OutHotZoneSecondsBeforeHiding = 0.5f;
 	Actor panel;
 	Timer timer;
 	State state;

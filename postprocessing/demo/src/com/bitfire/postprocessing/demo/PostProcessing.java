@@ -49,7 +49,7 @@ public final class PostProcessing implements Disposable, PostProcessListener {
 		zoomer.setOrigin( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
 		curvature.setZoom( 1f );
 		crt.setOffset( 0.002f );
-		vignette.setIntensity( 0.85f );
+		vignette.setIntensity( 1f );
 
 		crt.setEnabled( false );
 		vignette.setEnabled( false );

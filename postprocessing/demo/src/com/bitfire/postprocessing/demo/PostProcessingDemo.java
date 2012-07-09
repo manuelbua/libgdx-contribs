@@ -58,7 +58,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 	Vector2 circleOffset = new Vector2();
 	PostProcessing post;
 	InputMultiplexer plex;
-	Table uiContainer;
+	Table panelContainer;
 	Label singleMessage, fps;
 	TopPanelAnimator panelAnimator;
 
@@ -115,24 +115,24 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		np.setColor( new Color( 0.3f, 0.3f, 0.3f, 1f ) );
 		NinePatchDrawable tback = new NinePatchDrawable( np );
 
-		uiContainer = ResourceFactory.newTable();
-		uiContainer.setSize( width, 155 );
-		uiContainer.defaults().pad( 5, 25, 5, 0 ).align( Align.top );
-		uiContainer.left();
-		uiContainer.setBackground( tback );
+		panelContainer = ResourceFactory.newTable();
+		panelContainer.setSize( width, 155 );
+		panelContainer.defaults().pad( 5, 25, 5, 0 ).align( Align.top );
+		panelContainer.left();
+		panelContainer.setBackground( tback );
 
 		//
 		// panel animator
 		//
 
-		final float yShown = height - uiContainer.getHeight() + 13;
-		final float yHidden = height - 51 + 13;
+		final float yShown = height - panelContainer.getHeight() + 13;
+		final float yHidden = height - 60 + 13;
 
 		if( UsePanelAnimator ) {
-			panelAnimator = new TopPanelAnimator( uiContainer, new Rectangle( 10, 10, width - 20, 40 ), yShown, yHidden );
-			uiContainer.setY( yHidden );
+			panelAnimator = new TopPanelAnimator( panelContainer, new Rectangle( 10, 5, width - 20, 40 ), yShown, yHidden );
+			panelContainer.setY( yHidden );
 		} else {
-			uiContainer.setY( yShown );
+			panelContainer.setY( yShown );
 			panelShown = true;
 		}
 
@@ -452,10 +452,10 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		tVignette.add( ResourceFactory.newLabel( "Intensity " ) ).left();
 		tVignette.add( slVignetteI );
 		tVignette.row();
-		tVignette.add( cbGradientMapping ).colspan( 2 ).left();
+		tVignette.add( cbGradientMapping ).colspan( 2 ).center();
 		tVignette.row();
 		tVignette.add( ResourceFactory.newLabel( "Choose map " ) ).left();
-		tVignette.add( sbGradientMap );
+		tVignette.add( sbGradientMap ).padTop( 5 );
 
 		//
 		// zoomer
@@ -503,7 +503,8 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 			@Override
 			public void clicked( ActorEvent event, float x, float y ) {
 				if( !panelShown ) {
-					uiContainer.addAction( Actions.moveTo( uiContainer.getX(), yShown, 0.5f, Interpolation.exp10 ) );
+					panelContainer.addAction( Actions.moveTo( panelContainer.getX(), yShown, 0.5f, Interpolation.exp10 ) );
+					panelContainer.addAction( Actions.alpha( 1f, 0.5f, Interpolation.exp10 ) );
 					panelShown = true;
 				}
 			}
@@ -513,7 +514,8 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 			@Override
 			public void clicked( ActorEvent event, float x, float y ) {
 				if( panelShown ) {
-					uiContainer.addAction( Actions.moveTo( uiContainer.getX(), yHidden, 0.5f, Interpolation.exp10 ) );
+					panelContainer.addAction( Actions.moveTo( panelContainer.getX(), yHidden, 0.5f, Interpolation.exp10 ) );
+					panelContainer.addAction( Actions.alpha( 0.5f, 0.5f, Interpolation.exp10 ) );
 					panelShown = false;
 				}
 			}
@@ -521,28 +523,28 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 
 		if( !UsePanelAnimator ) {
 			Table tButtons = ResourceFactory.newTable();
-			tButtons.add( btnHide ).width( 80 ).height( 20 );
-			tButtons.row();
-			tButtons.add( btnShow ).width( 80 ).height( 20 );
+			tButtons.add( btnHide ).width( 80 ).padTop( 15 );
+			tButtons.row().padTop( 10 );
+			tButtons.add( btnShow ).width( 80 );
 
-			tZoomer.row().padTop( 40 );
+			tZoomer.row();
 			tZoomer.add( tButtons ).align( Align.right );
 		}
 
 		// lay out tables
-		uiContainer.add( tGlobal );
-		uiContainer.add( tBloom );
-		uiContainer.add( tCurvature );
-		uiContainer.add( tCrt );
-		uiContainer.add( tVignette );
+		panelContainer.add( tGlobal );
+		panelContainer.add( tBloom );
+		panelContainer.add( tCurvature );
+		panelContainer.add( tCrt );
+		panelContainer.add( tVignette );
 
 		if( !UsePanelAnimator ) {
-			uiContainer.add( tZoomer ).expandX();
+			panelContainer.add( tZoomer ).expandX();
 		} else {
-			uiContainer.add( tZoomer );
+			panelContainer.add( tZoomer );
 		}
 
-		ui.addActor( uiContainer );
+		ui.addActor( panelContainer );
 
 		// fire a change event on selected SelectBoxes to
 		// update the default selection and initialize with
