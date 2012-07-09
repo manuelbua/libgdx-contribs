@@ -1,4 +1,11 @@
 package com.bitfire.postprocessing.demo;
+
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+
+import org.lwjgl.opengl.Display;
+
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
@@ -17,6 +24,28 @@ public class DesktopLauncher {
 		config.fullscreen = false;
 
 		new LwjglApplication( new PostProcessingDemo(), config );
+
+		// move the window to the right screen
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice primary = env.getDefaultScreenDevice();
+		GraphicsDevice[] devices = env.getScreenDevices();
+		GraphicsDevice target = null;
+
+		// search for the first target screen
+		for( int i = 0; i < devices.length; i++ ) {
+			boolean isPrimary = (primary == devices[i]);
+			if( !isPrimary ) {
+				target = devices[i];
+				break;
+			}
+		}
+
+		if( target != null ) {
+			DisplayMode pmode = primary.getDisplayMode();
+			DisplayMode tmode = target.getDisplayMode();
+
+			Display.setLocation( pmode.getWidth() + (tmode.getWidth() - config.width) / 2, (tmode.getHeight() - config.height) / 2 );
+		}
 	}
 
 }
