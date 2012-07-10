@@ -36,8 +36,8 @@ public final class Bloom extends PostProcessorEffect {
 		public final String name;
 
 		public final BlurType blurType;
-		public final int blurPasses;	// simple blur
-		public final float blurAmount;	// normal blur (1 pass)
+		public final int blurPasses; // simple blur
+		public final float blurAmount; // normal blur (1 pass)
 		public final float bloomThreshold;
 
 		public final float bloomIntensity;

@@ -1,6 +1,7 @@
 package com.bitfire.utils;
 
-/************************************************************************** *
+/**************************************************************************
+ * *
  * General Purpose Hash Function Algorithms Library *
  * *
  * Author: Arash Partow - 2002 *
@@ -13,7 +14,8 @@ package com.bitfire.utils;
  * version of the Common Public License. *
  * http://www.opensource.org/licenses/cpl1.0.php *
  * *
- * ************************************************************************* */
+ * *************************************************************************
+ */
 
 public final class Hash {
 

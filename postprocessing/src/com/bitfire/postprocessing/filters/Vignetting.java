@@ -126,7 +126,7 @@ public final class Vignetting extends Filter<Vignetting> {
 
 		if( dolut ) {
 			lutStep = 1f / (float)texture.getHeight();
-			lutStepOffset = lutStep / 2f;	// center texel
+			lutStepOffset = lutStep / 2f; // center texel
 			setParams( Param.TexLUT, u_texture1 );
 			setParams( Param.LutStep, lutStep );
 			setParams( Param.LutStepOffset, lutStepOffset ).endParams();

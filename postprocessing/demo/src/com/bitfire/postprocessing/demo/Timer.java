@@ -37,8 +37,10 @@ public final class Timer {
 		nsStopTime = TimeUtils.nanoTime();
 	}
 
-	/** Resumes/continues tracking, without resetting the accumulated state
-	 * (should be called "continue" but can't */
+	/**
+	 * Resumes/continues tracking, without resetting the accumulated state
+	 * (should be called "continue" but can't
+	 */
 	public void resume() {
 		stopped = false;
 	}

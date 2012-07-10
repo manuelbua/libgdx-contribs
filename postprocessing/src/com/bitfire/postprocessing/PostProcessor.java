@@ -27,12 +27,14 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.utils.ItemsManager;
 
-/** Provides a way to capture the rendered scene to an off-screen buffer
+/**
+ * Provides a way to capture the rendered scene to an off-screen buffer
  * and to apply a chain of effects on it before rendering to screen.
  * 
  * Effects can be added or removed via {@link #addEffect(PostProcessorEffect)} and {@link #removeEffect(PostProcessorEffect)}.
  * 
- * @author bmanuel */
+ * @author bmanuel
+ */
 public final class PostProcessor implements Disposable {
 	private static Format fbFormat;
 	private final PingPongBuffer composite;
@@ -53,8 +55,10 @@ public final class PostProcessor implements Disposable {
 	// maintains a per-frame updated list of enabled effects
 	private Array<PostProcessorEffect> enabledEffects = new Array<PostProcessorEffect>( 5 );
 
-	/** Construct a new PostProcessor with FBO dimensions set to the size of the
-	 * screen */
+	/**
+	 * Construct a new PostProcessor with FBO dimensions set to the size of the
+	 * screen
+	 */
 	public PostProcessor( boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
 		this( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), useDepth, useAlphaChannel, use32Bits );
 	}
@@ -87,10 +91,12 @@ public final class PostProcessor implements Disposable {
 		hasCaptured = false;
 	}
 
-	/** Creates and returns a managed PingPongBuffer buffer, just create and
+	/**
+	 * Creates and returns a managed PingPongBuffer buffer, just create and
 	 * forget.
 	 * This is a drop-in replacement for the same-signature PingPongBuffer's
-	 * constructor. */
+	 * constructor.
+	 */
 	public PingPongBuffer newPingPongBuffer( int width, int height, Format frameBufferFormat, boolean hasDepth ) {
 		PingPongBuffer buffer = new PingPongBuffer( width, height, frameBufferFormat, hasDepth );
 		buffers.add( buffer );
@@ -119,8 +125,10 @@ public final class PostProcessor implements Disposable {
 		return enabled;
 	}
 
-	/** If called before capturing it will indicate if the next capture call will
-	 * succeeds or not. */
+	/**
+	 * If called before capturing it will indicate if the next capture call will
+	 * succeeds or not.
+	 */
 	public boolean isReady() {
 		boolean hasEffects = false;
 
@@ -146,17 +154,21 @@ public final class PostProcessor implements Disposable {
 		return enabledEffects.size;
 	}
 
-	/** Sets the listener that will receive events triggered by the PostProcessor
-	 * rendering pipeline. */
+	/**
+	 * Sets the listener that will receive events triggered by the PostProcessor
+	 * rendering pipeline.
+	 */
 	public void setListener( PostProcessListener listener ) {
 		this.listener = listener;
 	}
 
-	/** Adds the specified effect to the effect chain and transfer ownership
+	/**
+	 * Adds the specified effect to the effect chain and transfer ownership
 	 * to the PostProcessor, it will manage cleaning it up for you.
 	 * The order of the inserted effects IS important, since effects will be
 	 * applied in a FIFO fashion, the first added
-	 * is the first being applied. */
+	 * is the first being applied.
+	 */
 	public void addEffect( PostProcessorEffect effect ) {
 		effectsManager.add( effect );
 	}
@@ -166,9 +178,11 @@ public final class PostProcessor implements Disposable {
 		effectsManager.remove( effect );
 	}
 
-	/** Returns the internal framebuffer format, computed from the
+	/**
+	 * Returns the internal framebuffer format, computed from the
 	 * parameters specified during construction.
-	 * NOTE: the returned Format will be valid after construction and NOT early! */
+	 * NOTE: the returned Format will be valid after construction and NOT early!
+	 */
 	public static Format getFramebufferFormat() {
 		return fbFormat;
 	}
@@ -201,13 +215,15 @@ public final class PostProcessor implements Disposable {
 		composite.texture2.setWrap( compositeWrapU, compositeWrapV );
 	}
 
-	/** Starts capturing the scene, clears the buffer with the clear
+	/**
+	 * Starts capturing the scene, clears the buffer with the clear
 	 * color specified by {@link #setClearColor(Color)} or {@link #setClearColor(float r, float g, float b, float a)}.
 	 * 
 	 * @return true or false, whether or not capturing has been initiated.
 	 *         Capturing will fail in case there are no enabled effects in the
 	 *         chain or
-	 *         this instance is not enabled or capturing is already started. */
+	 *         this instance is not enabled or capturing is already started.
+	 */
 	public boolean capture() {
 		hasCaptured = false;
 
@@ -232,10 +248,12 @@ public final class PostProcessor implements Disposable {
 		return false;
 	}
 
-	/** Starts capturing the scene as {@link #capture()}, but
+	/**
+	 * Starts capturing the scene as {@link #capture()}, but
 	 * <strong>without</strong> clearing the screen.
 	 * 
-	 * @return true or false, whether or not capturing has been initiated. */
+	 * @return true or false, whether or not capturing has been initiated.
+	 */
 	public boolean captureNoClear() {
 		hasCaptured = false;
 
@@ -256,8 +274,10 @@ public final class PostProcessor implements Disposable {
 		return false;
 	}
 
-	/** Stops capturing the scene and returns the result, or null if nothing was
-	 * captured. */
+	/**
+	 * Stops capturing the scene and returns the result, or null if nothing was
+	 * captured.
+	 */
 	public FrameBuffer captureEnd() {
 		if( enabled && capturing ) {
 			capturing = false;
@@ -278,8 +298,10 @@ public final class PostProcessor implements Disposable {
 		return null;
 	}
 
-	/** Regenerates and/or rebinds owned resources when needed, eg. when
-	 * the OpenGL context is lost. */
+	/**
+	 * Regenerates and/or rebinds owned resources when needed, eg. when
+	 * the OpenGL context is lost.
+	 */
 	public void rebind() {
 		composite.texture1.setWrap( compositeWrapU, compositeWrapV );
 		composite.texture2.setWrap( compositeWrapU, compositeWrapV );
@@ -294,9 +316,11 @@ public final class PostProcessor implements Disposable {
 		}
 	}
 
-	/** Stops capturing the scene and apply the effect chain, if there is one.
+	/**
+	 * Stops capturing the scene and apply the effect chain, if there is one.
 	 * If the specified output framebuffer is NULL, then the rendering will be
-	 * performed to screen. */
+	 * performed to screen.
+	 */
 	public void render( FrameBuffer dest ) {
 		captureEnd();
 

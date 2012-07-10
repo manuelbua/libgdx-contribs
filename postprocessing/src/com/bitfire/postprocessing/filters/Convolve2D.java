@@ -18,9 +18,11 @@ package com.bitfire.postprocessing.filters;
 
 import com.bitfire.postprocessing.PingPongBuffer;
 
-/** Encapsulates a separable 2D convolution kernel filter
+/**
+ * Encapsulates a separable 2D convolution kernel filter
  * 
- * @author bmanuel */
+ * @author bmanuel
+ */
 public final class Convolve2D extends MultipassFilter {
 	public final int radius;
 	public final int length; // NxN taps filter, w/ N=length

@@ -54,7 +54,7 @@ public abstract class Filter<T> {
 
 	public T setInput( Texture input ) {
 		this.inputTexture = input;
-		return (T)this;	// assumes T extends Filter
+		return (T)this; // assumes T extends Filter
 	}
 
 	public T setInput( FrameBuffer input ) {
@@ -73,9 +73,11 @@ public abstract class Filter<T> {
 	/** FIXME add comment */
 	public abstract void rebind();
 
-	/* Sets the parameter to the specified value for this filter.
+	/*
+	 * Sets the parameter to the specified value for this filter.
 	 * This is for one-off operations since the shader is being bound and unbound once per call: for
-	 * a batch-ready version of this fuction see and use setParams instead. */
+	 * a batch-ready version of this fuction see and use setParams instead.
+	 */
 
 	// int
 	protected void setParam( Parameter param, int value ) {
@@ -145,8 +147,10 @@ public abstract class Filter<T> {
 		return (T)this;
 	}
 
-	/** Sets the parameter to the specified value for this filter.
-	 * When you are finished building the batch you shall signal it by invoking endParams(). */
+	/**
+	 * Sets the parameter to the specified value for this filter.
+	 * When you are finished building the batch you shall signal it by invoking endParams().
+	 */
 
 	// float
 	protected T setParams( Parameter param, float value ) {

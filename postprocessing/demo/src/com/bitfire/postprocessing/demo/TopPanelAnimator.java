@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 bmanuel
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,7 @@ public class TopPanelAnimator {
 		ShowingPanel, HidingPanel, Idle
 	}
 
-	private static final float InHotZoneSecondsBeforeShowing = 0f;
+	private static final float InHotZoneSecondsBeforeShowing = 0.25f;
 	private static final float OutHotZoneSecondsBeforeHiding = 0.5f;
 	Actor panel;
 	Timer timer;
@@ -53,7 +53,7 @@ public class TopPanelAnimator {
 	}
 
 	public void update() {
-		if(suspended) {
+		if( suspended ) {
 			return;
 		}
 
@@ -79,27 +79,19 @@ public class TopPanelAnimator {
 	}
 
 	public void resume() {
-		suspended = false;
-		timer.reset();
+		if( suspended ) {
+			suspended = false;
+			timer.reset();
+		}
 	}
 
 	private void idling() {
 		if( hotZone.justIn ) {
 			setState( State.ShowingPanel );
 
-			// resize hotzone rect to let the user move in the whole area
-			Rectangle hz = hotZone.getHotZone();
-			hz.setHeight( openedHotZoneHeight );
-			hotZone.setHotZone( hz );
-
 			// Gdx.app.log( "PanelAnimator", "Waiting to show..." );
 		} else if( hotZone.justOut ) {
 			setState( State.HidingPanel );
-
-			// restore original hotzone height
-			Rectangle hz = hotZone.getHotZone();
-			hz.setHeight( closedHotZoneHeight );
-			hotZone.setHotZone( hz );
 
 			// Gdx.app.log( "PanelAnimator", "Waiting to hide..." );
 		}
@@ -110,6 +102,12 @@ public class TopPanelAnimator {
 			if( elapsed > InHotZoneSecondsBeforeShowing ) {
 				setState( State.Idle );
 				panel.addAction( Actions.moveTo( panel.getX(), yShow, 0.5f, Interpolation.exp10 ) );
+
+				// resize hotzone rect to let the user move in the whole area
+				Rectangle hz = hotZone.getHotZone();
+				hz.setHeight( openedHotZoneHeight );
+				hotZone.setHotZone( hz );
+
 				// Gdx.app.log( "PanelAnimator", "Start showing" );
 			}
 		} else {
@@ -123,6 +121,12 @@ public class TopPanelAnimator {
 			if( elapsed > OutHotZoneSecondsBeforeHiding ) {
 				setState( State.Idle );
 				panel.addAction( Actions.moveTo( panel.getX(), yHidden, 0.5f, Interpolation.exp10 ) );
+
+				// restore original hotzone height
+				Rectangle hz = hotZone.getHotZone();
+				hz.setHeight( closedHotZoneHeight );
+				hotZone.setHotZone( hz );
+
 				// Gdx.app.log( "PanelAnimator", "Start hiding" );
 			}
 		} else {

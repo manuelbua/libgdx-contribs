@@ -20,7 +20,8 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
-/** Encapsulates a framebuffer with the ability to ping-pong between two
+/**
+ * Encapsulates a framebuffer with the ability to ping-pong between two
  * buffers.
  * 
  * Upon {@link #begin()} the buffer is reset to a known initial state,
@@ -36,7 +37,8 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
  * When finished, {@link #end()} should be called to stop capturing.
  * When the OpenGL context is lost, {@link #rebind()} should be called.
  * 
- * @author bmanuel */
+ * @author bmanuel
+ */
 public final class PingPongBuffer {
 	public FrameBuffer buffer1, buffer2;
 	public Texture texture1, texture2;
@@ -69,14 +71,16 @@ public final class PingPongBuffer {
 		set( buffer1, buffer2 );
 	}
 
-	/** An instance of this object can also be used to manipulate some other
+	/**
+	 * An instance of this object can also be used to manipulate some other
 	 * externally-allocated buffers, applying just the same ping-ponging behavior.
 	 * 
 	 * If this instance of the object was owning the resources, they will be preserved
 	 * and will be restored by a {@link #reset()} call.
 	 * 
 	 * @param buffer1 the first buffer
-	 * @param buffer2 the second buffer */
+	 * @param buffer2 the second buffer
+	 */
 	public void set( FrameBuffer buffer1, FrameBuffer buffer2 ) {
 		if( ownResources ) {
 			ownedResult = bufResult;
@@ -132,10 +136,12 @@ public final class PingPongBuffer {
 		bufResult = buffer2;
 	}
 
-	/** Starts and/or continue ping-ponging, begin capturing on the next available buffer,
+	/**
+	 * Starts and/or continue ping-ponging, begin capturing on the next available buffer,
 	 * returns the result of the previous {@link #capture()} call.
 	 * 
-	 * @return the Texture containing the result. */
+	 * @return the Texture containing the result.
+	 */
 	public Texture capture() {
 		endPending();
 

@@ -1,3 +1,19 @@
+/*******************************************************************************
+ * Copyright 2012 bmanuel
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
 package com.bitfire.postprocessing.demo;
 
 import com.badlogic.gdx.Gdx;
@@ -29,6 +45,7 @@ public final class UI {
 	public TopPanelAnimator panelAnimator;
 	Sprite background;
 	public boolean drawBackground, backgroundAffected, drawSprite, panelShown, usePanelAnimator;
+	public boolean comboBoxFlag;
 
 	static final boolean DebugUI = false;
 	static final int DefaultBackground = 2;
@@ -46,6 +63,7 @@ public final class UI {
 		drawBackground = true;
 		drawSprite = false;
 		backgroundAffected = true;
+		comboBoxFlag = false;
 		usePanelAnimator = panelAutoShow;
 		post.zoomRadialBlur = true;
 
@@ -75,7 +93,7 @@ public final class UI {
 		final float yWhenHidden = height - 60 + 13;
 
 		if( usePanelAnimator ) {
-			panelAnimator = new TopPanelAnimator( topPanel, new Rectangle( 10, 5, width - 20, 40 ), yWhenShown, yWhenHidden );
+			panelAnimator = new TopPanelAnimator( topPanel, new Rectangle( 10, 5, width - 20, 60 ), yWhenShown, yWhenHidden );
 			topPanel.setY( yWhenHidden );
 		} else {
 			topPanel.setY( yWhenShown );
@@ -108,7 +126,11 @@ public final class UI {
 		stage.addListener( new ClickListener() {
 			@Override
 			public void clicked( ActorEvent event, float x, float y ) {
-				Gdx.app.log( "", "stage" );
+				if( !comboBoxFlag ) {
+					panelAnimator.resume();
+				}
+
+				comboBoxFlag = false;
 			}
 		} );
 
@@ -119,21 +141,18 @@ public final class UI {
 			forceUpdateDefaultSelection.get( i ).fire( new ChangeListener.ChangeEvent() );
 
 			if( usePanelAnimator ) {
-				forceUpdateDefaultSelection.get( i ).addListener( new ClickListener() {
+				forceUpdateDefaultSelection.get( i ).addCaptureListener( new ClickListener() {
 					@Override
 					public void clicked( ActorEvent event, float x, float y ) {
-						Gdx.app.log( "", "test" );
-						event.setBubbles( false );
-						event.cancel();
-						event.handle();
-						// panelAnimator.suspend();
+						comboBoxFlag = true;
+						panelAnimator.suspend();
 					}
 				} );
 
 				forceUpdateDefaultSelection.get( i ).addListener( new ChangeListener() {
 					@Override
 					public void changed( ChangeEvent event, Actor actor ) {
-						// panelAnimator.resume();
+						comboBoxFlag = false;
 					}
 				} );
 			}
@@ -161,39 +180,37 @@ public final class UI {
 			}
 		} );
 
-		final SelectBox sbBackground = ResourceFactory.newSelectBox(
-				new String[] { "None ", "Scratches ", "Mountains ", "Lake " }, new ChangeListener() {
-					@Override
-					public void changed( ChangeEvent event, Actor actor ) {
-						SelectBox source = (SelectBox)event.getTarget();
-						drawBackground = true;
+		final SelectBox sbBackground = ResourceFactory.newSelectBox( new String[] { "None ", "Scratches ", "Mountains ", "Lake " }, new ChangeListener() {
+			@Override
+			public void changed( ChangeEvent event, Actor actor ) {
+				SelectBox source = (SelectBox)event.getTarget();
+				drawBackground = true;
 
-						switch( source.getSelectionIndex() ) {
-						case 0:
-							drawBackground = false;
-							break;
-						case 1:
-							background.setTexture( ResourceFactory.newTexture( "bgnd.jpg", false ) );
-							break;
-						case 2:
-							background.setTexture( ResourceFactory.newTexture( "bgnd2.jpg", false ) );
-							break;
-						case 3:
-							background.setTexture( ResourceFactory.newTexture( "bgnd3.jpg", false ) );
-							break;
-						}
-					}
-				} );
+				switch( source.getSelectionIndex() ) {
+				case 0:
+					drawBackground = false;
+					break;
+				case 1:
+					background.setTexture( ResourceFactory.newTexture( "bgnd.jpg", false ) );
+					break;
+				case 2:
+					background.setTexture( ResourceFactory.newTexture( "bgnd2.jpg", false ) );
+					break;
+				case 3:
+					background.setTexture( ResourceFactory.newTexture( "bgnd3.jpg", false ) );
+					break;
+				}
+			}
+		} );
 
 		// background affected by post-processing
-		final CheckBox cbBackgroundAffected = ResourceFactory.newCheckBox( " Background affected\n by post-processing",
-				backgroundAffected, new ClickListener() {
-					@Override
-					public void clicked( ActorEvent event, float x, float y ) {
-						CheckBox source = (CheckBox)event.getTarget();
-						backgroundAffected = source.isChecked();
-					}
-				} );
+		final CheckBox cbBackgroundAffected = ResourceFactory.newCheckBox( " Background affected\n by post-processing", backgroundAffected, new ClickListener() {
+			@Override
+			public void clicked( ActorEvent event, float x, float y ) {
+				CheckBox source = (CheckBox)event.getTarget();
+				backgroundAffected = source.isChecked();
+			}
+		} );
 
 		// sprite
 		final CheckBox cbSprite = ResourceFactory.newCheckBox( " Show sprite", drawSprite, new ClickListener() {
@@ -253,23 +270,21 @@ public final class UI {
 			}
 		} );
 
-		final Slider slBloomBloomI = ResourceFactory.newSlider( 0, 2, 0.01f, post.bloom.getBloomIntensity(),
-				new ChangeListener() {
-					@Override
-					public void changed( ChangeEvent event, Actor actor ) {
-						Slider source = (Slider)event.getTarget();
-						post.bloom.setBloomIntesity( source.getValue() );
-					}
-				} );
+		final Slider slBloomBloomI = ResourceFactory.newSlider( 0, 2, 0.01f, post.bloom.getBloomIntensity(), new ChangeListener() {
+			@Override
+			public void changed( ChangeEvent event, Actor actor ) {
+				Slider source = (Slider)event.getTarget();
+				post.bloom.setBloomIntesity( source.getValue() );
+			}
+		} );
 
-		final Slider slBloomBloomS = ResourceFactory.newSlider( 0, 2, 0.01f, post.bloom.getBloomSaturation(),
-				new ChangeListener() {
-					@Override
-					public void changed( ChangeEvent event, Actor actor ) {
-						Slider source = (Slider)event.getTarget();
-						post.bloom.setBloomSaturation( source.getValue() );
-					}
-				} );
+		final Slider slBloomBloomS = ResourceFactory.newSlider( 0, 2, 0.01f, post.bloom.getBloomSaturation(), new ChangeListener() {
+			@Override
+			public void changed( ChangeEvent event, Actor actor ) {
+				Slider source = (Slider)event.getTarget();
+				post.bloom.setBloomSaturation( source.getValue() );
+			}
+		} );
 
 		Table t = ResourceFactory.newTable();
 		t.add( cbBloom ).colspan( 2 ).center();
@@ -301,23 +316,21 @@ public final class UI {
 			}
 		} );
 
-		final Slider slCurvatureDist = ResourceFactory.newSlider( 0, 2, 0.01f, post.curvature.getDistortion(),
-				new ChangeListener() {
-					@Override
-					public void changed( ChangeEvent event, Actor actor ) {
-						Slider source = (Slider)event.getTarget();
-						post.curvature.setDistortion( source.getValue() );
-					}
-				} );
+		final Slider slCurvatureDist = ResourceFactory.newSlider( 0, 2, 0.01f, post.curvature.getDistortion(), new ChangeListener() {
+			@Override
+			public void changed( ChangeEvent event, Actor actor ) {
+				Slider source = (Slider)event.getTarget();
+				post.curvature.setDistortion( source.getValue() );
+			}
+		} );
 
-		final Slider slCurvatureZoom = ResourceFactory.newSlider( 0, 2, 0.01f, 2f - post.curvature.getZoom(),
-				new ChangeListener() {
-					@Override
-					public void changed( ChangeEvent event, Actor actor ) {
-						Slider source = (Slider)event.getTarget();
-						post.curvature.setZoom( 2f - source.getValue() );
-					}
-				} );
+		final Slider slCurvatureZoom = ResourceFactory.newSlider( 0, 2, 0.01f, 2f - post.curvature.getZoom(), new ChangeListener() {
+			@Override
+			public void changed( ChangeEvent event, Actor actor ) {
+				Slider source = (Slider)event.getTarget();
+				post.curvature.setZoom( 2f - source.getValue() );
+			}
+		} );
 
 		Table t = ResourceFactory.newTable();
 		t.add( cbCurvature ).colspan( 2 ).center();
@@ -413,56 +426,55 @@ public final class UI {
 			}
 		} );
 
-		final SelectBox sbGradientMap = ResourceFactory.newSelectBox( new String[] { "Cross processing ", "Sunset ", "Mars",
-				"Vivid ", "Greenland ", "Cloudy ", "Muddy " }, new ChangeListener() {
-			@Override
-			public void changed( ChangeEvent event, Actor actor ) {
-				if( post.vignette.isGradientMappingEnabled() ) {
-					SelectBox source = (SelectBox)event.getTarget();
-					switch( source.getSelectionIndex() ) {
-					case 0:
-						post.vignette.setLutIndex( 16 );
-						break;
-					case 1:
-						post.vignette.setLutIndex( 5 );
-						break;
-					case 2:
-						post.vignette.setLutIndex( 7 );
-						break;
-					case 3:
-						post.vignette.setLutIndex( 6 );
-						break;
-					case 4:
-						post.vignette.setLutIndex( 8 );
-						break;
-					case 5:
-						post.vignette.setLutIndex( 3 );
-						break;
-					case 6:
-						post.vignette.setLutIndex( 0 );
-						break;
+		final SelectBox sbGradientMap = ResourceFactory.newSelectBox(
+				new String[] { "Cross processing ", "Sunset ", "Mars", "Vivid ", "Greenland ", "Cloudy ", "Muddy " }, new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						if( post.vignette.isGradientMappingEnabled() ) {
+							SelectBox source = (SelectBox)event.getTarget();
+							switch( source.getSelectionIndex() ) {
+							case 0:
+								post.vignette.setLutIndex( 16 );
+								break;
+							case 1:
+								post.vignette.setLutIndex( 5 );
+								break;
+							case 2:
+								post.vignette.setLutIndex( 7 );
+								break;
+							case 3:
+								post.vignette.setLutIndex( 6 );
+								break;
+							case 4:
+								post.vignette.setLutIndex( 8 );
+								break;
+							case 5:
+								post.vignette.setLutIndex( 3 );
+								break;
+							case 6:
+								post.vignette.setLutIndex( 0 );
+								break;
+							}
+						}
 					}
-				}
-			}
-		} );
+				} );
 
 		sbGradientMap.setSelection( DefaultGradientMap );
 		forceUpdateDefaultSelection.add( sbGradientMap );
 
-		final CheckBox cbGradientMapping = ResourceFactory.newCheckBox( " Perform gradient mapping",
-				post.vignette.isGradientMappingEnabled(), new ClickListener() {
-					@Override
-					public void clicked( ActorEvent event, float x, float y ) {
-						CheckBox source = (CheckBox)event.getTarget();
-						if( source.isChecked() ) {
-							post.vignette.setLut( ResourceFactory.newTexture( "gradient-mapping.png", false ) );
-							sbGradientMap.fire( new ChangeListener.ChangeEvent() );
-						} else {
-							post.vignette.setLut( null );
-							post.vignette.setLutIndex( -1 );
-						}
-					}
-				} );
+		final CheckBox cbGradientMapping = ResourceFactory.newCheckBox( " Perform gradient mapping", post.vignette.isGradientMappingEnabled(), new ClickListener() {
+			@Override
+			public void clicked( ActorEvent event, float x, float y ) {
+				CheckBox source = (CheckBox)event.getTarget();
+				if( source.isChecked() ) {
+					post.vignette.setLut( ResourceFactory.newTexture( "gradient-mapping.png", false ) );
+					sbGradientMap.fire( new ChangeListener.ChangeEvent() );
+				} else {
+					post.vignette.setLut( null );
+					post.vignette.setLutIndex( -1 );
+				}
+			}
+		} );
 
 		Table t = ResourceFactory.newTable();
 		t.add( cbVignette ).colspan( 2 ).center();
