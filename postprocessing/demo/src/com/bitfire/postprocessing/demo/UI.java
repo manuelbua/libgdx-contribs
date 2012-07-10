@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 bmanuel
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,19 +39,33 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * Implements the UI creation and event handling.
+ *
+ * Notes on the panel animator: some very simple expedients help in determining whenever the
+ * user is voluntarily leaving the panel area to make it to hide itself or it's just due to
+ * the fact combobox widgets are higher than the panel, thus the user *needs* to move out of
+ * the panel to make a selection: the latter case is being tracked by
+ *
+ * @author bmanuel
+ *
+ */
 public final class UI {
-	public Stage stage;
-	public Label singleMessage, fps;
-	public TopPanelAnimator panelAnimator;
-	Sprite background;
-	public boolean drawBackground, backgroundAffected, drawSprite, panelShown, usePanelAnimator;
-	public boolean comboBoxFlag;
+	public boolean drawBackground, backgroundAffected, drawSprite;
+	public Sprite background;
 
-	static final boolean DebugUI = false;
-	static final int DefaultBackground = 2;
-	static final int DefaultGradientMap = 0;
-	PostProcessing post;
-	Array<SelectBox> forceUpdateDefaultSelection = new Array<SelectBox>();
+	private Stage stage;
+	private Label singleMessage, fps;
+
+	// panel animator
+	private boolean comboBoxFlag, panelShown, usePanelAnimator;
+	private TopPanelAnimator panelAnimator;
+
+	private static final boolean DebugUI = false;
+	private static final int DefaultBackground = 2;
+	private static final int DefaultGradientMap = 0;
+	private PostProcessing post;
+	private Array<SelectBox> selectBoxes = new Array<SelectBox>();
 
 	public UI( InputMultiplexer inputMultiplexer, PostProcessing postProcessing, boolean panelAutoShow ) {
 		float width = Gdx.graphics.getWidth();
@@ -79,7 +93,7 @@ public final class UI {
 		np.setColor( new Color( 0.3f, 0.3f, 0.3f, 1f ) );
 		NinePatchDrawable npBack = new NinePatchDrawable( np );
 
-		// build the top panel and its widgets
+		// build the top panel and add all of its widgets
 		Table topPanel = buildTopPanel( npBack, width, height );
 		topPanel.add( buildGlobalSettingsWidgets() );
 		topPanel.add( buildBloomWidgets() );
@@ -87,28 +101,29 @@ public final class UI {
 		topPanel.add( buildCrtEmulationWidgets() );
 		topPanel.add( buildVignettingWidgets() );
 
+		// the zoomer widgets group is somewhat "special": if we are going
+		// to NOT use a panel animator then one more button will be added
+		// to permit the user to show/hide the panel manually
 		Table tZoomer = buildZoomerWidgets();
 
+		// compute the panel's opened/closed position
 		final float yWhenShown = height - topPanel.getHeight() + 13;
 		final float yWhenHidden = height - 60 + 13;
 
 		if( usePanelAnimator ) {
+			panelShown = false;
 			panelAnimator = new TopPanelAnimator( topPanel, new Rectangle( 10, 5, width - 20, 60 ), yWhenShown, yWhenHidden );
 			topPanel.setY( yWhenHidden );
-		} else {
-			topPanel.setY( yWhenShown );
-			panelShown = true;
-		}
-
-		if( !usePanelAnimator ) {
 			topPanel.add( tZoomer ).expandX();
-
+		} else {
+			panelShown = true;
+			topPanel.setY( yWhenShown );
+			topPanel.add( tZoomer ).expandX();
 			tZoomer.row();
 			tZoomer.add( buildPanelActionButtons( topPanel, yWhenShown, yWhenHidden ) ).align( Align.right );
-		} else {
-			topPanel.add( tZoomer ).expandX();
 		}
 
+		// build the bottom panel
 		Table bottomPanel = buildBottomPanel( npBack, width, height );
 		bottomPanel.add( ResourceFactory.newLabel( "Press \"Q\" or \"Esc\" to quit" ) );
 
@@ -120,9 +135,40 @@ public final class UI {
 		singleMessage = ResourceFactory.newLabel( "" );
 		bottomPanel.add( singleMessage ).expandX().right();
 
+		// UI is quite ready at this point, just add the containers to the stage
 		stage.addActor( topPanel );
 		stage.addActor( bottomPanel );
 
+		// perform some processing on the SelectBox widgets
+		for( int i = 0; i < selectBoxes.size; i++ ) {
+			// fire a change event on selected SelectBoxes to
+			// update the default selection and initialize accordingly
+			selectBoxes.get( i ).fire( new ChangeListener.ChangeEvent() );
+
+			if( usePanelAnimator ) {
+				// track clicks on the comboboxes, this imply the widget is
+				// opening giving the user some choices
+				selectBoxes.get( i ).addListener( new ClickListener() {
+					@Override
+					public void clicked( ActorEvent event, float x, float y ) {
+						comboBoxFlag = true;
+						panelAnimator.suspend();
+					}
+				} );
+
+				// track changes, user performed a selection
+				selectBoxes.get( i ).addListener( new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						comboBoxFlag = false;
+					}
+				} );
+			}
+		}
+
+		// finally, track clicks on the stage, whenever the user cancel an
+		// opened combobox selection by clicking away it will cause the widgets
+		// to close (no ChangeListener will be notified)
 		stage.addListener( new ClickListener() {
 			@Override
 			public void clicked( ActorEvent event, float x, float y ) {
@@ -133,30 +179,6 @@ public final class UI {
 				comboBoxFlag = false;
 			}
 		} );
-
-		// fire a change event on selected SelectBoxes to
-		// update the default selection and initialize with
-		// the default values
-		for( int i = 0; i < forceUpdateDefaultSelection.size; i++ ) {
-			forceUpdateDefaultSelection.get( i ).fire( new ChangeListener.ChangeEvent() );
-
-			if( usePanelAnimator ) {
-				forceUpdateDefaultSelection.get( i ).addCaptureListener( new ClickListener() {
-					@Override
-					public void clicked( ActorEvent event, float x, float y ) {
-						comboBoxFlag = true;
-						panelAnimator.suspend();
-					}
-				} );
-
-				forceUpdateDefaultSelection.get( i ).addListener( new ChangeListener() {
-					@Override
-					public void changed( ChangeEvent event, Actor actor ) {
-						comboBoxFlag = false;
-					}
-				} );
-			}
-		}
 	}
 
 	private Table buildTopPanel( NinePatchDrawable back, float width, float height ) {
@@ -180,37 +202,39 @@ public final class UI {
 			}
 		} );
 
-		final SelectBox sbBackground = ResourceFactory.newSelectBox( new String[] { "None ", "Scratches ", "Mountains ", "Lake " }, new ChangeListener() {
-			@Override
-			public void changed( ChangeEvent event, Actor actor ) {
-				SelectBox source = (SelectBox)event.getTarget();
-				drawBackground = true;
+		final SelectBox sbBackground = ResourceFactory.newSelectBox(
+				new String[] { "None ", "Scratches ", "Mountains ", "Lake " }, new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						SelectBox source = (SelectBox)event.getTarget();
+						drawBackground = true;
 
-				switch( source.getSelectionIndex() ) {
-				case 0:
-					drawBackground = false;
-					break;
-				case 1:
-					background.setTexture( ResourceFactory.newTexture( "bgnd.jpg", false ) );
-					break;
-				case 2:
-					background.setTexture( ResourceFactory.newTexture( "bgnd2.jpg", false ) );
-					break;
-				case 3:
-					background.setTexture( ResourceFactory.newTexture( "bgnd3.jpg", false ) );
-					break;
-				}
-			}
-		} );
+						switch( source.getSelectionIndex() ) {
+						case 0:
+							drawBackground = false;
+							break;
+						case 1:
+							background.setTexture( ResourceFactory.newTexture( "bgnd.jpg", false ) );
+							break;
+						case 2:
+							background.setTexture( ResourceFactory.newTexture( "bgnd2.jpg", false ) );
+							break;
+						case 3:
+							background.setTexture( ResourceFactory.newTexture( "bgnd3.jpg", false ) );
+							break;
+						}
+					}
+				} );
 
 		// background affected by post-processing
-		final CheckBox cbBackgroundAffected = ResourceFactory.newCheckBox( " Background affected\n by post-processing", backgroundAffected, new ClickListener() {
-			@Override
-			public void clicked( ActorEvent event, float x, float y ) {
-				CheckBox source = (CheckBox)event.getTarget();
-				backgroundAffected = source.isChecked();
-			}
-		} );
+		final CheckBox cbBackgroundAffected = ResourceFactory.newCheckBox( " Background affected\n by post-processing",
+				backgroundAffected, new ClickListener() {
+					@Override
+					public void clicked( ActorEvent event, float x, float y ) {
+						CheckBox source = (CheckBox)event.getTarget();
+						backgroundAffected = source.isChecked();
+					}
+				} );
 
 		// sprite
 		final CheckBox cbSprite = ResourceFactory.newCheckBox( " Show sprite", drawSprite, new ClickListener() {
@@ -222,7 +246,7 @@ public final class UI {
 		} );
 
 		sbBackground.setSelection( DefaultBackground );
-		forceUpdateDefaultSelection.add( sbBackground );
+		selectBoxes.add( sbBackground );
 
 		Table t = ResourceFactory.newTable();
 		t.add( cbPost ).colspan( 2 ).left();
@@ -270,21 +294,23 @@ public final class UI {
 			}
 		} );
 
-		final Slider slBloomBloomI = ResourceFactory.newSlider( 0, 2, 0.01f, post.bloom.getBloomIntensity(), new ChangeListener() {
-			@Override
-			public void changed( ChangeEvent event, Actor actor ) {
-				Slider source = (Slider)event.getTarget();
-				post.bloom.setBloomIntesity( source.getValue() );
-			}
-		} );
+		final Slider slBloomBloomI = ResourceFactory.newSlider( 0, 2, 0.01f, post.bloom.getBloomIntensity(),
+				new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						Slider source = (Slider)event.getTarget();
+						post.bloom.setBloomIntesity( source.getValue() );
+					}
+				} );
 
-		final Slider slBloomBloomS = ResourceFactory.newSlider( 0, 2, 0.01f, post.bloom.getBloomSaturation(), new ChangeListener() {
-			@Override
-			public void changed( ChangeEvent event, Actor actor ) {
-				Slider source = (Slider)event.getTarget();
-				post.bloom.setBloomSaturation( source.getValue() );
-			}
-		} );
+		final Slider slBloomBloomS = ResourceFactory.newSlider( 0, 2, 0.01f, post.bloom.getBloomSaturation(),
+				new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						Slider source = (Slider)event.getTarget();
+						post.bloom.setBloomSaturation( source.getValue() );
+					}
+				} );
 
 		Table t = ResourceFactory.newTable();
 		t.add( cbBloom ).colspan( 2 ).center();
@@ -316,21 +342,23 @@ public final class UI {
 			}
 		} );
 
-		final Slider slCurvatureDist = ResourceFactory.newSlider( 0, 2, 0.01f, post.curvature.getDistortion(), new ChangeListener() {
-			@Override
-			public void changed( ChangeEvent event, Actor actor ) {
-				Slider source = (Slider)event.getTarget();
-				post.curvature.setDistortion( source.getValue() );
-			}
-		} );
+		final Slider slCurvatureDist = ResourceFactory.newSlider( 0, 2, 0.01f, post.curvature.getDistortion(),
+				new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						Slider source = (Slider)event.getTarget();
+						post.curvature.setDistortion( source.getValue() );
+					}
+				} );
 
-		final Slider slCurvatureZoom = ResourceFactory.newSlider( 0, 2, 0.01f, 2f - post.curvature.getZoom(), new ChangeListener() {
-			@Override
-			public void changed( ChangeEvent event, Actor actor ) {
-				Slider source = (Slider)event.getTarget();
-				post.curvature.setZoom( 2f - source.getValue() );
-			}
-		} );
+		final Slider slCurvatureZoom = ResourceFactory.newSlider( 0, 2, 0.01f, 2f - post.curvature.getZoom(),
+				new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						Slider source = (Slider)event.getTarget();
+						post.curvature.setZoom( 2f - source.getValue() );
+					}
+				} );
 
 		Table t = ResourceFactory.newTable();
 		t.add( cbCurvature ).colspan( 2 ).center();
@@ -426,55 +454,56 @@ public final class UI {
 			}
 		} );
 
-		final SelectBox sbGradientMap = ResourceFactory.newSelectBox(
-				new String[] { "Cross processing ", "Sunset ", "Mars", "Vivid ", "Greenland ", "Cloudy ", "Muddy " }, new ChangeListener() {
-					@Override
-					public void changed( ChangeEvent event, Actor actor ) {
-						if( post.vignette.isGradientMappingEnabled() ) {
-							SelectBox source = (SelectBox)event.getTarget();
-							switch( source.getSelectionIndex() ) {
-							case 0:
-								post.vignette.setLutIndex( 16 );
-								break;
-							case 1:
-								post.vignette.setLutIndex( 5 );
-								break;
-							case 2:
-								post.vignette.setLutIndex( 7 );
-								break;
-							case 3:
-								post.vignette.setLutIndex( 6 );
-								break;
-							case 4:
-								post.vignette.setLutIndex( 8 );
-								break;
-							case 5:
-								post.vignette.setLutIndex( 3 );
-								break;
-							case 6:
-								post.vignette.setLutIndex( 0 );
-								break;
-							}
-						}
-					}
-				} );
-
-		sbGradientMap.setSelection( DefaultGradientMap );
-		forceUpdateDefaultSelection.add( sbGradientMap );
-
-		final CheckBox cbGradientMapping = ResourceFactory.newCheckBox( " Perform gradient mapping", post.vignette.isGradientMappingEnabled(), new ClickListener() {
+		final SelectBox sbGradientMap = ResourceFactory.newSelectBox( new String[] { "Cross processing ", "Sunset ", "Mars",
+				"Vivid ", "Greenland ", "Cloudy ", "Muddy " }, new ChangeListener() {
 			@Override
-			public void clicked( ActorEvent event, float x, float y ) {
-				CheckBox source = (CheckBox)event.getTarget();
-				if( source.isChecked() ) {
-					post.vignette.setLut( ResourceFactory.newTexture( "gradient-mapping.png", false ) );
-					sbGradientMap.fire( new ChangeListener.ChangeEvent() );
-				} else {
-					post.vignette.setLut( null );
-					post.vignette.setLutIndex( -1 );
+			public void changed( ChangeEvent event, Actor actor ) {
+				if( post.vignette.isGradientMappingEnabled() ) {
+					SelectBox source = (SelectBox)event.getTarget();
+					switch( source.getSelectionIndex() ) {
+					case 0:
+						post.vignette.setLutIndex( 16 );
+						break;
+					case 1:
+						post.vignette.setLutIndex( 5 );
+						break;
+					case 2:
+						post.vignette.setLutIndex( 7 );
+						break;
+					case 3:
+						post.vignette.setLutIndex( 6 );
+						break;
+					case 4:
+						post.vignette.setLutIndex( 8 );
+						break;
+					case 5:
+						post.vignette.setLutIndex( 3 );
+						break;
+					case 6:
+						post.vignette.setLutIndex( 0 );
+						break;
+					}
 				}
 			}
 		} );
+
+		sbGradientMap.setSelection( DefaultGradientMap );
+		selectBoxes.add( sbGradientMap );
+
+		final CheckBox cbGradientMapping = ResourceFactory.newCheckBox( " Perform gradient mapping",
+				post.vignette.isGradientMappingEnabled(), new ClickListener() {
+					@Override
+					public void clicked( ActorEvent event, float x, float y ) {
+						CheckBox source = (CheckBox)event.getTarget();
+						if( source.isChecked() ) {
+							post.vignette.setLut( ResourceFactory.newTexture( "gradient-mapping.png", false ) );
+							sbGradientMap.fire( new ChangeListener.ChangeEvent() );
+						} else {
+							post.vignette.setLut( null );
+							post.vignette.setLutIndex( -1 );
+						}
+					}
+				} );
 
 		Table t = ResourceFactory.newTable();
 		t.add( cbVignette ).colspan( 2 ).center();

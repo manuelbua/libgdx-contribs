@@ -22,21 +22,27 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
-public class TopPanelAnimator {
+/**
+ * Implements an automatic top panel animator with the only role do make it appear when
+ * the user approach the top panel zone and make it disappear whenever the user is leaving
+ * the area.
+ *
+ * @author bmanuel
+ *
+ */
+public final class TopPanelAnimator {
 	enum State {
 		ShowingPanel, HidingPanel, Idle
 	}
 
-	private static final float InHotZoneSecondsBeforeShowing = 0.25f;
-	private static final float OutHotZoneSecondsBeforeHiding = 0.8f;
+	static final float InHotZoneSecondsBeforeShowing = 0.25f;
+	static final float OutHotZoneSecondsBeforeHiding = 0.8f;
 	Actor panel;
 	Timer timer;
 	State state;
 	HotZone hotZone;
 	float closedHotZoneHeight, openedHotZoneHeight;
 	boolean suspended;
-
-	// animation
 	float yShow, yHidden;
 
 	public TopPanelAnimator( Actor panel, Rectangle hotZone, float yWhenShown, float yWhenHidden ) {
@@ -88,11 +94,9 @@ public class TopPanelAnimator {
 	private void idling() {
 		if( hotZone.justIn ) {
 			setState( State.ShowingPanel );
-
 			// Gdx.app.log( "PanelAnimator", "Waiting to show..." );
 		} else if( hotZone.justOut ) {
 			setState( State.HidingPanel );
-
 			// Gdx.app.log( "PanelAnimator", "Waiting to hide..." );
 		}
 	}

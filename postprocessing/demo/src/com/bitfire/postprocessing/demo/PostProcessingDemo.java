@@ -39,9 +39,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.utils.ShaderLoader;
 
 public class PostProcessingDemo implements ApplicationListener, InputProcessor {
-	// FIXME need to work out better event handling for this! Some widgets
-	// will capture mouseMove events, need testing with a capture listener
-	// instead.
 	private static final boolean UsePanelAnimator = true;
 
 	SpriteBatch batch;
