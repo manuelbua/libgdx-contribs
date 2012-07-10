@@ -40,6 +40,7 @@ import com.bitfire.utils.ShaderLoader;
 
 public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 	private static final boolean UsePanelAnimator = true;
+	private static final boolean UseRightScreen = true;
 
 	SpriteBatch batch;
 	Sprite badlogic;
@@ -67,27 +68,29 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 
 		new LwjglApplication( new PostProcessingDemo(), config );
 
-		// move the window to the right screen
-		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice primary = env.getDefaultScreenDevice();
-		GraphicsDevice[] devices = env.getScreenDevices();
-		GraphicsDevice target = null;
+		if( UseRightScreen ) {
+			// move the window to the right screen
+			GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			GraphicsDevice primary = env.getDefaultScreenDevice();
+			GraphicsDevice[] devices = env.getScreenDevices();
+			GraphicsDevice target = null;
 
-		// search for the first target screen
-		for( int i = 0; i < devices.length; i++ ) {
-			boolean isPrimary = (primary == devices[i]);
-			if( !isPrimary ) {
-				target = devices[i];
-				break;
+			// search for the first target screen
+			for( int i = 0; i < devices.length; i++ ) {
+				boolean isPrimary = (primary == devices[i]);
+				if( !isPrimary ) {
+					target = devices[i];
+					break;
+				}
 			}
-		}
 
-		if( target != null ) {
-			DisplayMode pmode = primary.getDisplayMode();
-			DisplayMode tmode = target.getDisplayMode();
+			if( target != null ) {
+				DisplayMode pmode = primary.getDisplayMode();
+				DisplayMode tmode = target.getDisplayMode();
 
-			Display.setLocation( pmode.getWidth() + (tmode.getWidth() - config.width) / 2,
-					(tmode.getHeight() - config.height) / 2 );
+				Display.setLocation( pmode.getWidth() + (tmode.getWidth() - config.width) / 2,
+						(tmode.getHeight() - config.height) / 2 );
+			}
 		}
 	}
 

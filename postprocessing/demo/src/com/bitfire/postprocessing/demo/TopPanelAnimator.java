@@ -105,7 +105,9 @@ public final class TopPanelAnimator {
 		if( hotZone.isIn ) {
 			if( elapsed > InHotZoneSecondsBeforeShowing ) {
 				setState( State.Idle );
+
 				panel.addAction( Actions.moveTo( panel.getX(), yShow, 0.5f, Interpolation.exp10 ) );
+				panel.addAction( Actions.alpha( 1f, 0.5f, Interpolation.exp10 ) );
 
 				// resize hotzone rect to let the user move in the whole area
 				Rectangle hz = hotZone.getHotZone();
@@ -124,7 +126,9 @@ public final class TopPanelAnimator {
 		if( !hotZone.isIn ) {
 			if( elapsed > OutHotZoneSecondsBeforeHiding ) {
 				setState( State.Idle );
+
 				panel.addAction( Actions.moveTo( panel.getX(), yHidden, 0.5f, Interpolation.exp10 ) );
+				panel.addAction( Actions.alpha( 0.5f, 0.5f, Interpolation.exp10 ) );
 
 				// restore original hotzone height
 				Rectangle hz = hotZone.getHotZone();

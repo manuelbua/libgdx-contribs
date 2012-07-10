@@ -115,6 +115,7 @@ public final class UI {
 			panelAnimator = new TopPanelAnimator( topPanel, new Rectangle( 10, 5, width - 20, 60 ), yWhenShown, yWhenHidden );
 			topPanel.setY( yWhenHidden );
 			topPanel.add( tZoomer ).expandX();
+			topPanel.setColor( 1f, 1f, 1f, 0.5f );
 		} else {
 			panelShown = true;
 			topPanel.setY( yWhenShown );
@@ -251,7 +252,7 @@ public final class UI {
 		Table t = ResourceFactory.newTable();
 		t.add( cbPost ).colspan( 2 ).left();
 		t.row();
-		t.add( ResourceFactory.newLabel( "Choose\nbackground " ) );
+		t.add( ResourceFactory.newLabel( "Background " ) );
 		t.add( sbBackground );
 		t.row();
 		t.add( cbBackgroundAffected ).colspan( 2 ).left();
@@ -513,7 +514,7 @@ public final class UI {
 		t.row();
 		t.add( cbGradientMapping ).padTop( 10 ).colspan( 2 ).center();
 		t.row();
-		t.add( ResourceFactory.newLabel( "Choose map " ) ).left();
+		t.add( ResourceFactory.newLabel( "Gradient " ) ).center().padTop( 10 );
 		t.add( sbGradientMap ).padTop( 10 );
 
 		return t;
