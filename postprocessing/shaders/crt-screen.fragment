@@ -1,18 +1,30 @@
 /*******************************************************************************
  * Copyright 2012 bmanuel
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+
+/**
+ * Credits to Inigo Quilez 2009 (iq/rgba) for the original 'Postpro'
+ * code at http://www.iquilezles.org/apps/shadertoy/?p=postpro
+ *
+ * This version of the original fragment program has been adapted and
+ * parameterized to permit runtime configuration.
+ *
+ * Furthermore it has been reworked to mimic the GL_REPEAT texture
+ * wrapping on the FBO due to problems arised when running on a real
+ * Android device, equipped with a Tegra2 GPU (Asus TF101).
+ */
 
 #ifdef GL_ES
 	#define PRECISION mediump
@@ -21,19 +33,17 @@
 	#define PRECISION
 #endif
 
-uniform vec3 tint;// = vec3(0.8,1.0,0.7);
+uniform vec3 tint;
 uniform float time;
-uniform float offset;// = 0.003;
+uniform float offset;	// ~0.001-0.003;
 
 #ifdef ENABLE_BARREL_DISTORTION
-	uniform float Distortion;// = 0.3
+	uniform float Distortion;	// ~0.3
 	uniform float zoom;
 #endif
 
 uniform sampler2D u_texture0;
 varying vec2 v_texCoords;
-
-const vec4 Zero = vec4(0.0,0.0,0.0,1.0);
 
 #ifdef ENABLE_BARREL_DISTORTION
 
@@ -52,6 +62,8 @@ void main(void)
 	uv.y = 1.0 - uv.y;
 
 #ifdef ENABLE_BARREL_DISTORTION
+	const vec4 Zero = vec4(0.0,0.0,0.0,1.0);
+
     uv = barrelDistortion(uv);
     uv = 0.5 + (uv-0.5)*(zoom);
 
@@ -64,8 +76,8 @@ void main(void)
 	vec3 oricol = texture2D(u_texture0,vec2(uv.x,1.0-uv.y)).xyz;
 	vec3 col;
 
-	// use fract since Tegra2 seems to NOT support
-	// GL_REPEAT on FBOs.. WTF?
+	// uses fract instead of GL_REPEAT since Tegra2 seems buggy with
+	// GL_REPEAT on FBOs.. WTF?! Can anyone confirm this?
 	col.r = texture2D(u_texture0,fract(vec2(uv.x+offset,-uv.y))).x;
 	col.g = texture2D(u_texture0,fract(vec2(uv.x+0.000,-uv.y))).y;
 	col.b = texture2D(u_texture0,fract(vec2(uv.x-offset,-uv.y))).z;
