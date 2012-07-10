@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 bmanuel
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -89,7 +89,8 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 			DisplayMode pmode = primary.getDisplayMode();
 			DisplayMode tmode = target.getDisplayMode();
 
-			Display.setLocation( pmode.getWidth() + (tmode.getWidth() - config.width) / 2, (tmode.getHeight() - config.height) / 2 );
+			Display.setLocation( pmode.getWidth() + (tmode.getWidth() - config.width) / 2,
+					(tmode.getHeight() - config.height) / 2 );
 		}
 	}
 
@@ -132,12 +133,8 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 
 	@Override
 	public void render() {
-		Gdx.gl20.glClearColor( 1, 1, 1, 1 );
-		Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT );
-		ui.draw();
-
 		update();
-		// draw();
+		draw();
 	}
 
 	private void update() {
@@ -166,7 +163,8 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 	private void draw() {
 
 		boolean willPostProcess = post.isReady();
-		boolean backgroundFirst = (willPostProcess && !ui.backgroundAffected && ui.drawBackground) || (!willPostProcess && ui.drawBackground);
+		boolean backgroundFirst = (willPostProcess && !ui.backgroundAffected && ui.drawBackground)
+				|| (!willPostProcess && ui.drawBackground);
 		post.blending = backgroundFirst && willPostProcess;
 
 		if( backgroundFirst || !willPostProcess ) {
