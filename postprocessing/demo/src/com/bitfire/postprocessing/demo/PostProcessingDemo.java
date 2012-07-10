@@ -58,11 +58,16 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "libgdx's post-processing demo";
 		config.width = 1280;
-		config.height = 800;
+		config.height = 720;
 		config.samples = 0;
 		config.depth = 0;
 		config.vSyncEnabled = true;
-		config.useCPUSynch = false;
+
+		// Note: this is usually set to false, but i'm noticing a 3fps improvement over
+		// a cpuSync=false setting. Also, in case of grabbing the window via ffmpeg/qx11grab
+		// to make a video, artifacts may appear at the top such as flashing white bars: if
+		// this is the case, using cpuSync=true may solve this.
+		config.useCPUSynch = true;
 		config.useGL20 = true;
 		config.fullscreen = false;
 
