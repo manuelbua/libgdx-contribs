@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 bmanuel
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,7 @@ import com.badlogic.gdx.utils.Disposable;
  * This interface defines the base class for the concrete implementation
  * of post-processor effects.
  * An effect is considered enabled by default.
- * 
+ *
  * @author bmanuel
  */
 public abstract class PostProcessorEffect implements Disposable {
@@ -33,8 +33,8 @@ public abstract class PostProcessorEffect implements Disposable {
 	 * Concrete objects shall be responsible to recreate or rebind its own
 	 * resources whenever its needed, usually when the OpenGL context
 	 * is lost.
-	 * Eg., framebuffers' texture should be updated and shader parameters
-	 * should be reuploaded.
+	 * Eg., framebuffer textures should be updated and shader parameters
+	 * should be reuploaded/rebound.
 	 */
 	public abstract void rebind();
 
