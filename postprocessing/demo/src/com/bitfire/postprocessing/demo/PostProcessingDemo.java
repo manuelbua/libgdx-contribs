@@ -67,6 +67,9 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		// a cpuSync=false setting. Also, in case of grabbing the window via ffmpeg/qx11grab
 		// to make a video, artifacts may appear at the top such as flashing white bars: if
 		// this is the case, using cpuSync=true may solve this.
+		//
+		// ffmpeg -xerror -loglevel info -f x11grab -framerate 25 -video_size 1280x720 -i :0.0+2240,200 -dcodec copy -vcodec
+		// libx264 -preset ultrafast -y /tmp/out.mkv
 		config.useCPUSynch = true;
 		config.useGL20 = true;
 		config.fullscreen = false;
