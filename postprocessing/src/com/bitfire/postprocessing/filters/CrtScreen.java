@@ -21,7 +21,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.bitfire.utils.ShaderLoader;
 
 public final class CrtScreen extends Filter<CrtScreen> {
-	private float time, offset, zoom;
+	private float elapsedSecs, offset, zoom;
 	private final Vector3 vtint;
 	private final Color tint;
 	private float distortion;
@@ -32,7 +32,7 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		Texture0("u_texture0",0),
 		Time("time",0),
 		Tint("tint",3),
-		Offset("offset",0),
+		ColorOffset("offset",0),
 		Distortion("Distortion",0),
 		Zoom("zoom",0)
 		;
@@ -70,17 +70,17 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		setTint( 0.8f, 1.0f, 0.7f );
 		setDistortion( 0.3f );
 		setZoom( 1f );
-		setOffset( 0.003f );
+		setColorOffset( 0.003f );
 	}
 
-	public void setTime( float time ) {
-		this.time = time;
-		setParam( Param.Time, time );
+	public void setTime( float elapsedSecs ) {
+		this.elapsedSecs = elapsedSecs;
+		setParam( Param.Time, elapsedSecs );
 	}
 
-	public void setOffset( float offset ) {
+	public void setColorOffset( float offset ) {
 		this.offset = offset;
-		setParam( Param.Offset, this.offset );
+		setParam( Param.ColorOffset, this.offset );
 	}
 
 	public void setTint( Color color ) {
@@ -129,8 +129,8 @@ public final class CrtScreen extends Filter<CrtScreen> {
 	@Override
 	public void rebind() {
 		setParams( Param.Texture0, u_texture0 );
-		setParams( Param.Time, time );
-		setParams( Param.Offset, offset );
+		setParams( Param.Time, elapsedSecs );
+		setParams( Param.ColorOffset, offset );
 
 		vtint.set( tint.r, tint.g, tint.b );
 		setParams( Param.Tint, vtint );

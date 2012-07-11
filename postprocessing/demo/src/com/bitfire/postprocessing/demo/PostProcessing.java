@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 bmanuel
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,6 +29,11 @@ import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
 import com.bitfire.postprocessing.filters.RadialBlur;
 
+/**
+ * Encapsulates postprocessing functionalities
+ * 
+ * @author bmanuel
+ */
 public final class PostProcessing implements Disposable, PostProcessListener {
 
 	public PostProcessor postProcessor;
@@ -73,7 +78,7 @@ public final class PostProcessing implements Disposable, PostProcessListener {
 		zoomer.setBlurStrength( -0.1f );
 		zoomer.setOrigin( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
 		curvature.setZoom( 1f );
-		crt.setOffset( 0.002f );
+		crt.setColorOffset( 0.002f );
 		vignette.setIntensity( 1f );
 
 		crt.setEnabled( false );
@@ -108,6 +113,8 @@ public final class PostProcessing implements Disposable, PostProcessListener {
 	}
 
 	public void update( float elapsedSecs ) {
+
+		// animate some effects
 		float smoothing = 1.5f;
 		zoomFactor = lerp( zoomFactor * smoothing, zoomAmount / smoothing, 0.1f ) * 0.5f;
 		zoomer.setZoom( 1f + 4.0f * zoomFactor );
@@ -115,6 +122,8 @@ public final class PostProcessing implements Disposable, PostProcessListener {
 			zoomer.setBlurStrength( -0.1f * zoomFactor );
 		}
 
+		// this effect needs an external clock source to
+		// emulate scanlines properly
 		crt.setTime( elapsedSecs );
 	}
 

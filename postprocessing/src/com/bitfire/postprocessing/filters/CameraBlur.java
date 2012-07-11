@@ -20,6 +20,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Matrix4;
 import com.bitfire.utils.ShaderLoader;
 
+/**
+ * FIXME this effect is INCOMPLETE!
+ * 
+ * @author bmanuel
+ */
 public final class CameraBlur extends Filter<CameraBlur> {
 
 	private Texture depthMap = null;

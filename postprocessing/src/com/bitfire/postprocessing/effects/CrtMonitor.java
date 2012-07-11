@@ -101,12 +101,12 @@ public final class CrtMonitor extends PostProcessorEffect {
 	}
 
 	// setters
-	public void setTime( float time ) {
-		crt.setTime( time );
+	public void setTime( float elapsedSecs ) {
+		crt.setTime( elapsedSecs );
 	}
 
-	public void setOffset( float offset ) {
-		crt.setOffset( offset );
+	public void setColorOffset( float offset ) {
+		crt.setColorOffset( offset );
 	}
 
 	public void setTint( Color tint ) {
