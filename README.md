@@ -19,7 +19,7 @@ All available projects in the repository will be added to the following list wit
   
 ### Cloning and importing the projects in Eclipse ###
 
-Start by cloning the *libgdx-contribs* project in your preferred directory:
+Start by cloning the *libgdx-contribs* repository in your preferred directory:
 
     https://github.com/manuelbua/libgdx-contribs.git
 
