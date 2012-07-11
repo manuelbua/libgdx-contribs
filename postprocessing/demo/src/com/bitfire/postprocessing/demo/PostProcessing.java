@@ -119,6 +119,6 @@ public final class PostProcessing implements Disposable, PostProcessListener {
 	}
 
 	private static float lerp( float prev, float curr, float alpha ) {
-		return curr * alpha + prev * (1f - alpha);
+		return prev + alpha * (curr - prev);
 	}
 }
