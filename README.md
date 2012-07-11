@@ -7,11 +7,8 @@ Project files and instructions are for Eclipse 3.7.2 (Indigo) or higher, but oth
 
 All available projects in the repository will be added to the following list with a brief description:
 
-### utils ###
-*Common utilities used across the contributions.*
-
-### post-processing ###
-*A lightweight library to ease development and inclusion of post-processing effects in libgdx applications and games.*
+__utils__ *Common utilities used across the contributions.*  
+__post-processing__ *A lightweight library to ease development and inclusion of post-processing effects in libgdx applications and games.*
   
   
 ***
