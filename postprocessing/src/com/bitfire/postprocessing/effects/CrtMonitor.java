@@ -52,7 +52,7 @@ public final class CrtMonitor extends PostProcessorEffect {
 		doblur = performBlur;
 
 		if( doblur ) {
-			pingPongBuffer = new PingPongBuffer( w, h, PostProcessor.getFramebufferFormat(), false );
+			pingPongBuffer = PostProcessor.newPingPongBuffer( w, h, PostProcessor.getFramebufferFormat(), false );
 			blur = new Blur( w, h );
 			blur.setPasses( 1 );
 			blur.setAmount( 1f );

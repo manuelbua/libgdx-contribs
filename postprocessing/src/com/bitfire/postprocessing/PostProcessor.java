@@ -41,7 +41,7 @@ public final class PostProcessor implements Disposable {
 	private TextureWrap compositeWrapU;
 	private TextureWrap compositeWrapV;
 	private final ItemsManager<PostProcessorEffect> effectsManager = new ItemsManager<PostProcessorEffect>();
-	private final Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );
+	private static final Array<PingPongBuffer> buffers = new Array<PingPongBuffer>( 5 );
 	private final Color clearColor = Color.CLEAR;
 	private int clearBits = GL10.GL_COLOR_BUFFER_BIT;
 	private float clearDepth = 1f;
@@ -49,6 +49,7 @@ public final class PostProcessor implements Disposable {
 	private boolean enabled = true;
 	private boolean capturing = false;
 	private boolean hasCaptured = false;
+	private boolean useDepth = false;
 
 	private PostProcessListener listener = null;
 
@@ -90,15 +91,18 @@ public final class PostProcessor implements Disposable {
 		capturing = false;
 		hasCaptured = false;
 		enabled = true;
+		this.useDepth = useDepth;
 	}
 
 	/**
 	 * Creates and returns a managed PingPongBuffer buffer, just create and
-	 * forget.
+	 * forget. If rebind() is called on context loss, managed PingPongBuffers
+	 * will be rebound for you.
+	 * 
 	 * This is a drop-in replacement for the same-signature PingPongBuffer's
 	 * constructor.
 	 */
-	public PingPongBuffer newPingPongBuffer( int width, int height, Format frameBufferFormat, boolean hasDepth ) {
+	public static PingPongBuffer newPingPongBuffer( int width, int height, Format frameBufferFormat, boolean hasDepth ) {
 		PingPongBuffer buffer = new PingPongBuffer( width, height, frameBufferFormat, hasDepth );
 		buffers.add( buffer );
 		return buffer;
@@ -240,8 +244,11 @@ public final class PostProcessor implements Disposable {
 			composite.begin();
 			composite.capture();
 
+			if( useDepth ) {
+				Gdx.gl.glClearDepthf( clearDepth );
+			}
+
 			Gdx.gl.glClearColor( clearColor.r, clearColor.g, clearColor.b, clearColor.a );
-			Gdx.gl.glClearDepthf( clearDepth );
 			Gdx.gl.glClear( clearBits );
 			return true;
 		}
