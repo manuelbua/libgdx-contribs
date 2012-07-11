@@ -5,10 +5,17 @@ My contributions and utilities for the awesome libgdx game development framework
 
 Project files and instructions are for Eclipse 3.7.2 (Indigo) or higher, but others may work as well with some adaptation.
 
+***
+
+All available projects in the repository will be added to the following list with a brief description.
+
+## utils ##
+*Common utilities used across the contributions.*
+
 ## post-processing ##
+*A lightweight library to ease development and inclusion of post-processing effects in libgdx applications and games.*
 
-A lightweight library to ease development and inclusion of post-processing effects in libgdx applications and games.
-
+***
 
 ### Cloning and importing the projects in Eclipse ###
 
