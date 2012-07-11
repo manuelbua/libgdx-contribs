@@ -259,7 +259,5 @@ public final class Bloom extends PostProcessorEffect {
 		threshold.rebind();
 		combine.rebind();
 		pingPongBuffer.rebind();
-
-		setSettings( settings );
 	}
 }
