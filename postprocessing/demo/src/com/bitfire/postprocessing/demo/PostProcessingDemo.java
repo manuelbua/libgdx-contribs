@@ -70,7 +70,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		//
 		// ffmpeg -xerror -loglevel info -f x11grab -framerate 25 -video_size 1280x720 -i :0.0+2240,200 -dcodec copy -vcodec
 		// libx264 -preset ultrafast -y /tmp/out.mkv
-		config.useCPUSynch = true;
+		config.useCPUSynch = false;
 		config.useGL20 = true;
 		config.fullscreen = false;
 
