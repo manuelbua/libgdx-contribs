@@ -44,22 +44,30 @@ public final class PostProcessing implements Disposable, PostProcessListener {
 		boolean isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
 		blending = false;
 
+		// create the postprocessor
 		postProcessor = new PostProcessor( false, false, isDesktop );
+
+		// optionally create a listener
 		postProcessor.setListener( this );
 
+		// create the effects you want
 		bloom = new Bloom( (int)(Gdx.graphics.getWidth() * 0.25f), (int)(Gdx.graphics.getHeight() * 0.25f) );
 		curvature = new Curvature();
 		zoomer = new Zoomer( isDesktop ? RadialBlur.Quality.VeryHigh : RadialBlur.Quality.Low );
 		crt = new CrtMonitor( false, false );
 		vignette = new Vignette( false );
 
-		postProcessor.setEnabled( true );
+		// add them to the postprocessor
 		postProcessor.addEffect( curvature );
 		postProcessor.addEffect( zoomer );
 		postProcessor.addEffect( vignette );
 		postProcessor.addEffect( crt );
 		postProcessor.addEffect( bloom );
 
+		initializeEffects();
+	}
+
+	private void initializeEffects() {
 		// specify a negative value to blur inside-to-outside,
 		// so that to avoid artifacts at borders
 		zoomer.setBlurStrength( -0.1f );
