@@ -20,7 +20,7 @@ Start by cloning the *libgdx-contribs* repository in your preferred directory:
 
     https://github.com/manuelbua/libgdx-contribs.git
 
-Then import **libgdx-contribs-utils** and choose to import the project you want, for example **libgdx-contribs-postprocessing**.
+Then import libgdx-contribs-**utils** and choose to import the project you want, for example libgdx-contribs-**postprocessing**.
 
 In Eclipse, *File->Import* and point it to the *utils* folder, accept the defaults or change to your likings and import the project, then do the same with the project you choose to use.
 At this point you should have both projects built, if *Build automatically* has been setup in your workspace, else build them manually.
