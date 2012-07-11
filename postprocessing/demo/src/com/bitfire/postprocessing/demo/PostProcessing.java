@@ -100,6 +100,10 @@ public final class PostProcessing implements Disposable, PostProcessListener {
 		postProcessor.render( null );
 	}
 
+	public void rebind() {
+		postProcessor.rebind();
+	}
+
 	public boolean isEnabled() {
 		return postProcessor.isEnabled();
 	}

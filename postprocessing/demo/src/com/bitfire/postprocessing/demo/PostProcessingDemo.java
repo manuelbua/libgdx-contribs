@@ -209,6 +209,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 
 	@Override
 	public void resume() {
+		post.rebind();
 	}
 
 	@Override
