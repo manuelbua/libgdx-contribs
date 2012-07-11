@@ -26,9 +26,8 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
  * Implements an automatic top panel animator with the only role do make it appear when
  * the user approach the top panel zone and make it disappear whenever the user is leaving
  * the area.
- *
+ * 
  * @author bmanuel
- *
  */
 public final class TopPanelAnimator {
 	enum State {

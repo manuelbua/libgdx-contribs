@@ -41,14 +41,13 @@ import com.badlogic.gdx.utils.Array;
 
 /**
  * Implements the UI creation and event handling.
- *
+ * 
  * Notes on the panel animator: some very simple expedients help in determining whenever the
  * user is voluntarily leaving the panel area to make it to hide itself or it's just due to
  * the fact combobox widgets are higher than the panel, thus the user *needs* to move out of
  * the panel to make a selection: the latter case is being tracked by
- *
+ * 
  * @author bmanuel
- *
  */
 public final class UI {
 	public boolean drawBackground, backgroundAffected, drawSprite;
