@@ -3,7 +3,7 @@ A lightweight library to ease development and inclusion of post-processing effec
 
 ## Usage
 
-It's usually simple to add post-processing effects to your own application but, depending on the complexity of your rendering stage and the rendering states you are using you may be required to track state changes in some cases (see here for more information).
+It's usually simple to add post-processing effects to your own application but, depending on the complexity of your rendering stage and the rendering states you are using, you may be required to track state changes in some cases (see how the Bloom effect [saves](https://github.com/manuelbua/libgdx-contribs/blob/master/postprocessing/src/com/bitfire/postprocessing/effects/Bloom.java#L226-228) and [restores](https://github.com/manuelbua/libgdx-contribs/blob/master/postprocessing/src/com/bitfire/postprocessing/effects/Bloom.java#L243) the OpenGL blending state).
 
 ## Basic example
 Suppose you want to add a *bloom* effect to your libgdx application and that the following is your original source code (this is just an example, it will not compile!):
