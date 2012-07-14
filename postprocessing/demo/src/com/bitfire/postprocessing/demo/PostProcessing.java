@@ -97,7 +97,7 @@ public final class PostProcessing implements Disposable, PostProcessListener {
 	}
 
 	public void end() {
-		postProcessor.render( null );
+		postProcessor.render();
 	}
 
 	public void rebind() {

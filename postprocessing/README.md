@@ -97,9 +97,9 @@ Finally, we can now tell the post-processor when the actual scene drawing occurs
     public void render() {
         yourUpdateScene();
 
-        postProcessor.begin();
+        postProcessor.capture();
         yourRenderScene();
-        postProcessor.end();
+        postProcessor.render();
     }
 ```
 
@@ -108,14 +108,14 @@ Easy, uh? Just one more note: in case you didn't want to have your UI post-proce
 ```java
     private void yourRenderScene() {
 
-        postProcessor.begin();
+        postProcessor.capture();
 
         // draw game sprites
         batch.begin();
         yourBatchRenderer( batch );
         batch.end();
 
-        postProcessor.end();
+        postProcessor.render();
 
         // draw ui
         ui.draw();

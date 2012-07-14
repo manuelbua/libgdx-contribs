@@ -371,6 +371,11 @@ public final class PostProcessor implements Disposable {
 		}
 	}
 
+	/** Convenience method to render to screen. */
+	public void render() {
+		render( null );
+	}
+
 	private int buildEnabledEffectsList() {
 		enabledEffects.clear();
 
