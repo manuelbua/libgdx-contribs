@@ -1,0 +1,54 @@
+<project name="tween-engine" default="all" basedir=".">
+
+	<!-- version -->
+	<property name="version" value="1.0.0" />
+
+	<!-- props -->
+	<property name="api.dir" value="." />
+	<property name="api.name" value="postprocessing" />
+
+	<!-- TASKS -->
+
+	<!-- clean -->
+	<target name="clean">
+		<delete includeEmptyDirs="true"><fileset dir="${api.dir}" includes="bin/, release/"/></delete>
+	</target>
+
+	<!-- init -->
+	<target name="init" depends="clean">
+		<mkdir dir="${api.dir}/bin/" />
+		<mkdir dir="${api.dir}/release/" />
+	</target>
+
+	<!-- compile -->
+	<target name="compile" depends="init">
+		<javac target="1.6" source="1.6" debug="on" srcdir="${api.dir}/src/" destdir="${api.dir}/bin/">
+			<src path="../utils/src/" />
+			<classpath>
+				<fileset dir="/home/manuel/dev/libgdx-nightly/">
+					<include name="gdx.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+
+	<!-- package -->
+	<target name="package" depends="compile">
+		<!-- api -->
+		<jar destfile="${api.dir}/release/${api.name}.jar" basedir="${api.dir}/bin" />
+		<jar destfile="${api.dir}/release/${api.name}-sources.jar" basedir="${api.dir}/src">
+			<fileset dir="../utils/src/" />
+		</jar>
+	</target>
+
+	<!-- zip -->
+	<target name="zip" depends="package">
+		<zip destfile="release/${api.name}-${version}.zip">
+			<fileset dir="release/${api.dir}" includes="*.jar"/>
+			<zipfileset dir="${api.dir}/shaders" prefix="shaders"/>
+		</zip>
+	</target>
+
+	<!-- all -->
+	<target name="all" depends="zip" />
+</project>

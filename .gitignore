@@ -1,5 +1,7 @@
 */bin
+*/release
 *.so
 *.log
 *.class
-pom.xml
+*/pom.xml
+*/.ant*
