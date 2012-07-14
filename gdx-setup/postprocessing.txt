@@ -25,7 +25,7 @@ http://manuelbua.github.com/libgdx-contribs/gdx-setup/postprocessing-logo.jpg
 1.0.0
 
 [stable-url]
-https://github.com/downloads/manuelbua/libgdx-contribs/postprocessing-1.0.0.zip
+http://cloud.github.com/downloads/manuelbua/libgdx-contribs/postprocessing-1.0.0.zip
 
 [libs-common]
 postprocessing.jar
