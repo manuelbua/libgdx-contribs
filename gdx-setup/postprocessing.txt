@@ -1,0 +1,32 @@
+[name]
+Post-processing library
+
+[author]
+Manuel Bua
+
+[author-website]
+http://manuel.bit-fire.com
+
+[description]
+Add post-processing and cinematic effects to your games!<br/><br/>
+
+Go to the homepage and follow the instructions to get the demo<br/>
+and start explore how to add awesome effects to your libgdx games.
+
+Online video: http://youtu.be/TNMwUKiR5fY
+
+[homepage]
+http://manuelbua.github.com/libgdx-contribs/
+
+[logo]
+http://manuelbua.github.com/libgdx-contribs/gdx-setup/postprocessing-logo.jpg
+
+[stable-version]
+1.0.0
+
+[stable-url]
+https://github.com/downloads/manuelbua/libgdx-contribs/postprocessing-1.0.0.zip
+
+[libs-common]
+postprocessing.jar
+postprocessing-sources.jar
