@@ -11,7 +11,7 @@ http://manuel.bit-fire.com
 Add post-processing and cinematic effects to your games!<br/><br/>
 
 Go to the homepage and follow the instructions to get the demo<br/>
-and start explore how to add awesome effects to your libgdx games.
+and start explore how to add awesome effects to your libgdx games.<br/><br/>
 
 Online video: http://youtu.be/TNMwUKiR5fY
 
