@@ -49,13 +49,15 @@ public class YourApplication implements ApplicationListener, ... {
     }
 }
 ```
+First thing first, we should point the ShaderLoader to where you are going to put the accompaining shader code from the *shaders/* folder in this repository, else it will not find any shader support code: it's usually a good habit to put your resources in the **data** folder of your project, so just copy or link the *shaders* folder right there.
 
-The first thing we are going to do is to create an instance of the *PostProcessor* object, its role will be to manage one or more effects for us: also create the *Bloom* effect itself so that we can add it to the post-processor, note that in doing so we are also *transferring the ownership* of the effect object to the post-processor itself.
+Then, the first thing we are going to create is an instance of the *PostProcessor* object, its role will be to manage one or more effects for us: also create the *Bloom* effect itself so that we can add it to the post-processor, note that in doing so we are also *transferring the ownership* of the effect object to the post-processor itself.
 
 ```java
     @Override
     public void create() {
         yourCreateCode();
+        ShaderLoader.BasePath = "data/shaders/";
         postProcessor = new PostProcessor( false, false, isDesktop );
         Bloom bloom = new Bloom( (int)(Gdx.graphics.getWidth() * 0.25f), (int)(Gdx.graphics.getHeight() * 0.25f) );
         postProcessor.addEffect( bloom );
