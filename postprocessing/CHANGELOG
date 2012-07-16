@@ -1,0 +1,39 @@
+2012-07-16  Manuel Bua <manuel.bua[at]gmail.com>
+
+	* postprocessing/demo/src/com/bitfire/postprocessing/demo/UI.java:
+	Updated demo to work with the latest libgdx.
+
+	ActorEvent and ActorListener renamed respectively to InputEvent and
+	InputListener.
+
+2012-07-16  Manuel Bua <manuel.bua[at]gmail.com>
+
+	* postprocessing/mk-changelog.sh: Makes sure to generate the
+	changelog for the master branch.
+
+2012-07-16  Manuel Bua <manuel.bua[at]gmail.com>
+
+	* postprocessing/mk-changelog.sh: Add CHANGELOG script facility.
+
+	Should be quite manageable and very simple to use: just specify a
+	git log expression such as "v1.0.0..v1.0.1" to generate it, if
+	expression is omitted then a full log will be generated (required
+	git2cl!).  It will also try to filter out mail address and transform the "[at]"
+	(at) sign to an "[at]" string, not sure how many spammers this thing
+	will fool btw :P
+
+2012-07-15  Manuel Bua <manuel.bua[at]gmail.com>
+
+	* postprocessing/README.md: Disambiguate "link" with "soft-link".
+
+	I meant linux's soft-linking and not Eclipse resource linking, that
+	will probably not work AFAIK.
+
+2012-07-15  Manuel Bua <manuel.bua[at]gmail.com>
+
+	* postprocessing/README.md: Updated documentation, fixed missing
+	ShaderLoader configuration.
+
+2012-07-14  Manuel Bua <manuel.bua[at]gmail.com>
+
+	* Bump version to 1.0.1
