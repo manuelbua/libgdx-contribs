@@ -24,7 +24,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ActorEvent;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
@@ -150,7 +150,7 @@ public final class UI {
 				// opening giving the user some choices
 				selectBoxes.get( i ).addListener( new ClickListener() {
 					@Override
-					public void clicked( ActorEvent event, float x, float y ) {
+					public void clicked( InputEvent event, float x, float y ) {
 						comboBoxFlag = true;
 						panelAnimator.suspend();
 					}
@@ -171,7 +171,7 @@ public final class UI {
 		// to close (no ChangeListener will be notified)
 		stage.addListener( new ClickListener() {
 			@Override
-			public void clicked( ActorEvent event, float x, float y ) {
+			public void clicked( InputEvent event, float x, float y ) {
 				if( !comboBoxFlag ) {
 					panelAnimator.resume();
 				}
@@ -196,7 +196,7 @@ public final class UI {
 		// post-processing
 		final CheckBox cbPost = ResourceFactory.newCheckBox( " Post-processing", post.isEnabled(), new ClickListener() {
 			@Override
-			public void clicked( ActorEvent event, float x, float y ) {
+			public void clicked( InputEvent event, float x, float y ) {
 				CheckBox source = (CheckBox)event.getTarget();
 				post.setEnabled( source.isChecked() );
 			}
@@ -230,7 +230,7 @@ public final class UI {
 		final CheckBox cbBackgroundAffected = ResourceFactory.newCheckBox( " Background affected\n by post-processing",
 				backgroundAffected, new ClickListener() {
 					@Override
-					public void clicked( ActorEvent event, float x, float y ) {
+					public void clicked( InputEvent event, float x, float y ) {
 						CheckBox source = (CheckBox)event.getTarget();
 						backgroundAffected = source.isChecked();
 					}
@@ -239,7 +239,7 @@ public final class UI {
 		// sprite
 		final CheckBox cbSprite = ResourceFactory.newCheckBox( " Show sprite", drawSprite, new ClickListener() {
 			@Override
-			public void clicked( ActorEvent event, float x, float y ) {
+			public void clicked( InputEvent event, float x, float y ) {
 				CheckBox source = (CheckBox)event.getTarget();
 				drawSprite = source.isChecked();
 			}
@@ -264,7 +264,7 @@ public final class UI {
 	private Table buildBloomWidgets() {
 		final CheckBox cbBloom = ResourceFactory.newCheckBox( " Bloom", post.bloom.isEnabled(), new ClickListener() {
 			@Override
-			public void clicked( ActorEvent event, float x, float y ) {
+			public void clicked( InputEvent event, float x, float y ) {
 				CheckBox source = (CheckBox)event.getTarget();
 				post.bloom.setEnabled( source.isChecked() );
 			}
@@ -336,7 +336,7 @@ public final class UI {
 	private Table buildCurvatureWidgets() {
 		final CheckBox cbCurvature = ResourceFactory.newCheckBox( " Curvature", post.curvature.isEnabled(), new ClickListener() {
 			@Override
-			public void clicked( ActorEvent event, float x, float y ) {
+			public void clicked( InputEvent event, float x, float y ) {
 				CheckBox source = (CheckBox)event.getTarget();
 				post.curvature.setEnabled( source.isChecked() );
 			}
@@ -375,7 +375,7 @@ public final class UI {
 	private Table buildCrtEmulationWidgets() {
 		final CheckBox cbCrt = ResourceFactory.newCheckBox( " Old CRT emulation", post.crt.isEnabled(), new ClickListener() {
 			@Override
-			public void clicked( ActorEvent event, float x, float y ) {
+			public void clicked( InputEvent event, float x, float y ) {
 				CheckBox source = (CheckBox)event.getTarget();
 				post.crt.setEnabled( source.isChecked() );
 			}
@@ -440,7 +440,7 @@ public final class UI {
 	private Table buildVignettingWidgets() {
 		final CheckBox cbVignette = ResourceFactory.newCheckBox( " Vignetting", post.vignette.isEnabled(), new ClickListener() {
 			@Override
-			public void clicked( ActorEvent event, float x, float y ) {
+			public void clicked( InputEvent event, float x, float y ) {
 				CheckBox source = (CheckBox)event.getTarget();
 				post.vignette.setEnabled( source.isChecked() );
 			}
@@ -493,7 +493,7 @@ public final class UI {
 		final CheckBox cbGradientMapping = ResourceFactory.newCheckBox( " Perform gradient mapping",
 				post.vignette.isGradientMappingEnabled(), new ClickListener() {
 					@Override
-					public void clicked( ActorEvent event, float x, float y ) {
+					public void clicked( InputEvent event, float x, float y ) {
 						CheckBox source = (CheckBox)event.getTarget();
 						if( source.isChecked() ) {
 							post.vignette.setLut( ResourceFactory.newTexture( "gradient-mapping.png", false ) );
@@ -522,7 +522,7 @@ public final class UI {
 	private Table buildZoomerWidgets() {
 		final CheckBox cbZoomer = ResourceFactory.newCheckBox( " Zoomer", post.zoomer.isEnabled(), new ClickListener() {
 			@Override
-			public void clicked( ActorEvent event, float x, float y ) {
+			public void clicked( InputEvent event, float x, float y ) {
 				CheckBox source = (CheckBox)event.getTarget();
 				post.zoomer.setEnabled( source.isChecked() );
 				if( post.isEnabled() ) {
@@ -539,7 +539,7 @@ public final class UI {
 
 		final CheckBox cbZoomerDoBlur = ResourceFactory.newCheckBox( " Radial blur", post.zoomRadialBlur, new ClickListener() {
 			@Override
-			public void clicked( ActorEvent event, float x, float y ) {
+			public void clicked( InputEvent event, float x, float y ) {
 				CheckBox source = (CheckBox)event.getTarget();
 				if( source.isChecked() ) {
 					post.zoomRadialBlur = true;
@@ -561,7 +561,7 @@ public final class UI {
 	private Table buildPanelActionButtons( final Table topPanel, final float yWhenShown, final float yWhenHidden ) {
 		TextButton btnShowHide = ResourceFactory.newButton( "Show/hide panel", new ClickListener() {
 			@Override
-			public void clicked( ActorEvent event, float x, float y ) {
+			public void clicked( InputEvent event, float x, float y ) {
 				if( !panelShown ) {
 					topPanel.addAction( Actions.moveTo( topPanel.getX(), yWhenShown, 0.5f, Interpolation.exp10 ) );
 					topPanel.addAction( Actions.alpha( 1f, 0.5f, Interpolation.exp10 ) );
