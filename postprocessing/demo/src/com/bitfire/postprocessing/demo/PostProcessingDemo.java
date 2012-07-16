@@ -48,6 +48,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 	float angle;
 	float width, height, halfWidth, halfHeight;
 	long startMs;
+	boolean quitPending = false, quitScheduled = false;
 	Vector2 circleOffset = new Vector2();
 	PostProcessing post;
 	InputMultiplexer plex;
@@ -56,6 +57,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 
 	public static void main( String[] argv ) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+
 		config.title = "libgdx's post-processing demo";
 		config.width = 1280;
 		config.height = 720;
@@ -141,8 +143,24 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 
 	@Override
 	public void render() {
-		update();
-		draw();
+		if( !quitPending ) {
+			update();
+			draw();
+		} else {
+			quit();
+		}
+	}
+
+	private void quit() {
+		if( !quitScheduled ) {
+			Gdx.app.exit();
+			quitScheduled = true;
+		} else {
+			try {
+				Thread.sleep( 50 );
+			} catch( Exception e ) {
+			}
+		}
 	}
 
 	private void update() {
@@ -225,7 +243,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 	public boolean keyUp( int keycode ) {
 		// check for quitting in keyUp, avoid multiple re-entrant keydown events
 		if( keycode == Keys.Q || keycode == Keys.ESCAPE ) {
-			Gdx.app.exit();
+			quitPending = true;
 		}
 		return false;
 	}
