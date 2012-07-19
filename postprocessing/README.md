@@ -105,7 +105,7 @@ Finally, we can now tell the post-processor when the actual scene drawing occurs
     }
 ```
 
-Easy, uh? Just one more note: in case you didn't want to have your UI post-processed as well, you may want to alter your rendering code a bit differently, just exclude from the postprocessor's being/end block and render it after everything has been put on screen, so instead of modifying the `render()` method we are going to act on the real meat:
+Easy, uh? Just one more note: in case you didn't want to have your UI post-processed as well, you may want to alter your rendering code a bit differently, just exclude from the postprocessor's capture/render block and render it after everything has been put on screen, so instead of modifying the `render()` method we are going to act on the real meat:
 
 ```java
     private void yourRenderScene() {
