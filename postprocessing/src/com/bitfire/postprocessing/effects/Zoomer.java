@@ -33,32 +33,31 @@ public final class Zoomer extends PostProcessorEffect {
 
 	/** Creating a Zoomer specifying the radial blur quality will enable radial blur */
 	public Zoomer( RadialBlur.Quality quality ) {
-		radialBlur = new RadialBlur( quality );
-		zoom = null;
-		oneOnW = 1f / (float)Gdx.graphics.getWidth();
-		oneOnH = 1f / (float)Gdx.graphics.getHeight();
-
-		doRadial = true;
+		setup( new RadialBlur( quality ) );
 	}
 
 	/** Creating a Zoomer without any parameter will use plain simple zooming */
 	public Zoomer() {
-		radialBlur = null;
-		zoom = new Zoom();
+		setup( null );
+	}
 
-		doRadial = false;
+	private void setup( RadialBlur radialBlurFilter ) {
+		radialBlur = radialBlurFilter;
+		if( radialBlur != null ) {
+			doRadial = true;
+			zoom = null;
+		} else {
+			doRadial = false;
+			zoom = new Zoom();
+		}
+
+		oneOnW = 1f / (float)Gdx.graphics.getWidth();
+		oneOnH = 1f / (float)Gdx.graphics.getHeight();
 	}
 
 	/** Specify the zoom origin, in screen coordinates. */
 	public void setOrigin( Vector2 o ) {
-		userOriginX = o.x;
-		userOriginY = o.y;
-
-		if( doRadial ) {
-			radialBlur.setOrigin( o.x * oneOnW, 1f - o.y * oneOnH );
-		} else {
-			zoom.setOrigin( o.x * oneOnW, 1f - o.y * oneOnH );
-		}
+		setOrigin( o.x, o.y );
 	}
 
 	/** Specify the zoom origin, in screen coordinates. */
