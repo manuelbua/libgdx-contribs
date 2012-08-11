@@ -197,7 +197,7 @@ public final class UI {
 		final CheckBox cbPost = ResourceFactory.newCheckBox( " Post-processing", post.isEnabled(), new ClickListener() {
 			@Override
 			public void clicked( InputEvent event, float x, float y ) {
-				CheckBox source = (CheckBox)event.getTarget();
+				CheckBox source = (CheckBox)event.getListenerActor();
 				post.setEnabled( source.isChecked() );
 			}
 		} );
@@ -206,7 +206,7 @@ public final class UI {
 				new String[] { "None ", "Scratches ", "Mountains ", "Lake " }, new ChangeListener() {
 					@Override
 					public void changed( ChangeEvent event, Actor actor ) {
-						SelectBox source = (SelectBox)event.getTarget();
+						SelectBox source = (SelectBox)event.getListenerActor();
 						drawBackground = true;
 
 						switch( source.getSelectionIndex() ) {
@@ -231,7 +231,7 @@ public final class UI {
 				backgroundAffected, new ClickListener() {
 					@Override
 					public void clicked( InputEvent event, float x, float y ) {
-						CheckBox source = (CheckBox)event.getTarget();
+						CheckBox source = (CheckBox)event.getListenerActor();
 						backgroundAffected = source.isChecked();
 					}
 				} );
@@ -240,7 +240,7 @@ public final class UI {
 		final CheckBox cbSprite = ResourceFactory.newCheckBox( " Show sprite", drawSprite, new ClickListener() {
 			@Override
 			public void clicked( InputEvent event, float x, float y ) {
-				CheckBox source = (CheckBox)event.getTarget();
+				CheckBox source = (CheckBox)event.getListenerActor();
 				drawSprite = source.isChecked();
 			}
 		} );
@@ -265,7 +265,7 @@ public final class UI {
 		final CheckBox cbBloom = ResourceFactory.newCheckBox( " Bloom", post.bloom.isEnabled(), new ClickListener() {
 			@Override
 			public void clicked( InputEvent event, float x, float y ) {
-				CheckBox source = (CheckBox)event.getTarget();
+				CheckBox source = (CheckBox)event.getListenerActor();
 				post.bloom.setEnabled( source.isChecked() );
 			}
 		} );
@@ -273,7 +273,7 @@ public final class UI {
 		final Slider slBloomThreshold = ResourceFactory.newSlider( 0, 1, 0.01f, post.bloom.getThreshold(), new ChangeListener() {
 			@Override
 			public void changed( ChangeEvent event, Actor actor ) {
-				Slider source = (Slider)event.getTarget();
+				Slider source = (Slider)event.getListenerActor();
 				post.bloom.setThreshold( source.getValue() );
 			}
 		} );
@@ -281,7 +281,7 @@ public final class UI {
 		final Slider slBloomBaseI = ResourceFactory.newSlider( 0, 2, 0.01f, post.bloom.getBaseIntensity(), new ChangeListener() {
 			@Override
 			public void changed( ChangeEvent event, Actor actor ) {
-				Slider source = (Slider)event.getTarget();
+				Slider source = (Slider)event.getListenerActor();
 				post.bloom.setBaseIntesity( source.getValue() );
 			}
 		} );
@@ -289,7 +289,7 @@ public final class UI {
 		final Slider slBloomBaseS = ResourceFactory.newSlider( 0, 2, 0.01f, post.bloom.getBaseSaturation(), new ChangeListener() {
 			@Override
 			public void changed( ChangeEvent event, Actor actor ) {
-				Slider source = (Slider)event.getTarget();
+				Slider source = (Slider)event.getListenerActor();
 				post.bloom.setBaseSaturation( source.getValue() );
 			}
 		} );
@@ -298,7 +298,7 @@ public final class UI {
 				new ChangeListener() {
 					@Override
 					public void changed( ChangeEvent event, Actor actor ) {
-						Slider source = (Slider)event.getTarget();
+						Slider source = (Slider)event.getListenerActor();
 						post.bloom.setBloomIntesity( source.getValue() );
 					}
 				} );
@@ -307,7 +307,7 @@ public final class UI {
 				new ChangeListener() {
 					@Override
 					public void changed( ChangeEvent event, Actor actor ) {
-						Slider source = (Slider)event.getTarget();
+						Slider source = (Slider)event.getListenerActor();
 						post.bloom.setBloomSaturation( source.getValue() );
 					}
 				} );
@@ -337,8 +337,9 @@ public final class UI {
 		final CheckBox cbCurvature = ResourceFactory.newCheckBox( " Curvature", post.curvature.isEnabled(), new ClickListener() {
 			@Override
 			public void clicked( InputEvent event, float x, float y ) {
-				CheckBox source = (CheckBox)event.getTarget();
+				CheckBox source = (CheckBox)event.getListenerActor();
 				post.curvature.setEnabled( source.isChecked() );
+
 			}
 		} );
 
@@ -346,7 +347,7 @@ public final class UI {
 				new ChangeListener() {
 					@Override
 					public void changed( ChangeEvent event, Actor actor ) {
-						Slider source = (Slider)event.getTarget();
+						Slider source = (Slider)event.getListenerActor();
 						post.curvature.setDistortion( source.getValue() );
 					}
 				} );
@@ -355,7 +356,7 @@ public final class UI {
 				new ChangeListener() {
 					@Override
 					public void changed( ChangeEvent event, Actor actor ) {
-						Slider source = (Slider)event.getTarget();
+						Slider source = (Slider)event.getListenerActor();
 						post.curvature.setZoom( 2f - source.getValue() );
 					}
 				} );
@@ -376,7 +377,7 @@ public final class UI {
 		final CheckBox cbCrt = ResourceFactory.newCheckBox( " Old CRT emulation", post.crt.isEnabled(), new ClickListener() {
 			@Override
 			public void clicked( InputEvent event, float x, float y ) {
-				CheckBox source = (CheckBox)event.getTarget();
+				CheckBox source = (CheckBox)event.getListenerActor();
 				post.crt.setEnabled( source.isChecked() );
 			}
 		} );
@@ -384,7 +385,7 @@ public final class UI {
 		final Slider slCrtColorOffset = ResourceFactory.newSlider( 0, 0.01f, 0.001f, post.crt.getOffset(), new ChangeListener() {
 			@Override
 			public void changed( ChangeEvent event, Actor actor ) {
-				Slider source = (Slider)event.getTarget();
+				Slider source = (Slider)event.getListenerActor();
 				post.crt.setColorOffset( source.getValue() );
 			}
 		} );
@@ -392,7 +393,7 @@ public final class UI {
 		final Slider slCrtTintR = ResourceFactory.newSlider( 0, 1f, 0.01f, post.crt.getTint().r, new ChangeListener() {
 			@Override
 			public void changed( ChangeEvent event, Actor actor ) {
-				Slider source = (Slider)event.getTarget();
+				Slider source = (Slider)event.getListenerActor();
 				Color tint = post.crt.getTint();
 				tint.r = source.getValue();
 				post.crt.setTint( tint );
@@ -402,7 +403,7 @@ public final class UI {
 		final Slider slCrtTintG = ResourceFactory.newSlider( 0, 1f, 0.01f, post.crt.getTint().g, new ChangeListener() {
 			@Override
 			public void changed( ChangeEvent event, Actor actor ) {
-				Slider source = (Slider)event.getTarget();
+				Slider source = (Slider)event.getListenerActor();
 				Color tint = post.crt.getTint();
 				tint.g = source.getValue();
 				post.crt.setTint( tint );
@@ -412,7 +413,7 @@ public final class UI {
 		final Slider slCrtTintB = ResourceFactory.newSlider( 0, 1f, 0.01f, post.crt.getTint().b, new ChangeListener() {
 			@Override
 			public void changed( ChangeEvent event, Actor actor ) {
-				Slider source = (Slider)event.getTarget();
+				Slider source = (Slider)event.getListenerActor();
 				Color tint = post.crt.getTint();
 				tint.b = source.getValue();
 				post.crt.setTint( tint );
@@ -441,15 +442,16 @@ public final class UI {
 		final CheckBox cbVignette = ResourceFactory.newCheckBox( " Vignetting", post.vignette.isEnabled(), new ClickListener() {
 			@Override
 			public void clicked( InputEvent event, float x, float y ) {
-				CheckBox source = (CheckBox)event.getTarget();
+				CheckBox source = (CheckBox)event.getListenerActor();
 				post.vignette.setEnabled( source.isChecked() );
+
 			}
 		} );
 
 		final Slider slVignetteI = ResourceFactory.newSlider( 0, 1f, 0.01f, post.vignette.getIntensity(), new ChangeListener() {
 			@Override
 			public void changed( ChangeEvent event, Actor actor ) {
-				Slider source = (Slider)event.getTarget();
+				Slider source = (Slider)event.getListenerActor();
 				post.vignette.setIntensity( source.getValue() );
 			}
 		} );
@@ -459,7 +461,7 @@ public final class UI {
 			@Override
 			public void changed( ChangeEvent event, Actor actor ) {
 				if( post.vignette.isGradientMappingEnabled() ) {
-					SelectBox source = (SelectBox)event.getTarget();
+					SelectBox source = (SelectBox)event.getListenerActor();
 					switch( source.getSelectionIndex() ) {
 					case 0:
 						post.vignette.setLutIndex( 16 );
@@ -494,7 +496,7 @@ public final class UI {
 				post.vignette.isGradientMappingEnabled(), new ClickListener() {
 					@Override
 					public void clicked( InputEvent event, float x, float y ) {
-						CheckBox source = (CheckBox)event.getTarget();
+						CheckBox source = (CheckBox)event.getListenerActor();
 						if( source.isChecked() ) {
 							post.vignette.setLut( ResourceFactory.newTexture( "gradient-mapping.png", false ) );
 							sbGradientMap.fire( new ChangeListener.ChangeEvent() );
@@ -523,7 +525,7 @@ public final class UI {
 		final CheckBox cbZoomer = ResourceFactory.newCheckBox( " Zoomer", post.zoomer.isEnabled(), new ClickListener() {
 			@Override
 			public void clicked( InputEvent event, float x, float y ) {
-				CheckBox source = (CheckBox)event.getTarget();
+				CheckBox source = (CheckBox)event.getListenerActor();
 				post.zoomer.setEnabled( source.isChecked() );
 				if( post.isEnabled() ) {
 					if( post.zoomer.isEnabled() ) {
@@ -534,13 +536,14 @@ public final class UI {
 						singleMessage.setText( "" );
 					}
 				}
+
 			}
 		} );
 
 		final CheckBox cbZoomerDoBlur = ResourceFactory.newCheckBox( " Radial blur", post.zoomRadialBlur, new ClickListener() {
 			@Override
 			public void clicked( InputEvent event, float x, float y ) {
-				CheckBox source = (CheckBox)event.getTarget();
+				CheckBox source = (CheckBox)event.getListenerActor();
 				if( source.isChecked() ) {
 					post.zoomRadialBlur = true;
 				} else {
