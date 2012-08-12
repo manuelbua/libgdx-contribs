@@ -26,6 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider.SliderStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -79,7 +80,7 @@ public final class ResourceFactory {
 	}
 
 	public static Slider newSlider( float min, float max, float step, float value, ChangeListener listener ) {
-		Slider s = new Slider( min, max, step, UISkin );
+		Slider s = new Slider( min, max, step, false, UISkin.get( SliderStyle.class ) );
 		s.setValue( value );
 		if( listener != null ) {
 			s.addListener( listener );
