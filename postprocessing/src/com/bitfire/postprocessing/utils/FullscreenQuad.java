@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.bitfire.postprocessing;
+package com.bitfire.postprocessing.utils;
 
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;

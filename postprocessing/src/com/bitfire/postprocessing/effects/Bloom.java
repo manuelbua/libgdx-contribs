@@ -16,20 +16,17 @@
 
 package com.bitfire.postprocessing.effects;
 
-import java.nio.ByteBuffer;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.utils.BufferUtils;
-import com.bitfire.postprocessing.PingPongBuffer;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorEffect;
 import com.bitfire.postprocessing.filters.Blur;
 import com.bitfire.postprocessing.filters.Blur.BlurType;
 import com.bitfire.postprocessing.filters.Combine;
 import com.bitfire.postprocessing.filters.Threshold;
+import com.bitfire.postprocessing.utils.PingPongBuffer;
 
 public final class Bloom extends PostProcessorEffect {
 	public static class Settings {
@@ -88,7 +85,6 @@ public final class Bloom extends PostProcessorEffect {
 
 	private Settings settings;
 
-	private ByteBuffer prevBlendState;
 	private boolean blending = false;
 	private int sfactor, dfactor;
 
@@ -98,7 +94,6 @@ public final class Bloom extends PostProcessorEffect {
 		blur = new Blur( fboWidth, fboHeight );
 		threshold = new Threshold();
 		combine = new Combine();
-		prevBlendState = BufferUtils.newByteBuffer( 32 );
 
 		setSettings( new Settings( "default", 2, 0.277f, 1f, .85f, 1.1f, .85f ) );
 	}
@@ -223,10 +218,7 @@ public final class Bloom extends PostProcessorEffect {
 	public void render( final FrameBuffer src, final FrameBuffer dest ) {
 		Texture texsrc = src.getColorBufferTexture();
 
-		Gdx.gl20.glGetBooleanv( GL20.GL_BLEND, prevBlendState );
-		boolean blendingWasEnabled = (prevBlendState.get() == 1);
-		prevBlendState.clear();
-
+		boolean blendingWasEnabled = PostProcessor.isStateEnabled( GL20.GL_BLEND );
 		Gdx.gl.glDisable( GL20.GL_BLEND );
 
 		pingPongBuffer.begin();

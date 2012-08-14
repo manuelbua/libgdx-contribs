@@ -25,6 +25,7 @@ import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.bitfire.postprocessing.utils.PingPongBuffer;
 import com.bitfire.utils.ItemsManager;
 
 /**
@@ -36,6 +37,10 @@ import com.bitfire.utils.ItemsManager;
  * @author bmanuel
  */
 public final class PostProcessor implements Disposable {
+	/** Enable pipeline state queries: beware the pipeline can stall! */
+	public static boolean EnableQueryStates = false;
+
+	private static PipelineState pipelineState = null;
 	private static Format fbFormat;
 	private final PingPongBuffer composite;
 	private TextureWrap compositeWrapU;
@@ -51,7 +56,7 @@ public final class PostProcessor implements Disposable {
 	private boolean hasCaptured = false;
 	private boolean useDepth = false;
 
-	private PostProcessListener listener = null;
+	private PostProcessorListener listener = null;
 
 	// maintains a per-frame updated list of enabled effects
 	private Array<PostProcessorEffect> enabledEffects = new Array<PostProcessorEffect>( 5 );
@@ -88,6 +93,8 @@ public final class PostProcessor implements Disposable {
 		composite = newPingPongBuffer( fboWidth, fboHeight, fbFormat, useDepth );
 		setBufferTextureWrap( u, v );
 
+		pipelineState = new PipelineState();
+
 		capturing = false;
 		hasCaptured = false;
 		enabled = true;
@@ -108,6 +115,19 @@ public final class PostProcessor implements Disposable {
 		return buffer;
 	}
 
+	/**
+	 * Provides a way to query the pipeline for the most used states
+	 */
+	public static boolean isStateEnabled( int pname ) {
+		if( EnableQueryStates ) {
+			// Gdx.app.log( "PipelineState", "Querying blending" );
+			return pipelineState.isEnabled( pname );
+		}
+
+		// Gdx.app.log( "PipelineState", "(not querying)" );
+		return false;
+	}
+
 	/** Frees owned resources. */
 	@Override
 	public void dispose() {
@@ -123,6 +143,8 @@ public final class PostProcessor implements Disposable {
 		if( enabledEffects != null ) {
 			enabledEffects.clear();
 		}
+
+		pipelineState.dispose();
 	}
 
 	/** Whether or not the post-processor is enabled */
@@ -163,7 +185,7 @@ public final class PostProcessor implements Disposable {
 	 * Sets the listener that will receive events triggered by the PostProcessor
 	 * rendering pipeline.
 	 */
-	public void setListener( PostProcessListener listener ) {
+	public void setListener( PostProcessorListener listener ) {
 		this.listener = listener;
 	}
 

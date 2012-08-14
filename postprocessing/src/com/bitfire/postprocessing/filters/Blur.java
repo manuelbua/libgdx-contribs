@@ -17,7 +17,7 @@
 package com.bitfire.postprocessing.filters;
 
 import com.badlogic.gdx.utils.IntMap;
-import com.bitfire.postprocessing.PingPongBuffer;
+import com.bitfire.postprocessing.utils.PingPongBuffer;
 
 public final class Blur extends MultipassFilter {
 	// @formatter:off

@@ -16,22 +16,19 @@
 
 package com.bitfire.postprocessing.effects;
 
-import java.nio.ByteBuffer;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.utils.BufferUtils;
-import com.bitfire.postprocessing.PingPongBuffer;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorEffect;
 import com.bitfire.postprocessing.filters.Blur;
 import com.bitfire.postprocessing.filters.Blur.BlurType;
 import com.bitfire.postprocessing.filters.Combine;
 import com.bitfire.postprocessing.filters.CrtScreen;
+import com.bitfire.postprocessing.utils.PingPongBuffer;
 
 public final class CrtMonitor extends PostProcessorEffect {
 	private PingPongBuffer pingPongBuffer = null;
@@ -41,7 +38,6 @@ public final class CrtMonitor extends PostProcessorEffect {
 	private Combine combine;
 	private boolean doblur;
 
-	private ByteBuffer prevBlendState;
 	private boolean blending = false;
 	private int sfactor, dfactor;
 
@@ -69,8 +65,6 @@ public final class CrtMonitor extends PostProcessorEffect {
 		combine.setSource2Saturation( 0.8f );
 
 		crt = new CrtScreen( barrelDistortion );
-
-		prevBlendState = BufferUtils.newByteBuffer( 32 );
 	}
 
 	@Override
@@ -148,13 +142,8 @@ public final class CrtMonitor extends PostProcessorEffect {
 		// the original scene
 		Texture in = src.getColorBufferTexture();
 
-		Gdx.gl20.glGetBooleanv( GL20.GL_BLEND, prevBlendState );
-		boolean blendingWasEnabled = (prevBlendState.get() == 1);
-		prevBlendState.clear();
-
+		boolean blendingWasEnabled = PostProcessor.isStateEnabled( GL20.GL_BLEND );
 		Gdx.gl.glDisable( GL10.GL_BLEND );
-		// Gdx.gl.glDisable( GL10.GL_DEPTH_TEST );
-		// Gdx.gl.glDepthMask( false );
 
 		Texture out = null;
 

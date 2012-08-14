@@ -23,7 +23,7 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.bitfire.postprocessing.FullscreenQuad;
+import com.bitfire.postprocessing.utils.FullscreenQuad;
 
 /** The base class for any single-pass filter. */
 

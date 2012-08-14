@@ -16,7 +16,7 @@
 
 package com.bitfire.postprocessing.filters;
 
-import com.bitfire.postprocessing.PingPongBuffer;
+import com.bitfire.postprocessing.utils.PingPongBuffer;
 
 /**
  * The base class for any multi-pass filter.

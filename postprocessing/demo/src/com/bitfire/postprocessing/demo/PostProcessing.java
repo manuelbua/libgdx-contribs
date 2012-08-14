@@ -20,7 +20,7 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.postprocessing.PostProcessListener;
+import com.bitfire.postprocessing.PostProcessorListener;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.CrtMonitor;
@@ -34,7 +34,7 @@ import com.bitfire.postprocessing.filters.RadialBlur;
  * 
  * @author bmanuel
  */
-public final class PostProcessing implements Disposable, PostProcessListener {
+public final class PostProcessing implements Disposable, PostProcessorListener {
 
 	public PostProcessor postProcessor;
 	public Bloom bloom;
@@ -54,6 +54,7 @@ public final class PostProcessing implements Disposable, PostProcessListener {
 
 		// optionally create a listener
 		postProcessor.setListener( this );
+		PostProcessor.EnableQueryStates = false;
 
 		// create the effects you want
 		bloom = new Bloom( (int)(Gdx.graphics.getWidth() * 0.25f), (int)(Gdx.graphics.getHeight() * 0.25f) );
