@@ -1,0 +1,4 @@
+#!/bin/bash
+
+ant -f package-release.xml -Dpackage.version="$(git describe)"
+
