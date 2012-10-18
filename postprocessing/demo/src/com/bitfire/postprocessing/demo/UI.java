@@ -464,25 +464,25 @@ public final class UI {
 					SelectBox source = (SelectBox)event.getListenerActor();
 					switch( source.getSelectionIndex() ) {
 					case 0:
-						post.vignette.setLutIndex( 16 );
+						post.vignette.setLutIndexVal( 0, 16 );
 						break;
 					case 1:
-						post.vignette.setLutIndex( 5 );
+						post.vignette.setLutIndexVal( 0, 5 );
 						break;
 					case 2:
-						post.vignette.setLutIndex( 7 );
+						post.vignette.setLutIndexVal( 0, 7 );
 						break;
 					case 3:
-						post.vignette.setLutIndex( 6 );
+						post.vignette.setLutIndexVal( 0, 6 );
 						break;
 					case 4:
-						post.vignette.setLutIndex( 8 );
+						post.vignette.setLutIndexVal( 0, 8 );
 						break;
 					case 5:
-						post.vignette.setLutIndex( 3 );
+						post.vignette.setLutIndexVal( 0, 3 );
 						break;
 					case 6:
-						post.vignette.setLutIndex( 0 );
+						post.vignette.setLutIndexVal( 0, 0 );
 						break;
 					}
 				}
@@ -498,11 +498,11 @@ public final class UI {
 					public void clicked( InputEvent event, float x, float y ) {
 						CheckBox source = (CheckBox)event.getListenerActor();
 						if( source.isChecked() ) {
-							post.vignette.setLut( ResourceFactory.newTexture( "gradient-mapping.png", false ) );
+							post.vignette.setLutTexture( ResourceFactory.newTexture( "gradient-mapping.png", false ) );
 							sbGradientMap.fire( new ChangeListener.ChangeEvent() );
 						} else {
-							post.vignette.setLut( null );
-							post.vignette.setLutIndex( -1 );
+							post.vignette.setLutTexture( null );
+							post.vignette.setLutIndexVal( 0, -1 );
 						}
 					}
 				} );
