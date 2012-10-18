@@ -63,7 +63,7 @@ public final class Vignette extends PostProcessorEffect {
 		vignetting.setSaturationMul( saturationMul );
 	}
 
-	public void setLut( Texture texture ) {
+	public void setLutTexture( Texture texture ) {
 		vignetting.setLut( texture );
 	}
 
@@ -71,8 +71,12 @@ public final class Vignette extends PostProcessorEffect {
 		vignetting.setLutIntensity( value );
 	}
 
-	public void setLutIndex( int value ) {
-		vignetting.setLutIndex( value );
+	public void setLutIndexVal( int index, int value ) {
+		vignetting.setLutIndexVal( index, value );
+	}
+
+	public void setLutIndexOffset( float value ) {
+		vignetting.setLutIndexOffset( value );
 	}
 
 	/** Specify the center, in screen coordinates. */
@@ -88,8 +92,8 @@ public final class Vignette extends PostProcessorEffect {
 		return vignetting.getLutIntensity();
 	}
 
-	public int getLutIndex() {
-		return vignetting.getLutIndex();
+	public int getLutIndexVal( int index ) {
+		return vignetting.getLutIndexVal( index );
 	}
 
 	public Texture getLut() {

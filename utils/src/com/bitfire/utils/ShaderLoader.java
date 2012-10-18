@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 public final class ShaderLoader {
 	public static String BasePath = "";
+	public static boolean Pedantic = true;
 
 	public static ShaderProgram fromFile( String vertexFileName, String fragmentFileName ) {
 		return ShaderLoader.fromFile( vertexFileName, fragmentFileName, "" );
@@ -38,7 +39,7 @@ public final class ShaderLoader {
 	}
 
 	public static ShaderProgram fromString( String vertex, String fragment, String vertexName, String fragmentName, String defines ) {
-		ShaderProgram.pedantic = true;
+		ShaderProgram.pedantic = ShaderLoader.Pedantic;
 		ShaderProgram shader = new ShaderProgram( defines + "\n" + vertex, defines + "\n" + fragment );
 		if( !shader.isCompiled() ) {
 			Gdx.app.error( "ShaderLoader", shader.getLog() );

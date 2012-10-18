@@ -27,8 +27,8 @@ public final class Vignetting extends Filter<Vignetting> {
 	private Texture texLut;
 	private boolean dolut, dosat;
 	private float lutintensity;
-	private int lutindex;
-	private float lutStep, lutStepOffset;
+	private int[] lutindex;
+	private float lutStep, lutStepOffset, lutIndexOffset;
 	private float centerX, centerY;
 
 	public enum Param implements Parameter {
@@ -42,6 +42,8 @@ public final class Vignetting extends Filter<Vignetting> {
 		SaturationMul("SaturationMul",0),
 		LutIntensity("LutIntensity",0),
 		LutIndex("LutIndex",0),
+		LutIndex2("LutIndex2",0),
+		LutIndexOffset("LutIndexOffset",0),
 		LutStep("LutStep",0),
 		LutStepOffset("LutStepOffset",0),
 		CenterX("CenterX",0),
@@ -74,8 +76,13 @@ public final class Vignetting extends Filter<Vignetting> {
 						: "#define ENABLE_GRADIENT_MAPPING") ) );
 		dolut = false;
 		dosat = controlSaturation;
-		lutindex = -1;
+
+		lutindex = new int[ 2 ];
+		lutindex[0] = 0;
+		lutindex[1] = 0;
+
 		lutintensity = 1f;
+		lutIndexOffset = 0;
 		rebind();
 		setCoords( 0.8f, 0.25f );
 		setCenter( 0.5f, 0.5f );
@@ -138,9 +145,23 @@ public final class Vignetting extends Filter<Vignetting> {
 		setParam( Param.LutIntensity, lutintensity );
 	}
 
-	public void setLutIndex( int index ) {
-		lutindex = index;
-		setParam( Param.LutIndex, lutindex );
+	public void setLutIndexVal( int index, int value ) {
+		lutindex[index] = value;
+
+		switch( index ) {
+		case 0:
+			setParam( Param.LutIndex, lutindex[0] );
+			break;
+		case 1:
+			setParam( Param.LutIndex2, lutindex[1] );
+			break;
+		}
+
+	}
+
+	public void setLutIndexOffset( float value ) {
+		lutIndexOffset = value;
+		setParam( Param.LutIndexOffset, lutIndexOffset );
 	}
 
 	/** Specify the center, in normalized screen coordinates. */
@@ -159,8 +180,8 @@ public final class Vignetting extends Filter<Vignetting> {
 		return centerY;
 	}
 
-	public int getLutIndex() {
-		return (int)lutindex;
+	public int getLutIndexVal( int index ) {
+		return (int)lutindex[index];
 	}
 
 	public float getLutIntensity() {
@@ -199,7 +220,10 @@ public final class Vignetting extends Filter<Vignetting> {
 	public void rebind() {
 		setParams( Param.Texture0, u_texture0 );
 
-		setParams( Param.LutIndex, lutindex );
+		setParams( Param.LutIndex, lutindex[0] );
+		setParams( Param.LutIndex2, lutindex[1] );
+		setParams( Param.LutIndexOffset, lutIndexOffset );
+
 		setParams( Param.TexLUT, u_texture1 );
 		setParams( Param.LutIntensity, lutintensity );
 		setParams( Param.LutStep, lutStep );

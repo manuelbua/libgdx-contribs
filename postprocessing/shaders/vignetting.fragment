@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 bmanuel
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,21 +54,30 @@ varying vec2 v_texCoords;
 #ifdef ENABLE_GRADIENT_MAPPING
 	uniform PRECISION sampler2D u_texture1;
 	uniform float LutIntensity;
+
 	uniform int LutIndex;
+	uniform int LutIndex2;
+	uniform float LutIndexOffset;
+
 	uniform float LutStep;
 	uniform float LutStepOffset;
 
 	vec3 do_lookup( vec3 color ) {
-		vec3 curveColor;
+		vec3 curveColorA;
+		vec3 curveColorB;
 
-		float idx = float(LutIndex);
+		float idxA = float(LutIndex) * LutStep + LutStepOffset;
+		float idxB = float(LutIndex2) * LutStep + LutStepOffset;
 
-		// for a texture with an height of 20px (1px-height for each gradient mapping)
-		curveColor.r = texture2D( u_texture1, vec2(color.r, idx * LutStep + LutStepOffset) ).r;
-		curveColor.g = texture2D( u_texture1, vec2(color.g, idx * LutStep + LutStepOffset) ).g;
-		curveColor.b = texture2D( u_texture1, vec2(color.b, idx * LutStep + LutStepOffset) ).b;
+		curveColorA.r = texture2D( u_texture1, vec2(color.r, idxA ) ).r;
+		curveColorA.g = texture2D( u_texture1, vec2(color.g, idxA ) ).g;
+		curveColorA.b = texture2D( u_texture1, vec2(color.b, idxA ) ).b;
 
-		return mix(color,curveColor,LutIntensity);
+		curveColorB.r = texture2D( u_texture1, vec2(color.r, idxB ) ).r;
+		curveColorB.g = texture2D( u_texture1, vec2(color.g, idxB ) ).g;
+		curveColorB.b = texture2D( u_texture1, vec2(color.b, idxB ) ).b;
+
+		return mix(color,mix(curveColorA,curveColorB,LutIndexOffset),LutIntensity);
 	}
 #endif
 
