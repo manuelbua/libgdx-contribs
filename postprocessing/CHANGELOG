@@ -1,21 +1,91 @@
+2013-02-17  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[fixed] Vignetting wasn't being initialized correctly [add] some
+	work done for the Camera-based motion blur, normal+depth map is
+	required for working (data is packed and unpacked on-the-fly)
+	[fixed] Blur filter shouldn't compute the same weightings for the
+	same blur type, if the specified blur type is the same as the one
+	being used [fix] ensure the PostProcessor will not cull any face
+
+2012-10-18  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[update] demo updated to reflect Vignetting API changes
+
+2012-10-18  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[add] ShaderLoader can be configured to be pedantic or not
+	[update] Vignetting can modulate the output pixel color between two
+	different lut indices
+
+2012-08-15  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Fix slash issue in ant script.
+
+2012-08-15  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Refined version number generation.
+
+2012-08-15  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Changed versioning system for release package
+
+2012-08-14  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Bump version.
+
+2012-08-14  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Add centralized pipeline state queries, refactor packages The pipeline states, such as blending, can now be queried: the
+	mechanism can be turned on or off via
+	"PostProcessor.EnableQueryStates".  Keep in mind that queries such
+	as these are a performance killer especially on mobile devices,
+	where stalling the pipeline can degrade the whole experience.  Refactored the internal package structure, fixed the
+	PostProcessorListener class name (typo).
+
+2012-08-12  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Use the new Slider constructor
+
+2012-08-11  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Bump version to 1.0.3
+
+2012-08-11  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Use getListenerActor instead of getTarget
+
+2012-07-25  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Fix inverse dimensions initialization Refactor construction, delegate common initialization to a private
+	method.
+
+2012-07-19  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Fixed documentation.  It was still referring to the wrong begin/end block.
+
 2012-07-16  Manuel Bua <manuel.bua[at]gmail.com>
 
-	* postprocessing/demo/src/com/bitfire/postprocessing/demo/UI.java:
-	Updated demo to work with the latest libgdx.
+	Fixed issue #2.  Quitting the demo should ensure exit() has been requested then sleep
+	until the real quit happens.  The problem can be often be seen by using the Jogl backend,
+	sometimes it can happen to perform a render call in-between the
+	Gdx.app.exit() call and the application really closing.
 
-	ActorEvent and ActorListener renamed respectively to InputEvent and
+2012-07-16  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Add CHANGELOG, bump package release version.
+
+2012-07-16  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Updated demo to work with the latest libgdx.  ActorEvent and ActorListener renamed respectively to InputEvent and
 	InputListener.
 
 2012-07-16  Manuel Bua <manuel.bua[at]gmail.com>
 
-	* postprocessing/mk-changelog.sh: Makes sure to generate the
-	changelog for the master branch.
+	Makes sure to generate the changelog for the master branch.
 
 2012-07-16  Manuel Bua <manuel.bua[at]gmail.com>
 
-	* postprocessing/mk-changelog.sh: Add CHANGELOG script facility.
-
-	Should be quite manageable and very simple to use: just specify a
+	Add CHANGELOG script facility.  Should be quite manageable and very simple to use: just specify a
 	git log expression such as "v1.0.0..v1.0.1" to generate it, if
 	expression is omitted then a full log will be generated (required
 	git2cl!).  It will also try to filter out mail address and transform the "[at]"
@@ -24,16 +94,283 @@
 
 2012-07-15  Manuel Bua <manuel.bua[at]gmail.com>
 
-	* postprocessing/README.md: Disambiguate "link" with "soft-link".
-
-	I meant linux's soft-linking and not Eclipse resource linking, that
+	Disambiguate "link" with "soft-link".  I meant linux's soft-linking and not Eclipse resource linking, that
 	will probably not work AFAIK.
 
 2012-07-15  Manuel Bua <manuel.bua[at]gmail.com>
 
-	* postprocessing/README.md: Updated documentation, fixed missing
-	ShaderLoader configuration.
+	Updated documentation, fixed missing ShaderLoader configuration.
 
 2012-07-14  Manuel Bua <manuel.bua[at]gmail.com>
 
-	* Bump version to 1.0.1
+	Bump version to 1.0.1
+
+2012-07-14  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Add convenience method to render to screen, updated readme.
+
+2012-07-14  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Add package-release ant script, update .gitignore.
+
+2012-07-12  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Forgot to mention the library it's GLES2-only.
+
+2012-07-12  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Added missing information about bilinear filtering and binomial
+	distribution.
+
+2012-07-12  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[fixed] missing state tracking information.
+
+2012-07-12  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Add basic example to postprocessing project, update main readme
+	with refs.
+
+2012-07-12  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Add README.md to the postprocessing library.
+
+2012-07-11  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[fixed] user settings were overwritten on rebind by the default
+	ones.
+
+2012-07-11  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[fixed] properly create managed PingPongBuffer objects.  [fixed]
+	track depth buffer usage and do NOT clear depth if not asked to.
+
+2012-07-11  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[fixed] proper rebind on context loss.
+
+2012-07-11  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[fixed] do not use cpu sync by default.
+
+2012-07-11  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Add project's default Eclipse formatter, reset remaining license
+	headers to the default used across both projects.  Minor method/variables/enums renaming for the better!
+
+2012-07-11  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Refactor some code.
+
+2012-07-11  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[fixed] properly initialize the initial enabled state.
+
+2012-07-11  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[opt] 2 muls instead of 3.
+
+2012-07-11  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[code layout] trying to fix space issues turning up due to
+	Eclipse formatter inserting spaces and save action removing them..
+
+2012-07-11  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[fixed] typo.
+
+2012-07-10  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Project refactoring, add proper "utils" project.
+
+2012-07-10  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Updated license stuff for Crt emulation shader.
+
+2012-07-10  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[add] ffmpeg command line used for capturing the video demo.
+
+2012-07-10  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Optimal settings for grabbing a video of the window via
+	qx11grab.  (ffmpeg -xerror -loglevel info -f x11grab -framerate 60 -video_size
+	1280x720 -i :0.0+2240,200 -dcodec copy -vcodec libx264 -preset fast
+	-y /tmp/out.mkv)
+
+2012-07-10  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[add] start with hidden, semi-transparent the top panel [add]
+	modulate opacity when showing/hiding the top panel [change]
+	background/gradient map labels text [add] made an option to permit
+	to choose which screen to use when launching the application on
+	multi-head setups (tested with a dual-monitor setup only!)
+
+2012-07-10  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Better comments.
+
+2012-07-10  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Comments, code layout, access specifiers.
+
+2012-07-10  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Restore drawing scene normally, increase out-of-hotzone time
+	before hiding the panel, code layout, license header.
+
+2012-07-10  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[fixed] uses a flag to distinguish between clicks on a stage and
+	clicks performed to close an opened combobox, that should be enough
+	to resume the panel animator normal operations.  [fixed] hotzone
+	resizing was happening too early.  [code layout]
+
+2012-07-10  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Refactor UI and PostProcessing, trying to fix the click-through
+	problem with panel animator mouse events, but it looks like the
+	Stage will receive events in any case, no matter canceling, not
+	bubbling or handle().
+
+2012-07-09  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Removed separate desktop launcher, this demo is NOT meant to run
+	on devices other than a desktop.
+
+2012-07-09  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Code layout, add license header, exclude "demo" folder from the
+	package explorer.
+
+2012-07-09  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[fixed] double act(), ooops!
+
+2012-07-09  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Fix some UI ugliness, add alpha action animation, small buttons
+	were NOT that pretty ;)
+
+2012-07-09  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[add] currently disabled, implemented an automatic panel
+	show/hide mechanism, but some widgets will capture mouseMove events,
+	need testing with a capture listener intead.  [add] buttons to
+	show/hide the panel, the good old way.
+
+2012-07-09  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Start the application on the right screen.
+
+2012-07-09  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Uses a Window instead of a panel, not sure it's better btw..
+
+2012-07-09  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[add] window creation facility.
+
+2012-07-09  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[add] ResourceFactory implements a very simple texture caching
+	mechanism, new factory methods.  [add] PostProcessing, manage
+	initialization and post-processing events.
+
+2012-07-09  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Add new sans13 font as the default font, smaller is better!
+
+2012-07-08  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[add] Vignetting will now compute lut step and offset
+	automatically so that the texture lookup will get the texel at the
+	center.  [add] Preliminary work to determine if spending GPU time
+	looking up 3 texels is is needed or not, at this time a lut-index of
+	-1 indicate to not perform any gradient mapping.
+
+2012-07-08  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Some minor refactoring, always set lut-bound values, but refrain
+	from doing the same with saturation since it's a compile-time thing!
+
+2012-07-08  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[refactor] rename for the better!
+
+2012-07-08  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[fixed] PostProcessor::isReady() should also check for any
+	enabled effects.  [refactor] removed comment from shader code.
+	[add] default parameter values to Vignetting filter.
+
+2012-07-08  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Add missing comments, remove unused code for automatic
+	enabling/disabling.
+
+2012-07-08  Manuel Bua <manuel.bua[at]gmail.com>
+
+	I'm stupid, the combine filter isn't getting exposed at all ;)
+
+2012-07-08  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[refactor] add getters, rework zooming factors, setParam(s)
+	methods are filter-internal, not for public use! [fixed] crt
+	emulation, offset wasn't properly set.
+
+2012-07-07  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[fixed] restore blending state if it was enabled.  The first blooming substep requires blending disabled so there is a
+	need to track the current blending state and restore it after the
+	last substep has been performed.  Rant: they removed PushAttrib/PopAttrib, WTF??
+
+2012-07-07  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Temporarily disable automatic enabling/disabling.
+
+2012-07-07  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[add] a listener can be attached to be notified of events
+	generated inside the post-processing rendering pipeline. This is not
+	fully implemented yet, so only one single event is generated at this
+	time.
+
+2012-07-07  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[add] Make it possible to query the PostProcessor if it's ready
+	to capture or not.
+
+2012-07-07  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[fixed] ensures the default texture unit #0 is active after when
+	the PostProcessor has finished drawing.
+
+2012-07-07  Manuel Bua <manuel.bua[at]gmail.com>
+
+	[fixed] set hasCaptured to false earlier.  [rename] manager is
+	now effectsManager.
+
+2012-07-07  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Remove stupidly linked resource, create proper package, add
+	support for global shaders location to the ShaderLoader, add
+	DesktopLauncher and ResourceFactory.
+
+2012-07-07  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Create postprocessing-demo project.
+
+2012-07-07  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Create postprocessing library Eclipse project, depends from gdx
+	project.
+
+2012-07-06  Manuel Bua <manuel.bua[at]gmail.com>
+
+	Refactor PRECISION definition, remove obsolete comments.
+
+2012-07-06  Manuel Bua <manuel.bua[at]gmail.com>
+
+	* Initial import (moved there from URacer repository).
+
