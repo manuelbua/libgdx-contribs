@@ -40,7 +40,7 @@ import com.bitfire.utils.ShaderLoader;
 
 public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 	private static final boolean UsePanelAnimator = true;
-	private static final boolean UseRightScreen = true;
+	private static final boolean UseRightScreen = false;
 
 	SpriteBatch batch;
 	Sprite badlogic;

@@ -16,6 +16,7 @@
 
 package com.bitfire.postprocessing.effects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Matrix4;
@@ -29,10 +30,14 @@ import com.bitfire.postprocessing.filters.CameraBlur;
  */
 public final class CameraMotion extends PostProcessorEffect {
 	private CameraBlur camblur;
+	private Matrix4 ctp = new Matrix4();
+	private float width, height;
 
-	public CameraMotion( Texture depthMap ) {
+	public CameraMotion() {
 		camblur = new CameraBlur();
-		camblur.setDepthMap( depthMap );
+		camblur.setNormalDepthMap( null );
+		width = Gdx.graphics.getWidth();
+		height = Gdx.graphics.getHeight();
 	}
 
 	@Override
@@ -40,8 +45,30 @@ public final class CameraMotion extends PostProcessorEffect {
 		camblur.dispose();
 	}
 
-	public void setMatrices( Matrix4 invViewProj, Matrix4 prevViewProj ) {
-		camblur.setMatrices( invViewProj, prevViewProj );
+	public void setNormalDepthMap( Texture normalDepthMap ) {
+		camblur.setNormalDepthMap( normalDepthMap );
+	}
+
+	public void setMatrices( Matrix4 inv_view, Matrix4 prevViewProj, Matrix4 inv_proj ) {
+		ctp.set( prevViewProj ).mul( inv_view );
+		camblur.setCurrentToPrevious( ctp );
+		camblur.setInverseProj( inv_proj );
+	}
+
+	public void setBlurPasses( int passes ) {
+		camblur.setBlurPasses( passes );
+	}
+
+	public void setBlurScale( float scale ) {
+		camblur.setBlurScale( scale );
+	}
+
+	public void setNearFar( float near, float far ) {
+		camblur.setNearFarPlanes( near, far );
+	}
+
+	public void setDepthScale( float scale ) {
+		camblur.setDepthScale( scale );
 	}
 
 	@Override
@@ -51,6 +78,12 @@ public final class CameraMotion extends PostProcessorEffect {
 
 	@Override
 	public void render( FrameBuffer src, FrameBuffer dest ) {
+		if( dest != null ) {
+			camblur.setViewport( dest.getWidth(), dest.getHeight() );
+		} else {
+			camblur.setViewport( width, height );
+		}
+
 		camblur.setInput( src ).setOutput( dest ).render();
 	};
 }

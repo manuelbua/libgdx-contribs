@@ -77,9 +77,10 @@ public final class Vignetting extends Filter<Vignetting> {
 		dolut = false;
 		dosat = controlSaturation;
 
+		texLut = null;
 		lutindex = new int[ 2 ];
-		lutindex[0] = 0;
-		lutindex[1] = 0;
+		lutindex[0] = -1;
+		lutindex[1] = -1;
 
 		lutintensity = 1f;
 		lutIndexOffset = 0;

@@ -364,6 +364,8 @@ public final class PostProcessor implements Disposable {
 		int count = items.size;
 		if( count > 0 ) {
 
+			Gdx.gl.glDisable( GL20.GL_CULL_FACE );
+
 			// render effects chain, [0,n-1]
 			if( count > 1 ) {
 				for( int i = 0; i < count - 1; i++ ) {

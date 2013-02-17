@@ -85,8 +85,10 @@ public final class Blur extends MultipassFilter {
 	}
 
 	public void setType( BlurType type ) {
-		this.type = type;
-		computeBlurWeightings();
+		if( this.type != type ) {
+			this.type = type;
+			computeBlurWeightings();
+		}
 	}
 
 	// not all blur types support custom amounts at this time
