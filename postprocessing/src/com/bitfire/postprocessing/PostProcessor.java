@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.postprocessing.utils.PingPongBuffer;
@@ -50,6 +51,8 @@ public final class PostProcessor implements Disposable {
 	private final Color clearColor = Color.CLEAR;
 	private int clearBits = GL10.GL_COLOR_BUFFER_BIT;
 	private float clearDepth = 1f;
+	private static Rectangle viewport = new Rectangle();
+	private static boolean hasViewport = false;
 
 	private boolean enabled = true;
 	private boolean capturing = false;
@@ -62,18 +65,38 @@ public final class PostProcessor implements Disposable {
 	private Array<PostProcessorEffect> enabledEffects = new Array<PostProcessorEffect>( 5 );
 
 	/**
-	 * Construct a new PostProcessor with FBO dimensions set to the size of the
-	 * screen
+	 * Construct a new PostProcessor with FBO dimensions set to the size of the screen
 	 */
 	public PostProcessor( boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
 		this( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), useDepth, useAlphaChannel, use32Bits );
 	}
 
-	/** Construct a new PostProcessor with the given parameters. */
+	/**
+	 * Construct a new PostProcessor with the given parameters, defaulting to <em>TextureWrap.ClampToEdge</em> as
+	 * texture wrap mode
+	 */
 	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
 		this( fboWidth, fboHeight, useDepth, useAlphaChannel, use32Bits, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
 	}
 
+	/**
+	 * Construct a new PostProcessor with the given parameters and viewport, defaulting to <em>TextureWrap.ClampToEdge</em> as
+	 * texture wrap mode
+	 */
+	public PostProcessor( Rectangle viewport, boolean useDepth, boolean useAlphaChannel, boolean use32Bits ) {
+		this( (int)viewport.width, (int)viewport.height, useDepth, useAlphaChannel, use32Bits, TextureWrap.ClampToEdge,
+				TextureWrap.ClampToEdge );
+		setViewport( viewport );
+	}
+
+	/** Construct a new PostProcessor with the given parameters, viewport and the specified texture wrap mode */
+	public PostProcessor( Rectangle viewport, boolean useDepth, boolean useAlphaChannel, boolean use32Bits, TextureWrap u,
+			TextureWrap v ) {
+		this( (int)viewport.width, (int)viewport.height, useDepth, useAlphaChannel, use32Bits, u, v );
+		setViewport( viewport );
+	}
+
+	/** Construct a new PostProcessor with the given parameters and the specified texture wrap mode */
 	public PostProcessor( int fboWidth, int fboHeight, boolean useDepth, boolean useAlphaChannel, boolean use32Bits,
 			TextureWrap u, TextureWrap v ) {
 		if( use32Bits ) {
@@ -99,6 +122,7 @@ public final class PostProcessor implements Disposable {
 		hasCaptured = false;
 		enabled = true;
 		this.useDepth = useDepth;
+		setViewport( null );
 	}
 
 	/**
@@ -126,6 +150,28 @@ public final class PostProcessor implements Disposable {
 
 		// Gdx.app.log( "PipelineState", "(not querying)" );
 		return false;
+	}
+
+	/**
+	 * Restores the previously set viewport if one was specified earlier and the destination buffer is the screen
+	 */
+	protected static void restoreViewport( FrameBuffer dest ) {
+		if( hasViewport && dest == null ) {
+			Gdx.gl.glViewport( (int)viewport.x, (int)viewport.y, (int)viewport.width, (int)viewport.height );
+		}
+	}
+
+	/**
+	 * Sets the viewport to be restored, if null is specified then the viewport will NOT be restored at all.
+	 *
+	 * The predefined effects will restore the viewport settings at the final blitting stage (render to screen) by
+	 * invoking the restoreViewport static method.
+	 */
+	public void setViewport( Rectangle viewport ) {
+		PostProcessor.hasViewport = (viewport != null);
+		if( hasViewport ) {
+			PostProcessor.viewport.set( viewport );
+		}
 	}
 
 	/** Frees owned resources. */

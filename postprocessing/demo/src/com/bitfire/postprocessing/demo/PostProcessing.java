@@ -47,6 +47,8 @@ public final class PostProcessing implements Disposable, PostProcessorListener {
 
 	public PostProcessing() {
 		boolean isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
+		int vpW = Gdx.graphics.getWidth();
+		int vpH = Gdx.graphics.getHeight();
 		blending = false;
 
 		// create the postprocessor
@@ -59,9 +61,9 @@ public final class PostProcessing implements Disposable, PostProcessorListener {
 		// create the effects you want
 		bloom = new Bloom( (int)(Gdx.graphics.getWidth() * 0.25f), (int)(Gdx.graphics.getHeight() * 0.25f) );
 		curvature = new Curvature();
-		zoomer = new Zoomer( isDesktop ? RadialBlur.Quality.VeryHigh : RadialBlur.Quality.Low );
-		crt = new CrtMonitor( false, false );
-		vignette = new Vignette( false );
+		zoomer = new Zoomer( vpW, vpH, isDesktop ? RadialBlur.Quality.VeryHigh : RadialBlur.Quality.Low );
+		crt = new CrtMonitor( Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false, false );
+		vignette = new Vignette( vpW, vpH, false );
 
 		// add them to the postprocessor
 		postProcessor.addEffect( curvature );

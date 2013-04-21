@@ -16,7 +16,6 @@
 
 package com.bitfire.postprocessing.effects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Matrix4;
@@ -33,11 +32,11 @@ public final class CameraMotion extends PostProcessorEffect {
 	private Matrix4 ctp = new Matrix4();
 	private float width, height;
 
-	public CameraMotion() {
+	public CameraMotion( int width, int height ) {
+		this.width = width;
+		this.height = height;
 		camblur = new CameraBlur();
 		camblur.setNormalDepthMap( null );
-		width = Gdx.graphics.getWidth();
-		height = Gdx.graphics.getHeight();
 	}
 
 	@Override
@@ -83,6 +82,8 @@ public final class CameraMotion extends PostProcessorEffect {
 		} else {
 			camblur.setViewport( width, height );
 		}
+
+		restoreViewport( dest );
 
 		camblur.setInput( src ).setOutput( dest ).render();
 	};

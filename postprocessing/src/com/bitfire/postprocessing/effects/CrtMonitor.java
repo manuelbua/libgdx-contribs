@@ -41,21 +41,19 @@ public final class CrtMonitor extends PostProcessorEffect {
 	private boolean blending = false;
 	private int sfactor, dfactor;
 
-	public CrtMonitor( boolean barrelDistortion, boolean performBlur ) {
-		// the effect is designed to work on the whole screen area, no small/mid size tricks!
-		int w = Gdx.graphics.getWidth();
-		int h = Gdx.graphics.getHeight();
+	// the effect is designed to work on the whole screen area, no small/mid size tricks!
+	public CrtMonitor( int fboWidth, int fboHeight, boolean barrelDistortion, boolean performBlur ) {
 		doblur = performBlur;
 
 		if( doblur ) {
-			pingPongBuffer = PostProcessor.newPingPongBuffer( w, h, PostProcessor.getFramebufferFormat(), false );
-			blur = new Blur( w, h );
+			pingPongBuffer = PostProcessor.newPingPongBuffer( fboWidth, fboHeight, PostProcessor.getFramebufferFormat(), false );
+			blur = new Blur( fboWidth, fboHeight );
 			blur.setPasses( 1 );
 			blur.setAmount( 1f );
 			// blur.setType( BlurType.Gaussian3x3b ); // high defocus
 			blur.setType( BlurType.Gaussian3x3 ); // modern machines defocus
 		} else {
-			buffer = new FrameBuffer( PostProcessor.getFramebufferFormat(), w, h, false );
+			buffer = new FrameBuffer( PostProcessor.getFramebufferFormat(), fboWidth, fboHeight, false );
 		}
 
 		combine = new Combine();
@@ -174,6 +172,8 @@ public final class CrtMonitor extends PostProcessorEffect {
 		if( blending ) {
 			Gdx.gl.glBlendFunc( sfactor, dfactor );
 		}
+
+		restoreViewport( dest );
 
 		// do combine pass
 		combine.setOutput( dest ).setInput( in, out ).render();

@@ -16,7 +16,6 @@
 
 package com.bitfire.postprocessing.effects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.postprocessing.PostProcessorEffect;
@@ -27,10 +26,10 @@ public final class Vignette extends PostProcessorEffect {
 	public boolean controlSaturation;
 	private float oneOnW, oneOnH;
 
-	public Vignette( boolean controlSaturation ) {
+	public Vignette( int viewportWidth, int viewportHeight, boolean controlSaturation ) {
 		this.controlSaturation = controlSaturation;
-		oneOnW = 1f / (float)Gdx.graphics.getWidth();
-		oneOnH = 1f / (float)Gdx.graphics.getHeight();
+		oneOnW = 1f / (float)viewportWidth;
+		oneOnH = 1f / (float)viewportHeight;
 		vignetting = new Vignetting( controlSaturation );
 	}
 
@@ -135,6 +134,7 @@ public final class Vignette extends PostProcessorEffect {
 
 	@Override
 	public void render( FrameBuffer src, FrameBuffer dest ) {
+		restoreViewport( dest );
 		vignetting.setInput( src ).setOutput( dest ).render();
 	};
 }
