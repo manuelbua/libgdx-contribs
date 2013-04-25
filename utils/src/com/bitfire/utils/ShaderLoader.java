@@ -43,7 +43,7 @@ public final class ShaderLoader {
 		ShaderProgram shader = new ShaderProgram( defines + "\n" + vertex, defines + "\n" + fragment );
 		if( !shader.isCompiled() ) {
 			Gdx.app.error( "ShaderLoader", shader.getLog() );
-			Gdx.app.exit();
+			System.exit( -1 );
 		} else {
 			if( defines != null && defines.length() > 0 ) {
 				Gdx.app.log( "ShaderLoader", vertexName + "/" + fragmentName + " compiled w/ (" + defines.replace( "\n", ", " )
