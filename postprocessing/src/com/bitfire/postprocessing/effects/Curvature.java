@@ -55,7 +55,6 @@ public final class Curvature extends PostProcessorEffect {
 
 	@Override
 	public void render( FrameBuffer src, FrameBuffer dest ) {
-		restoreViewport( dest );
 		distort.setInput( src ).setOutput( dest ).render();
 	};
 

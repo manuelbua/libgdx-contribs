@@ -53,9 +53,4 @@ public abstract class PostProcessorEffect implements Disposable {
 	public void setEnabled( boolean enabled ) {
 		this.enabled = enabled;
 	}
-
-	/** Convenience method to forward the call to the PostProcessor object while still being a non-publicly accessible method */
-	protected void restoreViewport( FrameBuffer dest ) {
-		PostProcessor.restoreViewport( dest );
-	}
 }

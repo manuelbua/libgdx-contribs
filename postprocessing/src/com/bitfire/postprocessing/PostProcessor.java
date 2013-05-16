@@ -163,7 +163,7 @@ public final class PostProcessor implements Disposable {
 
 	/**
 	 * Sets the viewport to be restored, if null is specified then the viewport will NOT be restored at all.
-	 *
+	 * 
 	 * The predefined effects will restore the viewport settings at the final blitting stage (render to screen) by
 	 * invoking the restoreViewport static method.
 	 */
@@ -430,6 +430,8 @@ public final class PostProcessor implements Disposable {
 			if( listener != null ) {
 				listener.beforeRenderToScreen();
 			}
+
+			restoreViewport( dest );
 
 			// render with null dest (to screen)
 			items.get( count - 1 ).render( composite.getResultBuffer(), dest );

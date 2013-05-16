@@ -173,8 +173,6 @@ public final class CrtMonitor extends PostProcessorEffect {
 			Gdx.gl.glBlendFunc( sfactor, dfactor );
 		}
 
-		restoreViewport( dest );
-
 		// do combine pass
 		combine.setOutput( dest ).setInput( in, out ).render();
 	};
