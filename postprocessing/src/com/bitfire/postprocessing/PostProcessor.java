@@ -153,15 +153,6 @@ public final class PostProcessor implements Disposable {
 	}
 
 	/**
-	 * Restores the previously set viewport if one was specified earlier and the destination buffer is the screen
-	 */
-	protected static void restoreViewport( FrameBuffer dest ) {
-		if( hasViewport && dest == null ) {
-			Gdx.gl.glViewport( (int)viewport.x, (int)viewport.y, (int)viewport.width, (int)viewport.height );
-		}
-	}
-
-	/**
 	 * Sets the viewport to be restored, if null is specified then the viewport will NOT be restored at all.
 	 * 
 	 * The predefined effects will restore the viewport settings at the final blitting stage (render to screen) by
@@ -461,4 +452,14 @@ public final class PostProcessor implements Disposable {
 
 		return enabledEffects.size;
 	}
+
+	/**
+	 * Restores the previously set viewport if one was specified earlier and the destination buffer is the screen
+	 */
+	private static void restoreViewport( FrameBuffer dest ) {
+		if( hasViewport && dest == null ) {
+			Gdx.gl.glViewport( (int)viewport.x, (int)viewport.y, (int)viewport.width, (int)viewport.height );
+		}
+	}
+
 }
