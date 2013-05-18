@@ -129,6 +129,7 @@ public final class Zoomer extends PostProcessorEffect {
 
 	@Override
 	public void render( FrameBuffer src, FrameBuffer dest ) {
+		restoreViewport( dest );
 		if( doRadial ) {
 			radialBlur.setInput( src ).setOutput( dest ).render();
 		} else {

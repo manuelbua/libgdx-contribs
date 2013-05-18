@@ -240,6 +240,8 @@ public final class Bloom extends PostProcessorEffect {
 			Gdx.gl.glBlendFunc( sfactor, dfactor );
 		}
 
+		restoreViewport( dest );
+
 		// mix original scene and blurred threshold, modulate via
 		// set(Base|Bloom)(Saturation|Intensity)
 		combine.setOutput( dest ).setInput( texsrc, pingPongBuffer.getResultTexture() ).render();

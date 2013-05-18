@@ -83,6 +83,7 @@ public final class CameraMotion extends PostProcessorEffect {
 			camblur.setViewport( width, height );
 		}
 
+		restoreViewport( dest );
 		camblur.setInput( src ).setOutput( dest ).render();
 	};
 }

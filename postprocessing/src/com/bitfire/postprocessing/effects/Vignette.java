@@ -134,6 +134,7 @@ public final class Vignette extends PostProcessorEffect {
 
 	@Override
 	public void render( FrameBuffer src, FrameBuffer dest ) {
+		restoreViewport( dest );
 		vignetting.setInput( src ).setOutput( dest ).render();
 	};
 }

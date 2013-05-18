@@ -422,8 +422,6 @@ public final class PostProcessor implements Disposable {
 				listener.beforeRenderToScreen();
 			}
 
-			restoreViewport( dest );
-
 			// render with null dest (to screen)
 			items.get( count - 1 ).render( composite.getResultBuffer(), dest );
 
@@ -456,7 +454,7 @@ public final class PostProcessor implements Disposable {
 	/**
 	 * Restores the previously set viewport if one was specified earlier and the destination buffer is the screen
 	 */
-	private static void restoreViewport( FrameBuffer dest ) {
+	protected static void restoreViewport( FrameBuffer dest ) {
 		if( hasViewport && dest == null ) {
 			Gdx.gl.glViewport( (int)viewport.x, (int)viewport.y, (int)viewport.width, (int)viewport.height );
 		}
