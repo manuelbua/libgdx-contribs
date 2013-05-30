@@ -122,6 +122,10 @@ public final class PostProcessor implements Disposable {
 		hasCaptured = false;
 		enabled = true;
 		this.useDepth = useDepth;
+		if( useDepth ) {
+			clearBits |= GL10.GL_DEPTH_BUFFER_BIT;
+		}
+
 		setViewport( null );
 	}
 
@@ -418,7 +422,7 @@ public final class PostProcessor implements Disposable {
 				composite.end();
 			}
 
-			if( listener != null ) {
+			if( listener != null && dest == null ) {
 				listener.beforeRenderToScreen();
 			}
 

@@ -233,6 +233,11 @@ public final class UI {
 					public void clicked( InputEvent event, float x, float y ) {
 						CheckBox source = (CheckBox)event.getListenerActor();
 						backgroundAffected = source.isChecked();
+						// if( backgroundAffected ) {
+						// post.enableBlending();
+						// } else {
+						// post.disableBlending();
+						// }
 					}
 				} );
 

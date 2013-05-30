@@ -182,10 +182,18 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		boolean willPostProcess = post.isReady();
 		boolean backgroundFirst = (willPostProcess && !ui.backgroundAffected && ui.drawBackground)
 				|| (!willPostProcess && ui.drawBackground);
-		post.blending = backgroundFirst && willPostProcess;
+		boolean drawbg = ui.drawBackground && ui.backgroundAffected;
+		boolean drawsmth = drawbg || ui.drawSprite;
+		// post.blending = backgroundFirst && willPostProcess;
+
+		if( !ui.backgroundAffected || (backgroundFirst && willPostProcess && (post.postProcessor.getEnabledEffectsCount() == 1)) ) {
+			post.enableBlending();
+		} else {
+			post.disableBlending();
+		}
 
 		if( backgroundFirst || !willPostProcess ) {
-			Gdx.gl20.glClearColor( 0, 0, 0, 1 );
+			Gdx.gl20.glClearColor( 0, 0, 0, 0 );
 			Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT );
 			if( backgroundFirst ) {
 				batch.begin();
@@ -194,20 +202,22 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 			}
 		}
 
-		post.begin();
-		batch.begin();
-		{
-			if( ui.drawBackground && ui.backgroundAffected ) {
-				ui.background.draw( batch );
-			}
+		if( drawsmth ) {
+			post.begin();
+			batch.begin();
+			{
+				if( drawbg ) {
+					ui.background.draw( batch );
+				}
 
-			if( ui.drawSprite ) {
-				badlogic.setPosition( circleOffset.x - badlogic.getWidth() / 2, circleOffset.y - badlogic.getHeight() / 2 );
-				badlogic.draw( batch );
+				if( ui.drawSprite ) {
+					badlogic.setPosition( circleOffset.x - badlogic.getWidth() / 2, circleOffset.y - badlogic.getHeight() / 2 );
+					badlogic.draw( batch );
+				}
 			}
+			batch.end();
+			post.end();
 		}
-		batch.end();
-		post.end();
 
 		ui.draw();
 	}

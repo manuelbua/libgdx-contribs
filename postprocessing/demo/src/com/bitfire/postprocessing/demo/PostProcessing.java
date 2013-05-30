@@ -20,8 +20,8 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Disposable;
-import com.bitfire.postprocessing.PostProcessorListener;
 import com.bitfire.postprocessing.PostProcessor;
+import com.bitfire.postprocessing.PostProcessorListener;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.CrtMonitor;
 import com.bitfire.postprocessing.effects.Curvature;
@@ -42,8 +42,9 @@ public final class PostProcessing implements Disposable, PostProcessorListener {
 	public Zoomer zoomer;
 	public CrtMonitor crt;
 	public Vignette vignette;
-	public boolean blending, zoomRadialBlur;
+	public boolean zoomRadialBlur;
 	public float zoomAmount, zoomFactor;
+	private boolean blending;
 
 	public PostProcessing() {
 		boolean isDesktop = (Gdx.app.getType() == ApplicationType.Desktop);
@@ -52,7 +53,7 @@ public final class PostProcessing implements Disposable, PostProcessorListener {
 		blending = false;
 
 		// create the postprocessor
-		postProcessor = new PostProcessor( false, false, isDesktop );
+		postProcessor = new PostProcessor( false, true, isDesktop );
 
 		// optionally create a listener
 		postProcessor.setListener( this );
@@ -119,8 +120,17 @@ public final class PostProcessing implements Disposable, PostProcessorListener {
 		postProcessor.setEnabled( enabled );
 	}
 
-	public void update( float elapsedSecs ) {
+	public void enableBlending() {
+		bloom.enableBlending( GL20.GL_SRC_COLOR, GL20.GL_ONE_MINUS_SRC_COLOR );
+		blending = true;
+	}
 
+	public void disableBlending() {
+		bloom.disableBlending();
+		blending = false;
+	}
+
+	public void update( float elapsedSecs ) {
 		// animate some effects
 		float smoothing = 1.5f;
 		zoomFactor = lerp( zoomFactor * smoothing, zoomAmount / smoothing, 0.1f ) * 0.5f;
