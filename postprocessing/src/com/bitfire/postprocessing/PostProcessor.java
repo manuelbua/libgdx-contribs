@@ -200,10 +200,8 @@ public final class PostProcessor implements Disposable {
 	public boolean isReady() {
 		boolean hasEffects = false;
 
-		Array<PostProcessorEffect> items = effectsManager.items;
-		for( int i = 0; i < items.size; i++ ) {
-			PostProcessorEffect effect = items.get( i );
-			if( effect.isEnabled() ) {
+		for( PostProcessorEffect e : effectsManager ) {
+			if( e.isEnabled() ) {
 				hasEffects = true;
 				break;
 			}
@@ -381,9 +379,8 @@ public final class PostProcessor implements Disposable {
 			buffers.get( i ).rebind();
 		}
 
-		Array<PostProcessorEffect> items = effectsManager.items;
-		for( int i = 0; i < items.size; i++ ) {
-			items.get( i ).rebind();
+		for( PostProcessorEffect e : effectsManager ) {
+			e.rebind();
 		}
 	}
 
@@ -443,12 +440,9 @@ public final class PostProcessor implements Disposable {
 
 	private int buildEnabledEffectsList() {
 		enabledEffects.clear();
-
-		Array<PostProcessorEffect> items = effectsManager.items;
-		for( int i = 0; i < items.size; i++ ) {
-			PostProcessorEffect effect = items.get( i );
-			if( effect.isEnabled() ) {
-				enabledEffects.add( effect );
+		for( PostProcessorEffect e : effectsManager ) {
+			if( e.isEnabled() ) {
+				enabledEffects.add( e );
 			}
 		}
 

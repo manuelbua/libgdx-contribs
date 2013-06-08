@@ -16,13 +16,14 @@
 
 package com.bitfire.utils;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
-public class ItemsManager<T extends Disposable> implements Disposable {
+public class ItemsManager<T extends Disposable> implements Iterable<T>, Disposable {
 	private static final int ItemNotFound = -1;
-
-	public final Array<T> items = new Array<T>();
+	private final Array<T> items = new Array<T>();
 	protected final Array<Boolean> owned = new Array<Boolean>();
 
 	@Override
@@ -50,6 +51,22 @@ public class ItemsManager<T extends Disposable> implements Disposable {
 	/** Add an item to the manager and transfer ownership to it */
 	public void add( T item ) {
 		add( item, true );
+	}
+
+	/** Returns the item at the specified index */
+	public T get( int index ) {
+		return items.get( index );
+	}
+
+	/** Returns the number of items managed by this instance */
+	public int count() {
+		return items.size;
+	}
+
+	/* Returns an iterator on the managed items */
+	@Override
+	public Iterator<T> iterator() {
+		return items.iterator();
 	}
 
 	/** Removes a previously added resource */
