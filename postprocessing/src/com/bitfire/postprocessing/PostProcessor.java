@@ -403,6 +403,7 @@ public final class PostProcessor implements Disposable {
 		if( count > 0 ) {
 
 			Gdx.gl.glDisable( GL20.GL_CULL_FACE );
+			Gdx.gl.glDisable( GL20.GL_DEPTH_TEST );
 
 			// render effects chain, [0,n-1]
 			if( count > 1 ) {
