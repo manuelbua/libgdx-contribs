@@ -192,7 +192,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 			post.disableBlending();
 		}
 
-		if( backgroundFirst || !willPostProcess ) {
+		if( backgroundFirst || !willPostProcess || !ui.drawBackground) {
 			Gdx.gl20.glClearColor( 0, 0, 0, 0 );
 			Gdx.gl20.glClear( GL20.GL_COLOR_BUFFER_BIT );
 			if( backgroundFirst ) {
