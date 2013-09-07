@@ -17,15 +17,24 @@
 package com.bitfire.postprocessing.filters;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.utils.ShaderLoader;
 
 public final class CrtScreen extends Filter<CrtScreen> {
 	private float elapsedSecs, offset, zoom;
+	private float cdRedCyan, cdBlueYellow;
+	private Vector2 chromaticDispersion;
 	private final Vector3 vtint;
 	private final Color tint;
 	private float distortion;
 	private boolean dodistortion;
+	private RgbMode mode;
+
+	public enum RgbMode {
+		None, RgbShift, ChromaticAberrations
+	}
 
 	public enum Param implements Parameter {
 		// @formatter:off
@@ -33,6 +42,7 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		Time("time",0),
 		Tint("tint",3),
 		ColorOffset("offset",0),
+		ChromaticDispersion("chromaticDispersion",2),
 		Distortion("Distortion",0),
 		Zoom("zoom",0)
 		;
@@ -57,20 +67,36 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		}
 	}
 
-	public CrtScreen( boolean barrelDistortion ) {
-		super( ShaderLoader.fromFile( "screenspace", "crt-screen", barrelDistortion ? "#define ENABLE_BARREL_DISTORTION" : "" ) );
+	public CrtScreen( boolean barrelDistortion, RgbMode mode ) {
+		// @off
+		super( ShaderLoader.fromFile( "screenspace", "crt-screen", (barrelDistortion ? "#define ENABLE_BARREL_DISTORTION\n" : "")
+				+ (mode == RgbMode.RgbShift ? "#define ENABLE_RGB_SHIFT\n" : "")
+				+ (mode == RgbMode.ChromaticAberrations ? "#define ENABLE_CHROMATIC_ABERRATIONS\n" : "") ) );
+		// @on
+
 		dodistortion = barrelDistortion;
+		this.mode = mode;
 
 		vtint = new Vector3();
 		tint = new Color();
+		chromaticDispersion = new Vector2();
 
 		rebind();
 
 		setTime( 0f );
-		setTint( 0.8f, 1.0f, 0.7f );
+		setTint( 1.0f, 1.0f, 0.85f );
 		setDistortion( 0.3f );
 		setZoom( 1f );
-		setColorOffset( 0.003f );
+		switch( mode ) {
+		case ChromaticAberrations:
+			setChromaticDispersion( -0.1f, -0.1f );
+			break;
+		case RgbShift:
+			setColorOffset( 0.003f );
+			break;
+		default:
+			throw new GdxRuntimeException( "Unsupported RGB mode" );
+		}
 	}
 
 	public void setTime( float elapsedSecs ) {
@@ -80,7 +106,40 @@ public final class CrtScreen extends Filter<CrtScreen> {
 
 	public void setColorOffset( float offset ) {
 		this.offset = offset;
-		setParam( Param.ColorOffset, this.offset );
+		if( mode == RgbMode.RgbShift ) {
+			setParam( Param.ColorOffset, this.offset );
+		}
+	}
+
+	public void setChromaticDispersion( Vector2 dispersion ) {
+		setChromaticDispersion( dispersion.x, dispersion.y );
+	}
+
+	public void setChromaticDispersion( float redCyan, float blueYellow ) {
+
+		this.cdRedCyan = redCyan;
+		this.cdBlueYellow = blueYellow;
+		chromaticDispersion.x = cdRedCyan;
+		chromaticDispersion.y = cdBlueYellow;
+		if( mode == RgbMode.ChromaticAberrations ) {
+			setParam( Param.ChromaticDispersion, chromaticDispersion );
+		}
+	}
+
+	public void setChromaticDispersionRC( float redCyan ) {
+		this.cdRedCyan = redCyan;
+		chromaticDispersion.x = cdRedCyan;
+		if( mode == RgbMode.ChromaticAberrations ) {
+			setParam( Param.ChromaticDispersion, chromaticDispersion );
+		}
+	}
+
+	public void setChromaticDispersionBY( float blueYellow ) {
+		this.cdBlueYellow = blueYellow;
+		chromaticDispersion.y = cdBlueYellow;
+		if( mode == RgbMode.ChromaticAberrations ) {
+			setParam( Param.ChromaticDispersion, chromaticDispersion );
+		}
 	}
 
 	public void setTint( Color color ) {
@@ -113,6 +172,10 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		return offset;
 	}
 
+	public Vector2 getChromaticDispersion() {
+		return chromaticDispersion;
+	}
+
 	public float getZoom() {
 		return zoom;
 	}
@@ -130,9 +193,12 @@ public final class CrtScreen extends Filter<CrtScreen> {
 	public void rebind() {
 		setParams( Param.Texture0, u_texture0 );
 		setParams( Param.Time, elapsedSecs );
-		setParams( Param.ColorOffset, offset );
+		if( mode == RgbMode.RgbShift ) {
+			setParams( Param.ColorOffset, offset );
+		} else if( mode == RgbMode.ChromaticAberrations ) {
+			setParams( Param.ChromaticDispersion, chromaticDispersion );
+		}
 
-		vtint.set( tint.r, tint.g, tint.b );
 		setParams( Param.Tint, vtint );
 
 		if( dodistortion ) {

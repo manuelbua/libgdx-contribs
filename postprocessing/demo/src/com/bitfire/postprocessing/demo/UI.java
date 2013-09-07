@@ -202,29 +202,32 @@ public final class UI {
 			}
 		} );
 
-		final SelectBox sbBackground = ResourceFactory.newSelectBox(
-				new String[] { "None ", "Scratches ", "Mountains ", "Lake " }, new ChangeListener() {
-					@Override
-					public void changed( ChangeEvent event, Actor actor ) {
-						SelectBox source = (SelectBox)event.getListenerActor();
-						drawBackground = true;
+		final SelectBox sbBackground = ResourceFactory.newSelectBox( new String[] { "None ", "Scratches ", "Mountains ", "Lake ",
+				"Checker board " }, new ChangeListener() {
+			@Override
+			public void changed( ChangeEvent event, Actor actor ) {
+				SelectBox source = (SelectBox)event.getListenerActor();
+				drawBackground = true;
 
-						switch( source.getSelectionIndex() ) {
-						case 0:
-							drawBackground = false;
-							break;
-						case 1:
-							background.setTexture( ResourceFactory.newTexture( "bgnd.jpg", false ) );
-							break;
-						case 2:
-							background.setTexture( ResourceFactory.newTexture( "bgnd2.jpg", false ) );
-							break;
-						case 3:
-							background.setTexture( ResourceFactory.newTexture( "bgnd3.jpg", false ) );
-							break;
-						}
-					}
-				} );
+				switch( source.getSelectionIndex() ) {
+				case 0:
+					drawBackground = false;
+					break;
+				case 1:
+					background.setTexture( ResourceFactory.newTexture( "bgnd.jpg", false ) );
+					break;
+				case 2:
+					background.setTexture( ResourceFactory.newTexture( "bgnd2.jpg", false ) );
+					break;
+				case 3:
+					background.setTexture( ResourceFactory.newTexture( "bgnd3.jpg", false ) );
+					break;
+				case 4:
+					background.setTexture( ResourceFactory.newTexture( "bgnd4.jpg", false ) );
+					break;
+				}
+			}
+		} );
 
 		// background affected by post-processing
 		final CheckBox cbBackgroundAffected = ResourceFactory.newCheckBox( " Background affected\n by post-processing",
@@ -387,13 +390,26 @@ public final class UI {
 			}
 		} );
 
-		final Slider slCrtColorOffset = ResourceFactory.newSlider( 0, 0.01f, 0.001f, post.crt.getOffset(), new ChangeListener() {
-			@Override
-			public void changed( ChangeEvent event, Actor actor ) {
-				Slider source = (Slider)event.getListenerActor();
-				post.crt.setColorOffset( source.getValue() );
-			}
-		} );
+		final Slider slCrtDispersionRC = ResourceFactory.newSlider( -1f, 1f, 0.001f, post.crt.getChromaticDispersion().x,
+				new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						Slider source = (Slider)event.getListenerActor();
+						post.crt.setChromaticDispersionRC( source.getValue() );
+					}
+				} );
+
+		final Slider slCrtDispersionBY = ResourceFactory.newSlider( -1f, 1f, 0.001f, post.crt.getChromaticDispersion().y,
+				new ChangeListener() {
+					@Override
+					public void changed( ChangeEvent event, Actor actor ) {
+						Slider source = (Slider)event.getListenerActor();
+						post.crt.setChromaticDispersionBY( source.getValue() );
+					}
+				} );
+
+		slCrtDispersionRC.setSnapToValues( new float[] { 0 }, 0.05f );
+		slCrtDispersionBY.setSnapToValues( new float[] { 0 }, 0.05f );
 
 		final Slider slCrtTintR = ResourceFactory.newSlider( 0, 1f, 0.01f, post.crt.getTint().r, new ChangeListener() {
 			@Override
@@ -428,8 +444,11 @@ public final class UI {
 		Table t = ResourceFactory.newTable();
 		t.add( cbCrt ).colspan( 2 ).center();
 		t.row();
-		t.add( ResourceFactory.newLabel( "Color offset " ) ).left();
-		t.add( slCrtColorOffset );
+		t.add( ResourceFactory.newLabel( "Chromatic dispersion R/C " ) ).left();
+		t.add( slCrtDispersionRC );
+		t.row();
+		t.add( ResourceFactory.newLabel( "Chromatic dispersion B/Y " ) ).left();
+		t.add( slCrtDispersionBY );
 		t.row();
 		t.add( ResourceFactory.newLabel( "Tint (R) " ) ).left();
 		t.add( slCrtTintR );

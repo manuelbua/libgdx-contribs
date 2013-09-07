@@ -22,12 +22,15 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorEffect;
 import com.bitfire.postprocessing.filters.Blur;
 import com.bitfire.postprocessing.filters.Blur.BlurType;
 import com.bitfire.postprocessing.filters.Combine;
 import com.bitfire.postprocessing.filters.CrtScreen;
+import com.bitfire.postprocessing.filters.CrtScreen.RgbMode;
 import com.bitfire.postprocessing.utils.PingPongBuffer;
 
 public final class CrtMonitor extends PostProcessorEffect {
@@ -42,7 +45,7 @@ public final class CrtMonitor extends PostProcessorEffect {
 	private int sfactor, dfactor;
 
 	// the effect is designed to work on the whole screen area, no small/mid size tricks!
-	public CrtMonitor( int fboWidth, int fboHeight, boolean barrelDistortion, boolean performBlur ) {
+	public CrtMonitor( int fboWidth, int fboHeight, boolean barrelDistortion, boolean performBlur, RgbMode mode ) {
 		doblur = performBlur;
 
 		if( doblur ) {
@@ -57,12 +60,25 @@ public final class CrtMonitor extends PostProcessorEffect {
 		}
 
 		combine = new Combine();
-		combine.setSource1Intensity( barrelDistortion ? 0f : 0.15f );
-		combine.setSource2Intensity( barrelDistortion ? 1.2f : 1.1f );
-		combine.setSource1Saturation( 1f );
-		combine.setSource2Saturation( 0.8f );
 
-		crt = new CrtScreen( barrelDistortion );
+		switch( mode ) {
+		case RgbShift:
+			combine.setSource1Intensity( barrelDistortion ? 0f : 0.15f );
+			combine.setSource2Intensity( barrelDistortion ? 1.2f : 1.1f );
+			combine.setSource1Saturation( 1f );
+			combine.setSource2Saturation( 0.8f );
+			break;
+		case ChromaticAberrations:
+			combine.setSource1Intensity( 0f );
+			combine.setSource2Intensity( 1.2f );
+			combine.setSource1Saturation( 0f );
+			combine.setSource2Saturation( 1f );
+			break;
+		default:
+			throw new GdxRuntimeException( "Unsupported RGB mode" );
+		}
+
+		crt = new CrtScreen( barrelDistortion, mode );
 	}
 
 	@Override
@@ -101,6 +117,18 @@ public final class CrtMonitor extends PostProcessorEffect {
 		crt.setColorOffset( offset );
 	}
 
+	public void setChromaticDispersion( float redCyan, float blueYellow ) {
+		crt.setChromaticDispersion( redCyan, blueYellow );
+	}
+
+	public void setChromaticDispersionRC( float redCyan ) {
+		crt.setChromaticDispersionRC( redCyan );
+	}
+
+	public void setChromaticDispersionBY( float blueYellow ) {
+		crt.setChromaticDispersionBY( blueYellow );
+	}
+
 	public void setTint( Color tint ) {
 		crt.setTint( tint );
 	}
@@ -120,6 +148,10 @@ public final class CrtMonitor extends PostProcessorEffect {
 	// getters
 	public float getOffset() {
 		return crt.getOffset();
+	}
+
+	public Vector2 getChromaticDispersion() {
+		return crt.getChromaticDispersion();
 	}
 
 	public float getZoom() {

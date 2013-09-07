@@ -27,6 +27,7 @@ import com.bitfire.postprocessing.effects.CrtMonitor;
 import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Vignette;
 import com.bitfire.postprocessing.effects.Zoomer;
+import com.bitfire.postprocessing.filters.CrtScreen.RgbMode;
 import com.bitfire.postprocessing.filters.RadialBlur;
 
 /**
@@ -53,6 +54,7 @@ public final class PostProcessing implements Disposable, PostProcessorListener {
 		blending = false;
 
 		// create the postprocessor
+		// ShaderLoader.Pedantic = false;
 		postProcessor = new PostProcessor( false, true, isDesktop );
 
 		// optionally create a listener
@@ -63,7 +65,7 @@ public final class PostProcessing implements Disposable, PostProcessorListener {
 		bloom = new Bloom( (int)(Gdx.graphics.getWidth() * 0.25f), (int)(Gdx.graphics.getHeight() * 0.25f) );
 		curvature = new Curvature();
 		zoomer = new Zoomer( vpW, vpH, isDesktop ? RadialBlur.Quality.VeryHigh : RadialBlur.Quality.Low );
-		crt = new CrtMonitor( vpW, vpH, false, false );
+		crt = new CrtMonitor( vpW, vpH, false, false, RgbMode.RgbShift );
 		vignette = new Vignette( vpW, vpH, false );
 
 		// add them to the postprocessor
@@ -82,7 +84,6 @@ public final class PostProcessing implements Disposable, PostProcessorListener {
 		zoomer.setBlurStrength( -0.1f );
 		zoomer.setOrigin( Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 );
 		curvature.setZoom( 1f );
-		crt.setColorOffset( 0.002f );
 		vignette.setIntensity( 1f );
 
 		crt.setEnabled( false );
