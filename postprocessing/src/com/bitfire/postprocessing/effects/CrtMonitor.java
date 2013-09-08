@@ -146,6 +146,10 @@ public final class CrtMonitor extends PostProcessorEffect {
 	}
 
 	// getters
+	public Combine getCombinePass() {
+		return combine;
+	}
+
 	public float getOffset() {
 		return crt.getOffset();
 	}
