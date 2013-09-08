@@ -65,7 +65,7 @@ public final class PostProcessing implements Disposable, PostProcessorListener {
 		bloom = new Bloom( (int)(Gdx.graphics.getWidth() * 0.25f), (int)(Gdx.graphics.getHeight() * 0.25f) );
 		curvature = new Curvature();
 		zoomer = new Zoomer( vpW, vpH, isDesktop ? RadialBlur.Quality.VeryHigh : RadialBlur.Quality.Low );
-		crt = new CrtMonitor( vpW, vpH, false, false, RgbMode.RgbShift );
+		crt = new CrtMonitor( vpW, vpH, false, false, RgbMode.ChromaticAberrations );
 		vignette = new Vignette( vpW, vpH, false );
 
 		// add them to the postprocessor
