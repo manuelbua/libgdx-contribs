@@ -5,3 +5,7 @@
 *.class
 */pom.xml
 */.ant*
+target/
+.project
+.settings
+.classpath
