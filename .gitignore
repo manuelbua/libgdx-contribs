@@ -3,7 +3,6 @@
 *.so
 *.log
 *.class
-*/pom.xml
 */.ant*
 target/
 .project

@@ -22,8 +22,17 @@
 	<modules>
 		<module>utils</module>
 		<module>postprocessing</module>
-		<module>postprocessing-demo</module>
 	</modules>
+
+	<profiles>
+		<profile>
+			<id>demo</id>
+			<modules>
+				<module>postprocessing-demo</module>
+			</modules>
+		</profile>
+	</profiles>
+
 
 	<build>
 		<plugins>
