@@ -23,10 +23,10 @@
 	<!-- compile -->
 	<target name="compile" depends="init">
 		<javac target="1.6" source="1.6" debug="on" srcdir="${api.dir}/src/" destdir="${api.dir}/bin/">
-			<src path="../utils/src/" />
+			<src path="../utils/src/main/java/" />
 			<classpath>
 				<fileset dir="/home/manuel/dev/libgdx-nightly/">
-					<include name="gdx.jar" />
+					<include name="gdx-0.9.9-SNAPSHOT.jar" />
 				</fileset>
 			</classpath>
 		</javac>
@@ -36,7 +36,7 @@
 	<target name="package" depends="compile">
 		<!-- api -->
 		<jar destfile="${api.dir}/release/${api.name}.jar" basedir="${api.dir}/bin" />
-		<jar destfile="${api.dir}/release/${api.name}-sources.jar" basedir="${api.dir}/src">
+		<jar destfile="${api.dir}/release/${api.name}-sources.jar" basedir="${api.dir}/src/main/java">
 			<fileset dir="../utils/src/" />
 		</jar>
 	</target>
@@ -45,7 +45,7 @@
 	<target name="zip" depends="package">
 		<zip destfile="release/${api.name}-${version}.zip">
 			<fileset dir="release/${api.dir}" includes="*.jar"/>
-			<zipfileset dir="${api.dir}/shaders" prefix="shaders"/>
+			<zipfileset dir="${api.dir}/src/main/resources/shaders" prefix="shaders"/>
 		</zip>
 		<delete><fileset dir="release/" includes="*.jar" /></delete>
 	</target>
