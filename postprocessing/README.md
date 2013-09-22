@@ -130,5 +130,14 @@ Easy, uh? Just one more note: in case you didn't want to have your UI post-proce
 
 ## Known issues
 
-Probably quite a few bugs live in there :)  
+* **Error: Java.Lang.NoClassDefFoundError: com.bitfire.utils.ShaderLoader. (Android)**
+* **More obscure Dex-related errors (Android)**
+
+Thanks to CatalystNZ for figuring this out.
+It looks like the fix is pretty simple: one should track dependency usage in the projects and the projects it depends on, and carefully avoid to have both projects reference the same source.
+
+So referencing *gdx.jar* is enough and **DO NOT** link any gdx source in the contribs project (else, reference the sources and DO NOT use the .jar files anywhere).
+
+## Notes
+Probably quite a few other bugs live in there :)
 Please [report them](https://github.com/manuelbua/libgdx-contribs/issues) on github!
