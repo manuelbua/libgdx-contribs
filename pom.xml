@@ -10,6 +10,7 @@
 
 	<properties>
 		<gdx.version>0.9.9-SNAPSHOT</gdx.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<repositories>

@@ -6,6 +6,7 @@
 		<groupId>com.bitfire</groupId>
 		<artifactId>libgdx-contribs</artifactId>
 		<version>1.0.6.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>postprocessing-demo</artifactId>

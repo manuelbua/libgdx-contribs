@@ -21,7 +21,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 	default: { vScroll: default-scroll, hScrollKnob: default-round-large, background: default-rect, hScroll: default-scroll, vScrollKnob: default-round-large }
 },
 com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
-	default: { listBackground: default-rect, listSelection: default-select-selection, font: default-font, fontColor: white, background: default-select }
+	default: { font: default-font, fontColor: white, background: default-select, scrollStyle: default, listStyle: { font: default-font, selection: default-select-selection } }
 },
 com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
 	default-vertical: { handle: default-splitpane-vertical },
