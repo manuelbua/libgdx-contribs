@@ -97,7 +97,7 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 
 	@Override
 	public void create() {
-		ShaderLoader.BasePath = "../shaders/";
+		ShaderLoader.BasePath = "shaders/";
 		plex = new InputMultiplexer();
 		plex.addProcessor( this );
 		Gdx.input.setInputProcessor( plex );
