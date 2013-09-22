@@ -25,8 +25,8 @@
 		<javac target="1.6" source="1.6" debug="on" srcdir="${api.dir}/src/" destdir="${api.dir}/bin/">
 			<src path="../utils/src/main/java/" />
 			<classpath>
-				<fileset dir="/home/manuel/dev/libgdx-nightly/">
-					<include name="gdx-0.9.9-SNAPSHOT.jar" />
+				<fileset dir="/home/manuel/dev/libgdx/dist">
+					<include name="gdx.jar" />
 				</fileset>
 			</classpath>
 		</javac>
