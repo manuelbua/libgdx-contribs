@@ -8,14 +8,14 @@
 		<version>1.0.6.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<artifactId>postprocessing</artifactId>
+	<artifactId>libgdx-contribs-postprocessing</artifactId>
 	<packaging>jar</packaging>
 	<name>postprocessing</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.bitfire</groupId>
-			<artifactId>utils</artifactId>
+			<artifactId>libgdx-contribs-utils</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

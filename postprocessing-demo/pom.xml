@@ -9,7 +9,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>postprocessing-demo</artifactId>
+	<artifactId>libgdx-contribs-postprocessing-demo</artifactId>
 	<packaging>jar</packaging>
 	<name>postprocessing demo</name>
 
@@ -20,7 +20,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.bitfire</groupId>
-			<artifactId>postprocessing</artifactId>
+			<artifactId>libgdx-contribs-postprocessing</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
