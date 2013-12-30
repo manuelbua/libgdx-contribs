@@ -136,10 +136,30 @@ void main(void)
 	col.rgb = colorAberrate(u_texture0, flipped_uv);
 #endif
 
+#ifdef ENABLE_LOOSE_DETAILS
+	// contrast up, lightness down a bit, loose detail in dark areas
 	col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);
+#endif
+
+#ifdef ENABLE_VIGNETTE
+	// vignette
 	col *= 0.5 + 0.5*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);
+#endif
+
+#ifdef ENABLE_TINT
+	// tint
 	col *= tint;
+#endif
+
+#ifdef ENABLE_SCANLINES
+	// scanline
 	col *= 0.9+0.1*sin(10.0*time-uv.y*1000.0);
+#endif
+
+#ifdef ENABLE_PHOSPHOR_VIBRANCE
+	// phosphor vibrance
 	col *= 0.97+0.03*sin(110.0*time);
+#endif
+
 	gl_FragColor = vec4(col,1.0);
 }

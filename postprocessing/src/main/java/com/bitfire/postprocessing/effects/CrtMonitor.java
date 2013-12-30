@@ -45,173 +45,173 @@ public final class CrtMonitor extends PostProcessorEffect {
 	private int sfactor, dfactor;
 
 	// the effect is designed to work on the whole screen area, no small/mid size tricks!
-	public CrtMonitor( int fboWidth, int fboHeight, boolean barrelDistortion, boolean performBlur, RgbMode mode ) {
+	public CrtMonitor (int fboWidth, int fboHeight, boolean barrelDistortion, boolean performBlur, RgbMode mode, int effects) {
 		doblur = performBlur;
 
-		if( doblur ) {
-			pingPongBuffer = PostProcessor.newPingPongBuffer( fboWidth, fboHeight, PostProcessor.getFramebufferFormat(), false );
-			blur = new Blur( fboWidth, fboHeight );
-			blur.setPasses( 1 );
-			blur.setAmount( 1f );
+		if (doblur) {
+			pingPongBuffer = PostProcessor.newPingPongBuffer(fboWidth, fboHeight, PostProcessor.getFramebufferFormat(), false);
+			blur = new Blur(fboWidth, fboHeight);
+			blur.setPasses(1);
+			blur.setAmount(1f);
 			// blur.setType( BlurType.Gaussian3x3b ); // high defocus
-			blur.setType( BlurType.Gaussian3x3 ); // modern machines defocus
+			blur.setType(BlurType.Gaussian3x3); // modern machines defocus
 		} else {
-			buffer = new FrameBuffer( PostProcessor.getFramebufferFormat(), fboWidth, fboHeight, false );
+			buffer = new FrameBuffer(PostProcessor.getFramebufferFormat(), fboWidth, fboHeight, false);
 		}
 
 		combine = new Combine();
 
-		switch( mode ) {
+		switch (mode) {
 		case RgbShift:
-			combine.setSource1Intensity( barrelDistortion ? 0f : 0.15f );
-			combine.setSource2Intensity( barrelDistortion ? 1.2f : 1.1f );
-			combine.setSource1Saturation( 1f );
-			combine.setSource2Saturation( 0.8f );
+			combine.setSource1Intensity(barrelDistortion ? 0f : 0.15f);
+			combine.setSource2Intensity(barrelDistortion ? 1.2f : 1.1f);
+			combine.setSource1Saturation(1f);
+			combine.setSource2Saturation(0.8f);
 			break;
 		case ChromaticAberrations:
-			combine.setSource1Intensity( 0f );
-			combine.setSource2Intensity( 1.2f );
-			combine.setSource1Saturation( 0f );
-			combine.setSource2Saturation( 1f );
+			combine.setSource1Intensity(0f);
+			combine.setSource2Intensity(1.2f);
+			combine.setSource1Saturation(0f);
+			combine.setSource2Saturation(1f);
 			break;
 		default:
-			throw new GdxRuntimeException( "Unsupported RGB mode" );
+			throw new GdxRuntimeException("Unsupported RGB mode");
 		}
 
-		crt = new CrtScreen( barrelDistortion, mode );
+		crt = new CrtScreen(barrelDistortion, mode, effects);
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose () {
 		crt.dispose();
 		combine.dispose();
-		if( doblur ) {
+		if (doblur) {
 			blur.dispose();
 		}
 
-		if( buffer != null ) {
+		if (buffer != null) {
 			buffer.dispose();
 		}
 
-		if( pingPongBuffer != null ) {
+		if (pingPongBuffer != null) {
 			pingPongBuffer.dispose();
 		}
 	}
 
-	public void enableBlending( int sfactor, int dfactor ) {
+	public void enableBlending (int sfactor, int dfactor) {
 		this.blending = true;
 		this.sfactor = sfactor;
 		this.dfactor = dfactor;
 	}
 
-	public void disableBlending() {
+	public void disableBlending () {
 		this.blending = false;
 	}
 
 	// setters
-	public void setTime( float elapsedSecs ) {
-		crt.setTime( elapsedSecs );
+	public void setTime (float elapsedSecs) {
+		crt.setTime(elapsedSecs);
 	}
 
-	public void setColorOffset( float offset ) {
-		crt.setColorOffset( offset );
+	public void setColorOffset (float offset) {
+		crt.setColorOffset(offset);
 	}
 
-	public void setChromaticDispersion( float redCyan, float blueYellow ) {
-		crt.setChromaticDispersion( redCyan, blueYellow );
+	public void setChromaticDispersion (float redCyan, float blueYellow) {
+		crt.setChromaticDispersion(redCyan, blueYellow);
 	}
 
-	public void setChromaticDispersionRC( float redCyan ) {
-		crt.setChromaticDispersionRC( redCyan );
+	public void setChromaticDispersionRC (float redCyan) {
+		crt.setChromaticDispersionRC(redCyan);
 	}
 
-	public void setChromaticDispersionBY( float blueYellow ) {
-		crt.setChromaticDispersionBY( blueYellow );
+	public void setChromaticDispersionBY (float blueYellow) {
+		crt.setChromaticDispersionBY(blueYellow);
 	}
 
-	public void setTint( Color tint ) {
-		crt.setTint( tint );
+	public void setTint (Color tint) {
+		crt.setTint(tint);
 	}
 
-	public void setTint( float r, float g, float b ) {
-		crt.setTint( r, g, b );
+	public void setTint (float r, float g, float b) {
+		crt.setTint(r, g, b);
 	}
 
-	public void setDistortion( float distortion ) {
-		crt.setDistortion( distortion );
+	public void setDistortion (float distortion) {
+		crt.setDistortion(distortion);
 	}
 
-	public void setZoom( float zoom ) {
-		crt.setZoom( zoom );
+	public void setZoom (float zoom) {
+		crt.setZoom(zoom);
 	}
 
 	// getters
-	public Combine getCombinePass() {
+	public Combine getCombinePass () {
 		return combine;
 	}
 
-	public float getOffset() {
+	public float getOffset () {
 		return crt.getOffset();
 	}
 
-	public Vector2 getChromaticDispersion() {
+	public Vector2 getChromaticDispersion () {
 		return crt.getChromaticDispersion();
 	}
 
-	public float getZoom() {
+	public float getZoom () {
 		return crt.getZoom();
 	}
 
-	public Color getTint() {
+	public Color getTint () {
 		return crt.getTint();
 	}
 
 	@Override
-	public void rebind() {
+	public void rebind () {
 		crt.rebind();
 	}
 
 	@Override
-	public void render( FrameBuffer src, FrameBuffer dest ) {
+	public void render (FrameBuffer src, FrameBuffer dest) {
 		// the original scene
 		Texture in = src.getColorBufferTexture();
 
-		boolean blendingWasEnabled = PostProcessor.isStateEnabled( GL20.GL_BLEND );
-		Gdx.gl.glDisable( GL10.GL_BLEND );
+		boolean blendingWasEnabled = PostProcessor.isStateEnabled(GL20.GL_BLEND);
+		Gdx.gl.glDisable(GL10.GL_BLEND);
 
 		Texture out = null;
 
-		if( doblur ) {
+		if (doblur) {
 
 			pingPongBuffer.begin();
 			{
 				// crt pass
-				crt.setInput( in ).setOutput( pingPongBuffer.getSourceBuffer() ).render();
+				crt.setInput(in).setOutput(pingPongBuffer.getSourceBuffer()).render();
 
 				// blur pass
-				blur.render( pingPongBuffer );
+				blur.render(pingPongBuffer);
 			}
 			pingPongBuffer.end();
 
 			out = pingPongBuffer.getResultTexture();
 		} else {
 			// crt pass
-			crt.setInput( in ).setOutput( buffer ).render();
+			crt.setInput(in).setOutput(buffer).render();
 
 			out = buffer.getColorBufferTexture();
 		}
 
-		if( blending || blendingWasEnabled ) {
-			Gdx.gl.glEnable( GL20.GL_BLEND );
+		if (blending || blendingWasEnabled) {
+			Gdx.gl.glEnable(GL20.GL_BLEND);
 		}
 
-		if( blending ) {
-			Gdx.gl.glBlendFunc( sfactor, dfactor );
+		if (blending) {
+			Gdx.gl.glBlendFunc(sfactor, dfactor);
 		}
 
-		restoreViewport( dest );
+		restoreViewport(dest);
 
 		// do combine pass
-		combine.setOutput( dest ).setInput( in, out ).render();
+		combine.setOutput(dest).setInput(in, out).render();
 	};
 }
