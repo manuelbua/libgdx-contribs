@@ -37,7 +37,7 @@ public final class CrtScreen extends Filter<CrtScreen> {
 	}
 
 	public enum Effect {
-		None(0), LooseDetails(1), Vignette(2), Tint(4), Scanlines(8), PhosphorVibrance(16);
+		None(0), TweakContrast(1), Vignette(2), Tint(4), Scanlines(8), PhosphorVibrance(16);
 
 		public int v;
 
@@ -85,7 +85,7 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		super( ShaderLoader.fromFile( "screenspace", "crt-screen", (barrelDistortion ? "#define ENABLE_BARREL_DISTORTION\n" : "")
 				+ (mode == RgbMode.RgbShift ? "#define ENABLE_RGB_SHIFT\n" : "")
 				+ (mode == RgbMode.ChromaticAberrations ? "#define ENABLE_CHROMATIC_ABERRATIONS\n" : "")
-				+ (isSetEffect(Effect.LooseDetails, effects) ? "#define ENABLE_LOOSE_DETAILS\n" : "")
+				+ (isSetEffect(Effect.TweakContrast, effects) ? "#define ENABLE_TWEAK_CONTRAST\n" : "")
 				+ (isSetEffect(Effect.Vignette, effects) ? "#define ENABLE_VIGNETTE\n" : "")
 				+ (isSetEffect(Effect.Tint, effects) ? "#define ENABLE_TINT\n" : "")
 				+ (isSetEffect(Effect.Scanlines, effects) ? "#define ENABLE_SCANLINES\n" : "")

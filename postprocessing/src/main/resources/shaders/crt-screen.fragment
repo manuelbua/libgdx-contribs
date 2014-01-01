@@ -136,7 +136,7 @@ void main(void)
 	col.rgb = colorAberrate(u_texture0, flipped_uv);
 #endif
 
-#ifdef ENABLE_LOOSE_DETAILS
+#ifdef ENABLE_TWEAK_CONTRAST
 	// contrast up, lightness down a bit, loose detail in dark areas
 	col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);
 #endif
