@@ -23,77 +23,73 @@ public final class Zoom extends Filter<Zoom> {
 
 	public enum Param implements Parameter {
 		// @formatter:off
-		Texture( "u_texture0", 0 ),
-		OffsetX( "offset_x", 0 ),
-		OffsetY( "offset_y", 0 ),
-		Zoom( "zoom", 0 ),
-		;
+		Texture("u_texture0", 0), OffsetX("offset_x", 0), OffsetY("offset_y", 0), Zoom("zoom", 0), ;
 		// @formatter:on
 
 		private String mnemonic;
 		private int elementSize;
 
-		private Param( String mnemonic, int arrayElementSize ) {
+		private Param (String mnemonic, int arrayElementSize) {
 			this.mnemonic = mnemonic;
 			this.elementSize = arrayElementSize;
 		}
 
 		@Override
-		public String mnemonic() {
+		public String mnemonic () {
 			return this.mnemonic;
 		}
 
 		@Override
-		public int arrayElementSize() {
+		public int arrayElementSize () {
 			return this.elementSize;
 		}
 	}
 
-	public Zoom() {
-		super( ShaderLoader.fromFile( "zoom", "zoom" ) );
+	public Zoom () {
+		super(ShaderLoader.fromFile("zoom", "zoom"));
 		rebind();
-		setOrigin( 0.5f, 0.5f );
-		setZoom( 1f );
+		setOrigin(0.5f, 0.5f);
+		setZoom(1f);
 	}
 
 	/** Specify the zoom origin, in normalized screen coordinates. */
-	public void setOrigin( float x, float y ) {
+	public void setOrigin (float x, float y) {
 		this.x = x;
 		this.y = y;
-		setParams( Param.OffsetX, this.x );
-		setParams( Param.OffsetY, this.y );
+		setParams(Param.OffsetX, this.x);
+		setParams(Param.OffsetY, this.y);
 		endParams();
 	}
 
-	public void setZoom( float zoom ) {
+	public void setZoom (float zoom) {
 		this.zoom = zoom;
-		setParam( Param.Zoom, this.zoom );
+		setParam(Param.Zoom, this.zoom);
 	}
 
-	public float getZoom() {
+	public float getZoom () {
 		return zoom;
 	}
 
-	public float getOriginX() {
+	public float getOriginX () {
 		return x;
 	}
 
-	public float getOriginY() {
+	public float getOriginY () {
 		return y;
 	}
 
 	@Override
-	public void rebind() {
+	public void rebind () {
 		// reimplement super to batch every parameter
-		setParams( Param.Texture, u_texture0 );
-		setParams( Param.OffsetX, x );
-		setParams( Param.OffsetY, y );
-		setParams( Param.Zoom, zoom );
+		setParams(Param.Texture, u_texture0);
+		setParams(Param.OffsetX, x);
+		setParams(Param.OffsetY, y);
+		setParams(Param.Zoom, zoom);
 		endParams();
 	}
 
 	@Override
-	protected void onBeforeRender() {
-		inputTexture.bind( u_texture0 );
+	protected void onBeforeRender () {
+		inputTexture.bind(u_texture0);
 	}
 }

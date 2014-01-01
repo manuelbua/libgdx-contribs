@@ -22,31 +22,29 @@ import com.bitfire.postprocessing.utils.PingPongBuffer;
 public final class Blur extends MultipassFilter {
 	// @formatter:off
 	private enum Tap {
-		Tap3x3( 1 ),
-		Tap5x5( 2 ),
-		//Tap7x7( 3 )
+		Tap3x3(1), Tap5x5(2),
+		// Tap7x7( 3 )
 		;
 
 		public final int radius;
 
-		private Tap( int radius ) {
+		private Tap (int radius) {
 			this.radius = radius;
 		}
 	}
 
 	public enum BlurType {
-		Gaussian3x3( Tap.Tap3x3 ),
-		Gaussian3x3b( Tap.Tap3x3 ),	// R=5 (11x11, policy "higher-then-discard")
-		Gaussian5x5( Tap.Tap5x5 ),
-		Gaussian5x5b( Tap.Tap5x5 ), // R=9 (19x19, policy "higher-then-discard")
+		Gaussian3x3(Tap.Tap3x3), Gaussian3x3b(Tap.Tap3x3), // R=5 (11x11, policy "higher-then-discard")
+		Gaussian5x5(Tap.Tap5x5), Gaussian5x5b(Tap.Tap5x5), // R=9 (19x19, policy "higher-then-discard")
 		;
 
 		public final Tap tap;
 
-		private BlurType( Tap tap ) {
+		private BlurType (Tap tap) {
 			this.tap = tap;
 		}
 	}
+
 	// @formatter:on
 
 	// blur
@@ -56,9 +54,9 @@ public final class Blur extends MultipassFilter {
 
 	// fbo, textures
 	private float invWidth, invHeight;
-	private final IntMap<Convolve2D> convolve = new IntMap<Convolve2D>( Tap.values().length );
+	private final IntMap<Convolve2D> convolve = new IntMap<Convolve2D>(Tap.values().length);
 
-	public Blur( int width, int height ) {
+	public Blur (int width, int height) {
 		// precompute constants
 		this.invWidth = 1f / (float)width;
 		this.invHeight = 1f / (float)height;
@@ -67,61 +65,61 @@ public final class Blur extends MultipassFilter {
 		this.amount = 1f;
 
 		// create filters
-		for( Tap tap : Tap.values() ) {
-			convolve.put( tap.radius, new Convolve2D( tap.radius ) );
+		for (Tap tap : Tap.values()) {
+			convolve.put(tap.radius, new Convolve2D(tap.radius));
 		}
 
-		setType( BlurType.Gaussian5x5 );
+		setType(BlurType.Gaussian5x5);
 	}
 
-	public void dispose() {
-		for( Convolve2D c : convolve.values() ) {
+	public void dispose () {
+		for (Convolve2D c : convolve.values()) {
 			c.dispose();
 		}
 	}
 
-	public void setPasses( int passes ) {
+	public void setPasses (int passes) {
 		this.passes = passes;
 	}
 
-	public void setType( BlurType type ) {
-		if( this.type != type ) {
+	public void setType (BlurType type) {
+		if (this.type != type) {
 			this.type = type;
 			computeBlurWeightings();
 		}
 	}
 
 	// not all blur types support custom amounts at this time
-	public void setAmount( float amount ) {
+	public void setAmount (float amount) {
 		this.amount = amount;
 		computeBlurWeightings();
 	}
 
-	public int getPasses() {
+	public int getPasses () {
 		return passes;
 	}
 
-	public BlurType getType() {
+	public BlurType getType () {
 		return type;
 	}
 
 	// not all blur types support custom amounts at this time
-	public float getAmount() {
+	public float getAmount () {
 		return amount;
 	}
 
 	@Override
-	public void render( PingPongBuffer buffer ) {
-		Convolve2D c = convolve.get( this.type.tap.radius );
+	public void render (PingPongBuffer buffer) {
+		Convolve2D c = convolve.get(this.type.tap.radius);
 
-		for( int i = 0; i < this.passes; i++ ) {
-			c.render( buffer );
+		for (int i = 0; i < this.passes; i++) {
+			c.render(buffer);
 		}
 	}
 
-	private void computeBlurWeightings() {
+	private void computeBlurWeightings () {
 		boolean hasdata = true;
-		Convolve2D c = convolve.get( this.type.tap.radius );
+		Convolve2D c = convolve.get(this.type.tap.radius);
 
 		float[] outWeights = c.weights;
 		float[] outOffsetsH = c.offsetsHor;
@@ -130,11 +128,11 @@ public final class Blur extends MultipassFilter {
 		float dx = this.invWidth;
 		float dy = this.invHeight;
 
-		switch( this.type ) {
+		switch (this.type) {
 		case Gaussian3x3:
 		case Gaussian5x5:
-			computeKernel( this.type.tap.radius, this.amount, outWeights );
-			computeOffsets( this.type.tap.radius, this.invWidth, this.invHeight, outOffsetsH, outOffsetsV );
+			computeKernel(this.type.tap.radius, this.amount, outWeights);
+			computeOffsets(this.type.tap.radius, this.invWidth, this.invHeight, outOffsetsH, outOffsetsV);
 			break;
 
 		case Gaussian3x3b:
@@ -165,7 +163,7 @@ public final class Blur extends MultipassFilter {
 			outOffsetsV[5] = 1.33333f;
 
 			// scale offsets from binomial space to screen space
-			for( int i = 0; i < c.length * 2; i++ ) {
+			for (int i = 0; i < c.length * 2; i++) {
 				outOffsetsH[i] *= dx;
 				outOffsetsV[i] *= dy;
 			}
@@ -211,7 +209,7 @@ public final class Blur extends MultipassFilter {
 			outOffsetsV[9] = 3.23077f;
 
 			// scale offsets from binomial space to screen space
-			for( int i = 0; i < c.length * 2; i++ ) {
+			for (int i = 0; i < c.length * 2; i++) {
 				outOffsetsH[i] *= dx;
 				outOffsetsV[i] *= dy;
 			}
@@ -222,41 +220,41 @@ public final class Blur extends MultipassFilter {
 			break;
 		}
 
-		if( hasdata ) {
+		if (hasdata) {
 			c.upload();
 		}
 	}
 
-	private void computeKernel( int blurRadius, float blurAmount, float[] outKernel ) {
+	private void computeKernel (int blurRadius, float blurAmount, float[] outKernel) {
 		int radius = blurRadius;
 
 		// float sigma = (float)radius / amount;
 		float sigma = blurAmount;
 
 		float twoSigmaSquare = 2.0f * sigma * sigma;
-		float sigmaRoot = (float)Math.sqrt( twoSigmaSquare * Math.PI );
+		float sigmaRoot = (float)Math.sqrt(twoSigmaSquare * Math.PI);
 		float total = 0.0f;
 		float distance = 0.0f;
 		int index = 0;
 
-		for( int i = -radius; i <= radius; ++i ) {
+		for (int i = -radius; i <= radius; ++i) {
 			distance = i * i;
 			index = i + radius;
-			outKernel[index] = (float)Math.exp( -distance / twoSigmaSquare ) / sigmaRoot;
+			outKernel[index] = (float)Math.exp(-distance / twoSigmaSquare) / sigmaRoot;
 			total += outKernel[index];
 		}
 
 		int size = (radius * 2) + 1;
-		for( int i = 0; i < size; ++i ) {
+		for (int i = 0; i < size; ++i) {
 			outKernel[i] /= total;
 		}
 	}
 
-	private void computeOffsets( int blurRadius, float dx, float dy, float[] outOffsetH, float[] outOffsetV ) {
+	private void computeOffsets (int blurRadius, float dx, float dy, float[] outOffsetH, float[] outOffsetV) {
 		int radius = blurRadius;
 
 		final int X = 0, Y = 1;
-		for( int i = -radius, j = 0; i <= radius; ++i, j += 2 ) {
+		for (int i = -radius, j = 0; i <= radius; ++i, j += 2) {
 			outOffsetH[j + X] = i * dx;
 			outOffsetH[j + Y] = 0;
 
@@ -266,7 +264,7 @@ public final class Blur extends MultipassFilter {
 	}
 
 	@Override
-	public void rebind() {
+	public void rebind () {
 		computeBlurWeightings();
 	}
 }

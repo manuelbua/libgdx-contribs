@@ -23,29 +23,26 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
-/**
- * Encapsulates a fullscreen quad, geometry is aligned to the screen
- * corners.
+/** Encapsulates a fullscreen quad, geometry is aligned to the screen corners.
  * 
- * @author bmanuel
- */
+ * @author bmanuel */
 public class FullscreenQuad {
 	private Mesh quad;
 
-	public FullscreenQuad() {
+	public FullscreenQuad () {
 		quad = createFullscreenQuad();
 	}
 
-	public void dispose() {
+	public void dispose () {
 		quad.dispose();
 	}
 
 	/** Renders the quad with the specified shader program. */
-	public void render( ShaderProgram program ) {
-		quad.render( program, GL20.GL_TRIANGLE_FAN, 0, 4 );
+	public void render (ShaderProgram program) {
+		quad.render(program, GL20.GL_TRIANGLE_FAN, 0, 4);
 	}
 
-	private Mesh createFullscreenQuad() {
+	private Mesh createFullscreenQuad () {
 		// vertex coord
 		verts[X1] = -1;
 		verts[Y1] = -1;
@@ -72,15 +69,15 @@ public class FullscreenQuad {
 		verts[U4] = 0f;
 		verts[V4] = 1f;
 
-		Mesh tmpMesh = new Mesh( VertexDataType.VertexArray, true, 4, 0, new VertexAttribute( Usage.Position, 2, "a_position" ),
-				new VertexAttribute( Usage.TextureCoordinates, 2, "a_texCoord0" ) );
+		Mesh tmpMesh = new Mesh(VertexDataType.VertexArray, true, 4, 0, new VertexAttribute(Usage.Position, 2, "a_position"),
+			new VertexAttribute(Usage.TextureCoordinates, 2, "a_texCoord0"));
 
-		tmpMesh.setVertices( verts );
+		tmpMesh.setVertices(verts);
 		return tmpMesh;
 	}
 
 	private static final int VERT_SIZE = 16;
-	private static float[] verts = new float[ VERT_SIZE ];
+	private static float[] verts = new float[VERT_SIZE];
 	private static final int X1 = 0;
 	private static final int Y1 = 1;
 	private static final int U1 = 2;

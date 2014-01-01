@@ -27,13 +27,13 @@ import com.bitfire.postprocessing.utils.FullscreenQuad;
 
 /** The base class for any single-pass filter. */
 
-@SuppressWarnings( "unchecked" )
+@SuppressWarnings("unchecked")
 public abstract class Filter<T> {
 
 	public interface Parameter {
-		String mnemonic();
+		String mnemonic ();
 
-		int arrayElementSize();
+		int arrayElementSize ();
 	}
 
 	protected static final FullscreenQuad quad = new FullscreenQuad();
@@ -48,96 +48,97 @@ public abstract class Filter<T> {
 	protected ShaderProgram program = null;
 	private boolean programBegan = false;
 
-	public Filter( ShaderProgram program ) {
+	public Filter (ShaderProgram program) {
 		this.program = program;
 	}
 
-	public T setInput( Texture input ) {
+	public T setInput (Texture input) {
 		this.inputTexture = input;
 		return (T)this; // assumes T extends Filter
 	}
 
-	public T setInput( FrameBuffer input ) {
-		return setInput( input.getColorBufferTexture() );
+	public T setInput (FrameBuffer input) {
+		return setInput(input.getColorBufferTexture());
 	}
 
-	public T setOutput( FrameBuffer output ) {
+	public T setOutput (FrameBuffer output) {
 		this.outputBuffer = output;
 		return (T)this;
 	}
 
-	public void dispose() {
+	public void dispose () {
 		program.dispose();
 	}
 
 	/** FIXME add comment */
-	public abstract void rebind();
+	public abstract void rebind ();
 
-	/* Sets the parameter to the specified value for this filter.
-	 * This is for one-off operations since the shader is being bound and unbound once per call: for
-	 * a batch-ready version of this fuction see and use setParams instead. */
+	/*
+	 * Sets the parameter to the specified value for this filter. This is for one-off operations since the shader is being bound
+	 * and unbound once per call: for a batch-ready version of this fuction see and use setParams instead.
+	 */
 
 	// int
-	protected void setParam( Parameter param, int value ) {
+	protected void setParam (Parameter param, int value) {
 		program.begin();
-		program.setUniformi( param.mnemonic(), value );
+		program.setUniformi(param.mnemonic(), value);
 		program.end();
 	}
 
 	// float
-	protected void setParam( Parameter param, float value ) {
+	protected void setParam (Parameter param, float value) {
 		program.begin();
-		program.setUniformf( param.mnemonic(), value );
+		program.setUniformf(param.mnemonic(), value);
 		program.end();
 	}
 
 	// vec2
-	protected void setParam( Parameter param, Vector2 value ) {
+	protected void setParam (Parameter param, Vector2 value) {
 		program.begin();
-		program.setUniformf( param.mnemonic(), value );
+		program.setUniformf(param.mnemonic(), value);
 		program.end();
 	}
 
 	// vec3
-	protected void setParam( Parameter param, Vector3 value ) {
+	protected void setParam (Parameter param, Vector3 value) {
 		program.begin();
-		program.setUniformf( param.mnemonic(), value );
+		program.setUniformf(param.mnemonic(), value);
 		program.end();
 	}
 
 	// mat3
-	protected T setParam( Parameter param, Matrix3 value ) {
+	protected T setParam (Parameter param, Matrix3 value) {
 		program.begin();
-		program.setUniformMatrix( param.mnemonic(), value );
+		program.setUniformMatrix(param.mnemonic(), value);
 		program.end();
 		return (T)this;
 	}
 
 	// mat4
-	protected T setParam( Parameter param, Matrix4 value ) {
+	protected T setParam (Parameter param, Matrix4 value) {
 		program.begin();
-		program.setUniformMatrix( param.mnemonic(), value );
+		program.setUniformMatrix(param.mnemonic(), value);
 		program.end();
 		return (T)this;
 	}
 
 	// float[], vec2[], vec3[], vec4[]
-	protected T setParamv( Parameter param, float[] values, int offset, int length ) {
+	protected T setParamv (Parameter param, float[] values, int offset, int length) {
 		program.begin();
 
-		switch( param.arrayElementSize() ) {
+		switch (param.arrayElementSize()) {
 		case 4:
-			program.setUniform4fv( param.mnemonic(), values, offset, length );
+			program.setUniform4fv(param.mnemonic(), values, offset, length);
 			break;
 		case 3:
-			program.setUniform3fv( param.mnemonic(), values, offset, length );
+			program.setUniform3fv(param.mnemonic(), values, offset, length);
 			break;
 		case 2:
-			program.setUniform2fv( param.mnemonic(), values, offset, length );
+			program.setUniform2fv(param.mnemonic(), values, offset, length);
 			break;
 		default:
 		case 1:
-			program.setUniform1fv( param.mnemonic(), values, offset, length );
+			program.setUniform1fv(param.mnemonic(), values, offset, length);
 			break;
 		}
 
@@ -145,91 +146,89 @@ public abstract class Filter<T> {
 		return (T)this;
 	}
 
-	/**
-	 * Sets the parameter to the specified value for this filter.
-	 * When you are finished building the batch you shall signal it by invoking endParams().
-	 */
+	/** Sets the parameter to the specified value for this filter. When you are finished building the batch you shall signal it by
+	 * invoking endParams(). */
 
 	// float
-	protected T setParams( Parameter param, float value ) {
-		if( !programBegan ) {
+	protected T setParams (Parameter param, float value) {
+		if (!programBegan) {
 			programBegan = true;
 			program.begin();
 		}
-		program.setUniformf( param.mnemonic(), value );
+		program.setUniformf(param.mnemonic(), value);
 		return (T)this;
 	}
 
 	// int version
-	protected T setParams( Parameter param, int value ) {
-		if( !programBegan ) {
+	protected T setParams (Parameter param, int value) {
+		if (!programBegan) {
 			programBegan = true;
 			program.begin();
 		}
-		program.setUniformi( param.mnemonic(), value );
+		program.setUniformi(param.mnemonic(), value);
 		return (T)this;
 	}
 
 	// vec2 version
-	protected T setParams( Parameter param, Vector2 value ) {
-		if( !programBegan ) {
+	protected T setParams (Parameter param, Vector2 value) {
+		if (!programBegan) {
 			programBegan = true;
 			program.begin();
 		}
-		program.setUniformf( param.mnemonic(), value );
+		program.setUniformf(param.mnemonic(), value);
 		return (T)this;
 	}
 
 	// vec3 version
-	protected T setParams( Parameter param, Vector3 value ) {
-		if( !programBegan ) {
+	protected T setParams (Parameter param, Vector3 value) {
+		if (!programBegan) {
 			programBegan = true;
 			program.begin();
 		}
-		program.setUniformf( param.mnemonic(), value );
+		program.setUniformf(param.mnemonic(), value);
 		return (T)this;
 	}
 
 	// mat3
-	protected T setParams( Parameter param, Matrix3 value ) {
-		if( !programBegan ) {
+	protected T setParams (Parameter param, Matrix3 value) {
+		if (!programBegan) {
 			programBegan = true;
 			program.begin();
 		}
-		program.setUniformMatrix( param.mnemonic(), value );
+		program.setUniformMatrix(param.mnemonic(), value);
 		return (T)this;
 	}
 
 	// mat4
-	protected T setParams( Parameter param, Matrix4 value ) {
-		if( !programBegan ) {
+	protected T setParams (Parameter param, Matrix4 value) {
+		if (!programBegan) {
 			programBegan = true;
 			program.begin();
 		}
-		program.setUniformMatrix( param.mnemonic(), value );
+		program.setUniformMatrix(param.mnemonic(), value);
 		return (T)this;
 	}
 
 	// float[], vec2[], vec3[], vec4[]
-	protected T setParamsv( Parameter param, float[] values, int offset, int length ) {
-		if( !programBegan ) {
+	protected T setParamsv (Parameter param, float[] values, int offset, int length) {
+		if (!programBegan) {
 			programBegan = true;
 			program.begin();
 		}
 
-		switch( param.arrayElementSize() ) {
+		switch (param.arrayElementSize()) {
 		case 4:
-			program.setUniform4fv( param.mnemonic(), values, offset, length );
+			program.setUniform4fv(param.mnemonic(), values, offset, length);
 			break;
 		case 3:
-			program.setUniform3fv( param.mnemonic(), values, offset, length );
+			program.setUniform3fv(param.mnemonic(), values, offset, length);
 			break;
 		case 2:
-			program.setUniform2fv( param.mnemonic(), values, offset, length );
+			program.setUniform2fv(param.mnemonic(), values, offset, length);
 			break;
 		default:
 		case 1:
-			program.setUniform1fv( param.mnemonic(), values, offset, length );
+			program.setUniform1fv(param.mnemonic(), values, offset, length);
 			break;
 		}
 
@@ -237,18 +236,18 @@ public abstract class Filter<T> {
 	}
 
 	/** Should be called after any one or more setParams method calls. */
-	protected void endParams() {
-		if( programBegan ) {
+	protected void endParams () {
+		if (programBegan) {
 			program.end();
 			programBegan = false;
 		}
 	}
 
 	/** This method will get called just before a rendering operation occurs. */
-	protected abstract void onBeforeRender();
+	protected abstract void onBeforeRender ();
 
-	public final void render() {
-		if( outputBuffer != null ) {
+	public final void render () {
+		if (outputBuffer != null) {
 			outputBuffer.begin();
 			realRender();
 			outputBuffer.end();
@@ -257,12 +256,12 @@ public abstract class Filter<T> {
 		}
 	}
 
-	private void realRender() {
+	private void realRender () {
 		// gives a chance to filters to perform needed operations just before the rendering operation take place.
 		onBeforeRender();
 
 		program.begin();
-		quad.render( program );
+		quad.render(program);
 		program.end();
 	}
 }
