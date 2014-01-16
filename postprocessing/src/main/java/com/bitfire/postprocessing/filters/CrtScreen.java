@@ -17,6 +17,7 @@
 package com.bitfire.postprocessing.filters;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -120,7 +121,7 @@ public final class CrtScreen extends Filter<CrtScreen> {
 
 	public void setTime (float elapsedSecs) {
 		this.elapsedSecs = elapsedSecs;
-		setParam(Param.Time, elapsedSecs);
+		setParam(Param.Time, (elapsedSecs % MathUtils.PI));
 	}
 
 	public void setColorOffset (float offset) {
