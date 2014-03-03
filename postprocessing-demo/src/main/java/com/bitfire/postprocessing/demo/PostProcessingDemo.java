@@ -64,7 +64,6 @@ public class PostProcessingDemo implements ApplicationListener, InputProcessor {
 		config.samples = 0;
 		config.depth = 0;
 		config.vSyncEnabled = true;
-		config.useGL20 = true;
 		config.fullscreen = false;
 
 		new LwjglApplication( new PostProcessingDemo(), config );

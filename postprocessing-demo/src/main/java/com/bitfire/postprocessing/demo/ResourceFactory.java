@@ -100,15 +100,17 @@ public final class ResourceFactory {
 		return cb;
 	}
 
-	public static SelectBox newSelectBox( Object[] items ) {
+	public static SelectBox<String> newSelectBox( String[] items ) {
 		return newSelectBox( items, null );
 	}
 
-	public static SelectBox newSelectBox( Object[] items, ChangeListener listener ) {
-		SelectBox sb = new SelectBox( items, UISkin );
+	public static SelectBox<String> newSelectBox( String[] items, ChangeListener listener ) {
+		SelectBox<String> sb = new SelectBox<String>( UISkin );
 		if( listener != null ) {
 			sb.addListener( listener );
 		}
+
+		sb.setItems( items );
 		return sb;
 	}
 

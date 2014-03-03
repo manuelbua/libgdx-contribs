@@ -18,7 +18,6 @@ package com.bitfire.postprocessing;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
@@ -47,7 +46,7 @@ public final class PostProcessor implements Disposable {
 	private final ItemsManager<PostProcessorEffect> effectsManager = new ItemsManager<PostProcessorEffect>();
 	private static final Array<PingPongBuffer> buffers = new Array<PingPongBuffer>(5);
 	private final Color clearColor = Color.CLEAR;
-	private int clearBits = GL10.GL_COLOR_BUFFER_BIT;
+	private int clearBits = GL20.GL_COLOR_BUFFER_BIT;
 	private float clearDepth = 1f;
 	private static Rectangle viewport = new Rectangle();
 	private static boolean hasViewport = false;
@@ -114,7 +113,7 @@ public final class PostProcessor implements Disposable {
 		enabled = true;
 		this.useDepth = useDepth;
 		if (useDepth) {
-			clearBits |= GL10.GL_DEPTH_BUFFER_BIT;
+			clearBits |= GL20.GL_DEPTH_BUFFER_BIT;
 		}
 
 		setViewport(null);

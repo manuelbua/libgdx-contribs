@@ -202,14 +202,15 @@ public final class UI {
 			}
 		} );
 
-		final SelectBox sbBackground = ResourceFactory.newSelectBox( new String[] { "None ", "Scratches ", "Mountains ", "Lake ",
-				"Checker board " }, new ChangeListener() {
+		final SelectBox<String> sbBackground = ResourceFactory.newSelectBox( new String[] { "None ", "Scratches ", "Mountains ",
+				"Lake ", "Checker board " }, new ChangeListener() {
 			@Override
 			public void changed( ChangeEvent event, Actor actor ) {
-				SelectBox source = (SelectBox)event.getListenerActor();
+				@SuppressWarnings( "unchecked" )
+				SelectBox<String> source = (SelectBox<String>)actor;
 				drawBackground = true;
 
-				switch( source.getSelectionIndex() ) {
+				switch( source.getSelectedIndex() ) {
 				case 0:
 					drawBackground = false;
 					break;
@@ -253,7 +254,7 @@ public final class UI {
 			}
 		} );
 
-		sbBackground.setSelection( DefaultBackground );
+		sbBackground.setSelectedIndex( DefaultBackground );
 		selectBoxes.add( sbBackground );
 
 		Table t = ResourceFactory.newTable();
@@ -480,13 +481,13 @@ public final class UI {
 			}
 		} );
 
-		final SelectBox sbGradientMap = ResourceFactory.newSelectBox( new String[] { "Cross processing ", "Sunset ", "Mars",
-				"Vivid ", "Greenland ", "Cloudy ", "Muddy " }, new ChangeListener() {
+		final SelectBox<String> sbGradientMap = ResourceFactory.newSelectBox( new String[] { "Cross processing ", "Sunset ",
+				"Mars", "Vivid ", "Greenland ", "Cloudy ", "Muddy " }, new ChangeListener() {
 			@Override
 			public void changed( ChangeEvent event, Actor actor ) {
 				if( post.vignette.isGradientMappingEnabled() ) {
-					SelectBox source = (SelectBox)event.getListenerActor();
-					switch( source.getSelectionIndex() ) {
+					SelectBox<String> source = (SelectBox)actor;
+					switch( source.getSelectedIndex() ) {
 					case 0:
 						post.vignette.setLutIndexVal( 0, 16 );
 						break;
@@ -513,7 +514,7 @@ public final class UI {
 			}
 		} );
 
-		sbGradientMap.setSelection( DefaultGradientMap );
+		sbGradientMap.setSelectedIndex( DefaultGradientMap );
 		selectBoxes.add( sbGradientMap );
 
 		final CheckBox cbGradientMapping = ResourceFactory.newCheckBox( " Perform gradient mapping",

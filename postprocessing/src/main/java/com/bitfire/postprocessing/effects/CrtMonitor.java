@@ -18,7 +18,6 @@ package com.bitfire.postprocessing.effects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -177,7 +176,7 @@ public final class CrtMonitor extends PostProcessorEffect {
 		Texture in = src.getColorBufferTexture();
 
 		boolean blendingWasEnabled = PostProcessor.isStateEnabled(GL20.GL_BLEND);
-		Gdx.gl.glDisable(GL10.GL_BLEND);
+		Gdx.gl.glDisable(GL20.GL_BLEND);
 
 		Texture out = null;
 
