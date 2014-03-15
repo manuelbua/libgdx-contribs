@@ -28,9 +28,7 @@ public final class RadialBlur extends Filter<RadialBlur> {
 	private float zoom;
 
 	public enum Quality {
-		// @formatter:off
 		VeryHigh(16), High(8), Normal(5), Medium(4), Low(2);
-		// @formatter:off
 
 		final int length;
 
@@ -40,11 +38,14 @@ public final class RadialBlur extends Filter<RadialBlur> {
 	}
 
 	public enum Param implements Parameter {
-		// @formatter:off
-		Texture("u_texture0", 0), BlurDiv("blur_div", 0), OffsetX("offset_x", 0), OffsetY("offset_y", 0),
-// OneOnBlurLen( "one_on_blurlen", 0 ),
+		// @off
+		Texture("u_texture0", 0), 
+		BlurDiv("blur_div", 0), 
+		OffsetX("offset_x", 0), 
+		OffsetY("offset_y", 0),
+		// OneOnBlurLen( "one_on_blurlen", 0 ),
 		Zoom("zoom", 0), ;
-		// @formatter:on
+		// @on
 
 		private String mnemonic;
 		private int elementSize;
