@@ -1,3 +1,5 @@
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=manuelbua&url=https://github.com/manuelbua/libgdx-contribs&title=libgdx-contribs&language=&tags=github&category=software) 
+
 libgdx-contribs
 ===============
 [homepage](http://manuelbua.github.io/libgdx-contribs/)
