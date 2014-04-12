@@ -36,6 +36,7 @@ public final class CrtMonitor extends PostProcessorEffect {
 	private PingPongBuffer pingPongBuffer = null;
 	private FrameBuffer buffer = null;
 	private CrtScreen crt;
+	private RgbMode rgbMode;
 	private Blur blur;
 	private Combine combine;
 	private boolean doblur;
@@ -46,6 +47,7 @@ public final class CrtMonitor extends PostProcessorEffect {
 	// the effect is designed to work on the whole screen area, no small/mid size tricks!
 	public CrtMonitor (int fboWidth, int fboHeight, boolean barrelDistortion, boolean performBlur, RgbMode mode, int effects) {
 		doblur = performBlur;
+		rgbMode = mode;
 
 		if (doblur) {
 			pingPongBuffer = PostProcessor.newPingPongBuffer(fboWidth, fboHeight, PostProcessor.getFramebufferFormat(), false);
@@ -60,7 +62,7 @@ public final class CrtMonitor extends PostProcessorEffect {
 
 		combine = new Combine();
 
-		switch (mode) {
+		switch (rgbMode) {
 		case RgbShift:
 			combine.setSource1Intensity(barrelDistortion ? 0f : 0.15f);
 			combine.setSource2Intensity(barrelDistortion ? 1.2f : 1.1f);
@@ -163,6 +165,10 @@ public final class CrtMonitor extends PostProcessorEffect {
 
 	public Color getTint () {
 		return crt.getTint();
+	}
+
+	public RgbMode getRgbMode () {
+		return rgbMode;
 	}
 
 	@Override
