@@ -22,7 +22,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorEffect;
 import com.bitfire.postprocessing.filters.Blur;
@@ -36,7 +35,6 @@ public final class CrtMonitor extends PostProcessorEffect {
 	private PingPongBuffer pingPongBuffer = null;
 	private FrameBuffer buffer = null;
 	private CrtScreen crt;
-	private RgbMode rgbMode;
 	private Blur blur;
 	private Combine combine;
 	private boolean doblur;
@@ -45,9 +43,8 @@ public final class CrtMonitor extends PostProcessorEffect {
 	private int sfactor, dfactor;
 
 	// the effect is designed to work on the whole screen area, no small/mid size tricks!
-	public CrtMonitor (int fboWidth, int fboHeight, boolean barrelDistortion, boolean performBlur, RgbMode mode, int effects) {
+	public CrtMonitor (int fboWidth, int fboHeight, boolean barrelDistortion, boolean performBlur, RgbMode mode, int effectsSupport) {
 		doblur = performBlur;
-		rgbMode = mode;
 
 		if (doblur) {
 			pingPongBuffer = PostProcessor.newPingPongBuffer(fboWidth, fboHeight, PostProcessor.getFramebufferFormat(), false);
@@ -61,25 +58,7 @@ public final class CrtMonitor extends PostProcessorEffect {
 		}
 
 		combine = new Combine();
-
-		switch (rgbMode) {
-		case RgbShift:
-			combine.setSource1Intensity(barrelDistortion ? 0f : 0.15f);
-			combine.setSource2Intensity(barrelDistortion ? 1.2f : 1.1f);
-			combine.setSource1Saturation(1f);
-			combine.setSource2Saturation(0.8f);
-			break;
-		case ChromaticAberrations:
-			combine.setSource1Intensity(0f);
-			combine.setSource2Intensity(1.2f);
-			combine.setSource1Saturation(0f);
-			combine.setSource2Saturation(1f);
-			break;
-		default:
-			throw new GdxRuntimeException("Unsupported RGB mode");
-		}
-
-		crt = new CrtScreen(barrelDistortion, mode, effects);
+		crt = new CrtScreen(barrelDistortion, mode, effectsSupport);
 	}
 
 	@Override
@@ -146,6 +125,10 @@ public final class CrtMonitor extends PostProcessorEffect {
 		crt.setZoom(zoom);
 	}
 
+	public void setRgbMode (RgbMode mode) {
+		crt.setRgbMode(mode);
+	}
+
 	// getters
 	public Combine getCombinePass () {
 		return combine;
@@ -168,7 +151,7 @@ public final class CrtMonitor extends PostProcessorEffect {
 	}
 
 	public RgbMode getRgbMode () {
-		return rgbMode;
+		return crt.getRgbMode();
 	}
 
 	@Override

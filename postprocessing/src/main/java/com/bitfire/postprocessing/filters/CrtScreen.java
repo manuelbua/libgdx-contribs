@@ -34,7 +34,13 @@ public final class CrtScreen extends Filter<CrtScreen> {
 	private RgbMode mode;
 
 	public enum RgbMode {
-		None, RgbShift, ChromaticAberrations
+		None(0), RgbShift(1), ChromaticAberrations(2);
+
+		public int v;
+
+		private RgbMode (int value) {
+			this.v = value;
+		}
 	}
 
 	public enum Effect {
@@ -77,42 +83,44 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		}
 	}
 
-	private static boolean isSetEffect (Effect e, int effects) {
-		return (effects & e.v) == e.v;
+	private static boolean isSet (int flag, int flags) {
+		return (flags & flag) == flag;
 	}
 
-	public CrtScreen (boolean barrelDistortion, RgbMode mode, int effects) {
+	public CrtScreen (boolean barrelDistortion, RgbMode mode, int effectsSupport) {
 		// @off
 		super( ShaderLoader.fromFile( "screenspace", "crt-screen", (barrelDistortion ? "#define ENABLE_BARREL_DISTORTION\n" : "")
 				+ (mode == RgbMode.RgbShift ? "#define ENABLE_RGB_SHIFT\n" : "")
 				+ (mode == RgbMode.ChromaticAberrations ? "#define ENABLE_CHROMATIC_ABERRATIONS\n" : "")
-				+ (isSetEffect(Effect.TweakContrast, effects) ? "#define ENABLE_TWEAK_CONTRAST\n" : "")
-				+ (isSetEffect(Effect.Vignette, effects) ? "#define ENABLE_VIGNETTE\n" : "")
-				+ (isSetEffect(Effect.Tint, effects) ? "#define ENABLE_TINT\n" : "")
-				+ (isSetEffect(Effect.Scanlines, effects) ? "#define ENABLE_SCANLINES\n" : "")
-				+ (isSetEffect(Effect.PhosphorVibrance, effects) ? "#define ENABLE_PHOSPHOR_VIBRANCE\n" : "")
+				+ (isSet(Effect.TweakContrast.v, effectsSupport) ? "#define ENABLE_TWEAK_CONTRAST\n" : "")
+				+ (isSet(Effect.Vignette.v, effectsSupport) ? "#define ENABLE_VIGNETTE\n" : "")
+				+ (isSet(Effect.Tint.v, effectsSupport) ? "#define ENABLE_TINT\n" : "")
+				+ (isSet(Effect.Scanlines.v, effectsSupport) ? "#define ENABLE_SCANLINES\n" : "")
+				+ (isSet(Effect.PhosphorVibrance.v, effectsSupport) ? "#define ENABLE_PHOSPHOR_VIBRANCE\n" : "")
 		));
 		// @on
 
 		dodistortion = barrelDistortion;
-		this.mode = mode;
 
 		vtint = new Vector3();
 		tint = new Color();
 		chromaticDispersion = new Vector2();
 
-		rebind();
-
 		setTime(0f);
 		setTint(1.0f, 1.0f, 0.85f);
 		setDistortion(0.3f);
 		setZoom(1f);
+		setRgbMode(mode);
+
+		// default values
 		switch (mode) {
 		case ChromaticAberrations:
 			setChromaticDispersion(-0.1f, -0.1f);
 			break;
 		case RgbShift:
 			setColorOffset(0.003f);
+			break;
+		case None:
 			break;
 		default:
 			throw new GdxRuntimeException("Unsupported RGB mode");
@@ -122,6 +130,10 @@ public final class CrtScreen extends Filter<CrtScreen> {
 	public void setTime (float elapsedSecs) {
 		this.elapsedSecs = elapsedSecs;
 		setParam(Param.Time, (elapsedSecs % MathUtils.PI));
+	}
+
+	public void setRgbMode (RgbMode mode) {
+		this.mode = mode;
 	}
 
 	public void setColorOffset (float offset) {
@@ -136,7 +148,6 @@ public final class CrtScreen extends Filter<CrtScreen> {
 	}
 
 	public void setChromaticDispersion (float redCyan, float blueYellow) {
-
 		this.cdRedCyan = redCyan;
 		this.cdBlueYellow = blueYellow;
 		chromaticDispersion.x = cdRedCyan;
@@ -188,6 +199,10 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		}
 	}
 
+	public RgbMode getRgbMode () {
+		return mode;
+	}
+
 	public float getOffset () {
 		return offset;
 	}
@@ -213,9 +228,12 @@ public final class CrtScreen extends Filter<CrtScreen> {
 	public void rebind () {
 		setParams(Param.Texture0, u_texture0);
 		setParams(Param.Time, elapsedSecs);
+
 		if (mode == RgbMode.RgbShift) {
 			setParams(Param.ColorOffset, offset);
-		} else if (mode == RgbMode.ChromaticAberrations) {
+		}
+
+		if (mode == RgbMode.ChromaticAberrations) {
 			setParams(Param.ChromaticDispersion, chromaticDispersion);
 		}
 
