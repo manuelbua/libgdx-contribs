@@ -8,3 +8,5 @@ target/
 .project
 .settings
 .classpath
+.gradle/
+build/

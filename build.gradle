@@ -1,0 +1,62 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven { url 'https://github.com/steffenschaefer/gwt-gradle-plugin/raw/maven-repo/' }
+    }
+    dependencies {
+        classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.4'
+    }
+}
+
+allprojects {
+    apply plugin: "eclipse"
+    apply plugin: "idea"
+
+	version = '1.0.6'
+    ext {
+        appName = 'libgdx-contribs'
+        gdxVersion = '1.2.0'
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    }
+}
+
+project(":postprocessing") {
+    apply plugin: "java"
+
+    dependencies {
+		compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile project(":utils")
+    }
+}
+
+project(":utils") {
+    apply plugin: "java"
+
+    dependencies {
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        //compile "com.badlogicgames.ashley:ashley:1.0.1"
+    }
+}
+
+project(":postprocessing-demo") {
+    apply plugin: "java"
+
+    dependencies {
+		compile project(":utils")
+		compile project(":postprocessing")
+        //compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    }
+}
+
+tasks.eclipse.doLast {
+    delete ".project"
+}
