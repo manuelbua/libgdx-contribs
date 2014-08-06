@@ -1,4 +1,0 @@
-#!/bin/bash
-
-# use git-describe's commit index as the minor version
-ant -f package-release.xml -Dpackage.version="$(git describe|sed 's/-\([0-9]\)\+-g/.\1-/g')"
