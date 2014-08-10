@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 bmanuel
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,7 +44,7 @@ public final class CrtScreen extends Filter<CrtScreen> {
 	}
 
 	public enum Effect {
-		None(0), TweakContrast(1), Vignette(2), Tint(4), Scanlines(8), PhosphorVibrance(16);
+		None(0), TweakContrast(1), Vignette(2), Tint(4), Scanlines(8), PhosphorVibrance(16), ScanDistortion(32);
 
 		public int v;
 
@@ -60,7 +60,8 @@ public final class CrtScreen extends Filter<CrtScreen> {
 		Tint("tint", 3),
 		ColorOffset("offset", 0),
 		ChromaticDispersion("chromaticDispersion", 2),
-		Distortion("Distortion", 0), Zoom("zoom", 0)
+		Distortion("Distortion", 0),
+		Zoom("zoom", 0)
 		;
 		// @on
 
@@ -97,6 +98,7 @@ public final class CrtScreen extends Filter<CrtScreen> {
 				+ (isSet(Effect.Tint.v, effectsSupport) ? "#define ENABLE_TINT\n" : "")
 				+ (isSet(Effect.Scanlines.v, effectsSupport) ? "#define ENABLE_SCANLINES\n" : "")
 				+ (isSet(Effect.PhosphorVibrance.v, effectsSupport) ? "#define ENABLE_PHOSPHOR_VIBRANCE\n" : "")
+				+ (isSet(Effect.ScanDistortion.v, effectsSupport) ? "#define ENABLE_SCAN_DISTORTION\n" : "")
 		));
 		// @on
 
