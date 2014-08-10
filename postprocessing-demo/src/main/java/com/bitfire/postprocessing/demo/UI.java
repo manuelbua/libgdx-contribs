@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 bmanuel
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,12 +41,12 @@ import com.badlogic.gdx.utils.Array;
 
 /**
  * Implements the UI creation and event handling.
- * 
+ *
  * Notes on the panel animator: some very simple expedients help in determining whenever the
  * user is voluntarily leaving the panel area to make it to hide itself or it's just due to
  * the fact combobox widgets are higher than the panel, thus the user *needs* to move out of
  * the panel to make a selection: the latter case is being tracked by
- * 
+ *
  * @author bmanuel
  */
 public final class UI {
@@ -82,6 +82,9 @@ public final class UI {
 
 		stage = new Stage();
 		inputMultiplexer.addProcessor( stage );
+		if( DebugUI ) {
+			stage.setDebugAll( true );
+		}
 
 		// selectable screen background
 		background = ResourceFactory.newSprite( "bgnd.jpg" );
@@ -630,10 +633,6 @@ public final class UI {
 
 	public void draw() {
 		stage.draw();
-
-		if( DebugUI ) {
-			Table.drawDebug( stage );
-		}
 	}
 
 	public void mouseMoved( int x, int y ) {
