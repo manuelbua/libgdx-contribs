@@ -206,7 +206,7 @@ public final class UI {
 		} );
 
 		final SelectBox<String> sbBackground = ResourceFactory.newSelectBox( new String[] { "None ", "Scratches ", "Mountains ",
-				"Lake ", "Checker board " }, new ChangeListener() {
+				"Lake ", "Checker board ", "Solid white " }, new ChangeListener() {
 			@Override
 			public void changed( ChangeEvent event, Actor actor ) {
 				@SuppressWarnings( "unchecked" )
@@ -228,6 +228,9 @@ public final class UI {
 					break;
 				case 4:
 					background.setTexture( ResourceFactory.newTexture( "bgnd4.jpg", false ) );
+					break;
+				case 5:
+					background.setTexture( ResourceFactory.newTexture( "bgnd5.jpg", false ) );
 					break;
 				}
 			}
