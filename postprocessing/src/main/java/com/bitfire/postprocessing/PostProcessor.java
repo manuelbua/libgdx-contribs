@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 bmanuel
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,9 +30,9 @@ import com.bitfire.utils.ItemsManager;
 
 /** Provides a way to capture the rendered scene to an off-screen buffer and to apply a chain of effects on it before rendering to
  * screen.
- * 
+ *
  * Effects can be added or removed via {@link #addEffect(PostProcessorEffect)} and {@link #removeEffect(PostProcessorEffect)}.
- * 
+ *
  * @author bmanuel */
 public final class PostProcessor implements Disposable {
 	/** Enable pipeline state queries: beware the pipeline can stall! */
@@ -121,7 +121,7 @@ public final class PostProcessor implements Disposable {
 
 	/** Creates and returns a managed PingPongBuffer buffer, just create and forget. If rebind() is called on context loss, managed
 	 * PingPongBuffers will be rebound for you.
-	 * 
+	 *
 	 * This is a drop-in replacement for the same-signature PingPongBuffer's constructor. */
 	public static PingPongBuffer newPingPongBuffer (int width, int height, Format frameBufferFormat, boolean hasDepth) {
 		PingPongBuffer buffer = new PingPongBuffer(width, height, frameBufferFormat, hasDepth);
@@ -141,7 +141,7 @@ public final class PostProcessor implements Disposable {
 	}
 
 	/** Sets the viewport to be restored, if null is specified then the viewport will NOT be restored at all.
-	 * 
+	 *
 	 * The predefined effects will restore the viewport settings at the final blitting stage (render to screen) by invoking the
 	 * restoreViewport static method. */
 	public void setViewport (Rectangle viewport) {
@@ -252,7 +252,7 @@ public final class PostProcessor implements Disposable {
 
 	/** Starts capturing the scene, clears the buffer with the clear color specified by {@link #setClearColor(Color)} or
 	 * {@link #setClearColor(float r, float g, float b, float a)}.
-	 * 
+	 *
 	 * @return true or false, whether or not capturing has been initiated. Capturing will fail in case there are no enabled effects
 	 *         in the chain or this instance is not enabled or capturing is already started. */
 	public boolean capture () {
@@ -283,7 +283,7 @@ public final class PostProcessor implements Disposable {
 	}
 
 	/** Starts capturing the scene as {@link #capture()}, but <strong>without</strong> clearing the screen.
-	 * 
+	 *
 	 * @return true or false, whether or not capturing has been initiated. */
 	public boolean captureNoClear () {
 		hasCaptured = false;
