@@ -317,6 +317,10 @@ public final class PostProcessor implements Disposable {
 		return null;
 	}
 
+	public PingPongBuffer getCombinedBuffer () {
+		return composite;
+	}
+
 	/** After a capture/captureEnd action, returns the just captured buffer */
 	public FrameBuffer captured () {
 		if (enabled && hasCaptured) {
