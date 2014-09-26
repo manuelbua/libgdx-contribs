@@ -24,18 +24,13 @@
 		</dependency>
 		<dependency>
 			<groupId>com.badlogicgames.gdx</groupId>
-			<artifactId>gdx</artifactId>
-			<version>${gdx.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.badlogicgames.gdx</groupId>
 			<artifactId>gdx-backend-lwjgl</artifactId>
-			<version>${gdx.version}</version>
+			<version>[${gdx.version},)</version>
 		</dependency>
 		<dependency>
 			<groupId>com.badlogicgames.gdx</groupId>
 			<artifactId>gdx-platform</artifactId>
-			<version>${gdx.version}</version>
+			<version>[${gdx.version},)</version>
 			<classifier>natives-desktop</classifier>
 		</dependency>
 	</dependencies>
