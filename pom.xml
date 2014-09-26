@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.bitfire</groupId>
 	<artifactId>libgdx-contribs</artifactId>
-	<version>1.0.6.1-SNAPSHOT</version>
+	<version>1.0.7-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>libgdx-contribs</name>
 
