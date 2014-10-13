@@ -154,20 +154,30 @@ public final class PostProcessor implements Disposable {
 	/** Frees owned resources. */
 	@Override
 	public void dispose () {
+		dispose(true);
+	}
+
+	public void dispose (boolean totalClean) {
 		effectsManager.dispose();
 
-		// cleanup managed buffers, if any
-		for (int i = 0; i < buffers.size; i++) {
-			buffers.get(i).dispose();
-		}
+		if (totalClean) {
+			// cleanup managed buffers, if any
+			for (int i = 0; i < buffers.size; i++) {
+				buffers.get(i).dispose();
+			}
 
-		buffers.clear();
+			buffers.clear();
+		} else {
+			buffers.removeValue(composite, true);
+		}
 
 		if (enabledEffects != null) {
 			enabledEffects.clear();
 		}
 
-		pipelineState.dispose();
+		if (totalClean) {
+			pipelineState.dispose();
+		}
 	}
 
 	/** Whether or not the post-processor is enabled */
