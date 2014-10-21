@@ -2,6 +2,7 @@
 // See http://blenderartists.org/forum/showthread.php?209574-Full-Screen-Anti-Aliasing-(NFAA-DLAA-SSAA)
 // and http://www.gamedev.net/topic/580517-nfaa---a-post-process-anti-aliasing-filter-results-implementation-details/
 // Copyright Styves, Martinsh
+// Modified by Sagrista, Toni
 
 #ifdef GL_ES
 precision mediump float;
@@ -21,27 +22,19 @@ float lumRGB(vec3 v)
 
 const float fScale = 1.0;
 
-void main(){
+vec4 nfaaColor(sampler2D texture, vec2 texCoords, vec2 viewportInverse){
     // Offset coordinates
-    vec2 upOffset = vec2(0.0, u_viewportInverse.y) * fScale;
-    vec2 rightOffset = vec2(u_viewportInverse.x, 0.0) * fScale;
+    vec2 upOffset = vec2(0.0, viewportInverse.y) * fScale;
+    vec2 rightOffset = vec2(viewportInverse.x, 0.0) * fScale;
     
-    float topHeight = lumRGB(
-	    texture2D(u_texture0, v_texCoords.xy + upOffset).rgb);
-    float bottomHeight = lumRGB(
-	    texture2D(u_texture0, v_texCoords.xy - upOffset).rgb);
-    float rightHeight = lumRGB(
-	    texture2D(u_texture0, v_texCoords.xy + rightOffset).rgb);
-    float leftHeight = lumRGB(
-	    texture2D(u_texture0, v_texCoords.xy - rightOffset).rgb);
-    float leftTopHeight = lumRGB(
-	    texture2D(u_texture0, v_texCoords.xy - rightOffset + upOffset).rgb);
-    float leftBottomHeight = lumRGB(
-	    texture2D(u_texture0, v_texCoords.xy - rightOffset - upOffset).rgb);
-    float rightBottomHeight = lumRGB(
-	    texture2D(u_texture0, v_texCoords.xy + rightOffset + upOffset).rgb);
-    float rightTopHeight = lumRGB(
-	    texture2D(u_texture0, v_texCoords.xy + rightOffset - upOffset).rgb);
+    float topHeight = lumRGB(texture2D(texture, texCoords.xy + upOffset).rgb);
+    float bottomHeight = lumRGB(texture2D(texture, texCoords.xy - upOffset).rgb);
+    float rightHeight = lumRGB(texture2D(texture, texCoords.xy + rightOffset).rgb);
+    float leftHeight = lumRGB(texture2D(texture, texCoords.xy - rightOffset).rgb);
+    float leftTopHeight = lumRGB(texture2D(texture, texCoords.xy - rightOffset + upOffset).rgb);
+    float leftBottomHeight = lumRGB(texture2D(texture, texCoords.xy - rightOffset - upOffset).rgb);
+    float rightBottomHeight = lumRGB(texture2D(texture, texCoords.xy + rightOffset + upOffset).rgb);
+    float rightTopHeight = lumRGB(texture2D(texture, texCoords.xy + rightOffset - upOffset).rgb);
     
     // Normal map creation
     float sum0 = rightTopHeight + topHeight + rightBottomHeight;
@@ -52,20 +45,59 @@ void main(){
     float vect2 = (sum2 - sum3);
     
     // Put them together and scale.
-    vec2 Normal = vec2(vect1, vect2) * u_viewportInverse * fScale;
+    vec2 Normal = vec2(vect1, vect2) * viewportInverse * fScale;
     
     // Color
-    vec4 Scene0 = texture2D(u_texture0, v_texCoords.xy);
-    vec4 Scene1 = texture2D(u_texture0, v_texCoords.xy + Normal.xy);
-    vec4 Scene2 = texture2D(u_texture0, v_texCoords.xy - Normal.xy);
-    vec4 Scene3 = texture2D(u_texture0,
-	    v_texCoords.xy + vec2(Normal.x, -Normal.y) * 0.5);
-    vec4 Scene4 = texture2D(u_texture0,
-	    v_texCoords.xy - vec2(Normal.x, -Normal.y) * 0.5);
+    vec4 Scene0 = texture2D(texture, texCoords.xy);
+    vec4 Scene1 = texture2D(texture, texCoords.xy + Normal.xy);
+    vec4 Scene2 = texture2D(texture, texCoords.xy - Normal.xy);
+    vec4 Scene3 = texture2D(texture, texCoords.xy + vec2(Normal.x, -Normal.y) * 0.5);
+    vec4 Scene4 = texture2D(texture, texCoords.xy - vec2(Normal.x, -Normal.y) * 0.5);
     
     // Final color
-    gl_FragColor.rgb = (Scene0.rgb + Scene1.rgb + Scene2.rgb + Scene3.rgb
-	    + Scene4.rgb) * 0.2;
+    return vec4((Scene0.rgb + Scene1.rgb + Scene2.rgb + Scene3.rgb + Scene4.rgb) * 0.2, 1.0);
+	    
+}
+
+float GetColorLuminance(vec3 i_vColor){
+    return dot(i_vColor, vec3(0.2126, 0.7152, 0.0722));
+}
+
+vec4 nfaaLuminosity(sampler2D texture, vec2 texCoords, vec2 viewportInverse){
+    // Normal
+    vec2 upOffset = vec2(0, viewportInverse.y);
+    vec2 rightOffset = vec2(viewportInverse.x, 0);
+
+    float topHeight = GetColorLuminance(texture2D(texture, texCoords.xy + upOffset).rgb);
+    float bottomHeight = GetColorLuminance(texture2D(texture, texCoords.xy - upOffset).rgb);
+    float rightHeight = GetColorLuminance(texture2D(texture, texCoords.xy + rightOffset).rgb);
+    float leftHeight = GetColorLuminance(texture2D(texture, texCoords.xy - rightOffset).rgb);
+    float leftTopHeight = GetColorLuminance(texture2D(texture, texCoords.xy - rightOffset + upOffset).rgb);
+    float leftBottomHeight = GetColorLuminance(texture2D(texture, texCoords.xy - rightOffset - upOffset).rgb);
+    float rightTopHeight = GetColorLuminance(texture2D(texture, texCoords.xy + rightOffset + upOffset).rgb);
+    float rightBottomHeight = GetColorLuminance(texture2D(texture, texCoords.xy + rightOffset - upOffset).rgb);
+
+    float xDifference = (2.0 * rightHeight + rightTopHeight + rightBottomHeight) / 4.0 - (2.0 * leftHeight + leftTopHeight + leftBottomHeight)/4.0;
+    float yDifference = (2.0 * topHeight + leftTopHeight + rightTopHeight) / 4.0 - (2.0 * bottomHeight + rightBottomHeight + leftBottomHeight)/4.0;
+    vec3 vect1 = vec3(1.0, 0.0, xDifference);
+    vec3 vect2 = vec3(0.0, 1.0, yDifference);
+    vec3 Normal = normalize(cross(vect1, vect2));
+
+    // Color
+    Normal.xy *= viewportInverse * 2.0;	// Increase pixel size to get more blur
     
-    gl_FragColor.a = 1.0;
+    vec4 Scene0 = texture2D(texture, texCoords.xy);
+    vec4 Scene1 = texture2D(texture, texCoords.xy + Normal.xy);
+    vec4 Scene2 = texture2D(texture, texCoords.xy - Normal.xy);
+    vec4 Scene3 = texture2D(texture, texCoords.xy + vec2(Normal.x, -Normal.y));
+    vec4 Scene4 = texture2D(texture, texCoords.xy - vec2(Normal.x, -Normal.y));
+
+    // Final color
+    return vec4((Scene0.rgb + Scene1.rgb + Scene2.rgb + Scene3.rgb + Scene4.rgb) * 0.2, 1.0);
+
+}
+
+void main(){  
+    //gl_FragColor = nfaaColor(u_texture0, v_texCoords, u_viewportInverse);
+    gl_FragColor = nfaaLuminosity(u_texture0, v_texCoords, u_viewportInverse);
 }
