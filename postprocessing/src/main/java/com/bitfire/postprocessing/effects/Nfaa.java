@@ -18,48 +18,42 @@ package com.bitfire.postprocessing.effects;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.postprocessing.PostProcessorEffect;
-import com.bitfire.postprocessing.filters.FxaaFilter;
+import com.bitfire.postprocessing.filters.NfaaFilter;
 
-/** Implements the fast approximate anti-aliasing. Very fast and useful for combining with other post-processing effects.
+/** Implements the normal filter anti-aliasing. Very fast and useful for combining with other post-processing effects.
  * @author Toni Sagrista */
-public final class Fxaa extends PostProcessorEffect {
-	private FxaaFilter fxaaFilter = null;
+public final class Nfaa extends PostProcessorEffect {
+	private NfaaFilter nfaaFilter = null;
 
-	/** Create a FXAA with the viewport size */
-	public Fxaa (int viewportWidth, int viewportHeight) {
+	/** Create a NFAA with the viewport size */
+	public Nfaa (int viewportWidth, int viewportHeight) {
 		setup(viewportWidth, viewportHeight);
 	}
 
 	private void setup (int viewportWidth, int viewportHeight) {
-		fxaaFilter = new FxaaFilter(viewportWidth, viewportHeight);
+		nfaaFilter = new NfaaFilter(viewportWidth, viewportHeight);
 	}
 
 	public void setViewportSize (int width, int height) {
-		fxaaFilter.setViewportSize(width, height);
-	}
-
-	/** Sets the span max parameter. The default value is 8.
-	 * @param value */
-	public void setSpanMax (float value) {
-		fxaaFilter.setFxaaSpanMax(value);
+		nfaaFilter.setViewportSize(width, height);
 	}
 
 	@Override
 	public void dispose () {
-		if (fxaaFilter != null) {
-			fxaaFilter.dispose();
-			fxaaFilter = null;
+		if (nfaaFilter != null) {
+			nfaaFilter.dispose();
+			nfaaFilter = null;
 		}
 	}
 
 	@Override
 	public void rebind () {
-		fxaaFilter.rebind();
+		nfaaFilter.rebind();
 	}
 
 	@Override
 	public void render (FrameBuffer src, FrameBuffer dest) {
 		restoreViewport(dest);
-		fxaaFilter.setInput(src).setOutput(dest).render();
+		nfaaFilter.setInput(src).setOutput(dest).render();
 	}
 }
