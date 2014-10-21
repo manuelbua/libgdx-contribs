@@ -17,12 +17,11 @@
 package com.bitfire.postprocessing.effects;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.bitfire.postprocessing.PostProcessorEffect;
 import com.bitfire.postprocessing.filters.NfaaFilter;
 
 /** Implements the normal filter anti-aliasing. Very fast and useful for combining with other post-processing effects.
  * @author Toni Sagrista */
-public final class Nfaa extends PostProcessorEffect {
+public final class Nfaa extends Antialiasing {
 	private NfaaFilter nfaaFilter = null;
 
 	/** Create a NFAA with the viewport size */

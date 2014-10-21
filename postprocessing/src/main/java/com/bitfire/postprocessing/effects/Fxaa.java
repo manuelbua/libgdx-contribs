@@ -17,12 +17,11 @@
 package com.bitfire.postprocessing.effects;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.bitfire.postprocessing.PostProcessorEffect;
 import com.bitfire.postprocessing.filters.FxaaFilter;
 
 /** Implements the fast approximate anti-aliasing. Very fast and useful for combining with other post-processing effects.
  * @author Toni Sagrista */
-public final class Fxaa extends PostProcessorEffect {
+public final class Fxaa extends Antialiasing {
 	private FxaaFilter fxaaFilter = null;
 
 	/** Create a FXAA with the viewport size */
