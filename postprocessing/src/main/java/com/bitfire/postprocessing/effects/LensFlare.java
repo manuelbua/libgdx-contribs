@@ -38,6 +38,10 @@ public final class LensFlare extends PostProcessorEffect {
 		lens.setIntensity(intensity);
 	}
 
+	public float getIntensity () {
+		return lens.getIntensity();
+	}
+
 	public void setColor (float r, float g, float b) {
 		lens.setColor(r, g, b);
 	}
