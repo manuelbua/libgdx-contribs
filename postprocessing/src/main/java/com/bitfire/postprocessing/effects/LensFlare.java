@@ -21,11 +21,11 @@ import com.bitfire.postprocessing.PostProcessorEffect;
 import com.bitfire.postprocessing.filters.Lens;
 
 /** Lens flare effect.
+ * @deprecated Please use the better {@link com.bitfire.postprocessing.effects.LensFlare2}.
  * @author Toni Sagrista */
 public final class LensFlare extends PostProcessorEffect {
 	private Lens lens = null;
 
-	/** Create a FXAA with the viewport size */
 	public LensFlare (int viewportWidth, int viewportHeight) {
 		setup(viewportWidth, viewportHeight);
 	}
