@@ -6,7 +6,9 @@ precision mediump float;
 precision mediump int;
 #endif
 
+// Unprocessed image
 uniform sampler2D u_texture0;
+// Lens color
 uniform sampler2D u_texture1;
 
 varying vec2 v_texCoords;
@@ -49,7 +51,7 @@ void main() {
 	vec2 offset = fract(texcoord + ghostVec * float(i));
 	
 	float weight = length(vec2(0.5) - offset) / length(vec2(0.5));
-	weight = pow(1.0 - weight, 10.0);
+	weight = pow(1.0 - weight, 2.0);
 	
 	result += textureDistorted(
 				u_texture0,
@@ -64,7 +66,7 @@ void main() {
   
     //	sample halo:
     float weight = length(vec2(0.5) - fract(texcoord + haloVec)) / length(vec2(0.5));
-    weight = pow(1.0 - weight, 10.0);
+    weight = pow(1.0 - weight, 2.0);
     result += textureDistorted(
 	    u_texture0,
 	    fract(texcoord + haloVec),
