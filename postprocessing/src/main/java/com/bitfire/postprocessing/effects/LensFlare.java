@@ -17,48 +17,58 @@
 package com.bitfire.postprocessing.effects;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.bitfire.postprocessing.filters.FxaaFilter;
+import com.bitfire.postprocessing.PostProcessorEffect;
+import com.bitfire.postprocessing.filters.Lens;
 
-/** Implements the fast approximate anti-aliasing. Very fast and useful for combining with other post-processing effects.
+/** Lens flare effect.
+ * @deprecated Please use the better {@link com.bitfire.postprocessing.effects.LensFlare2}.
  * @author Toni Sagrista */
-public final class Fxaa extends Antialiasing {
-	private FxaaFilter fxaaFilter = null;
+public final class LensFlare extends PostProcessorEffect {
+	private Lens lens = null;
 
-	/** Create a FXAA with the viewport size */
-	public Fxaa (int viewportWidth, int viewportHeight) {
+	public LensFlare (int viewportWidth, int viewportHeight) {
 		setup(viewportWidth, viewportHeight);
 	}
 
 	private void setup (int viewportWidth, int viewportHeight) {
-		fxaaFilter = new FxaaFilter(viewportWidth, viewportHeight);
+		lens = new Lens(viewportWidth, viewportHeight);
 	}
 
-	public void setViewportSize (int width, int height) {
-		fxaaFilter.setViewportSize(width, height);
+	public void setIntensity (float intensity) {
+		lens.setIntensity(intensity);
 	}
 
-	/** Sets the span max parameter. The default value is 8.
-	 * @param value */
-	public void setSpanMax (float value) {
-		fxaaFilter.setFxaaSpanMax(value);
+	public float getIntensity () {
+		return lens.getIntensity();
+	}
+
+	public void setColor (float r, float g, float b) {
+		lens.setColor(r, g, b);
+	}
+
+	/** Sets the light position in screen coordinates [-1..1].
+	 * @param x Light position x screen coordinate,
+	 * @param y Light position y screen coordinate. */
+	public void setLightPosition (float x, float y) {
+		lens.setLightPosition(x, y);
 	}
 
 	@Override
 	public void dispose () {
-		if (fxaaFilter != null) {
-			fxaaFilter.dispose();
-			fxaaFilter = null;
+		if (lens != null) {
+			lens.dispose();
+			lens = null;
 		}
 	}
 
 	@Override
 	public void rebind () {
-		fxaaFilter.rebind();
+		lens.rebind();
 	}
 
 	@Override
 	public void render (FrameBuffer src, FrameBuffer dest) {
 		restoreViewport(dest);
-		fxaaFilter.setInput(src).setOutput(dest).render();
+		lens.setInput(src).setOutput(dest).render();
 	}
 }
