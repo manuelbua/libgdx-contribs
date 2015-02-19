@@ -62,7 +62,7 @@ void main() {
 	
 	
     }
-    result *= texture2D(u_texture1, vec2(length(vec2(0.5) - v_texCoords) / length(vec2(0.5))));
+    result *= texture2D(u_texture1, vec2(length(vec2(0.5) - texcoord) / length(vec2(0.5))));
   
     //	sample halo:
     float weight = length(vec2(0.5) - fract(texcoord + haloVec)) / length(vec2(0.5));
