@@ -5,8 +5,7 @@
 	<parent>
 		<groupId>com.bitfire</groupId>
 		<artifactId>libgdx-contribs</artifactId>
-		<version>1.0.6.1-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
+		<version>1.0.7-SNAPSHOT</version>
 	</parent>
 	<artifactId>libgdx-contribs-utils</artifactId>
 	<packaging>jar</packaging>
@@ -16,7 +15,7 @@
 		<dependency>
 			<groupId>com.badlogicgames.gdx</groupId>
 			<artifactId>gdx</artifactId>
-			<version>${gdx.version}</version>
+			<version>[${gdx.version},)</version>
 		</dependency>
 	</dependencies>
 
