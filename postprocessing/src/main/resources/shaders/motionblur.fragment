@@ -1,6 +1,6 @@
 // Simple motion blur implementation by Toni Sagrista
 // Last frame is drawn with lower opacity
-#version 120
+
 #ifdef GL_ES
 precision mediump float;
 precision mediump int;
