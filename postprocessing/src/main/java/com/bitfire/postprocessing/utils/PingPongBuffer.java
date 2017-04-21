@@ -168,8 +168,17 @@ public final class PingPongBuffer {
 		endPending();
 	}
 
-	/** @return the source texture of the current ping-pong chain. */
+	/**
+	 * @return the source texture of the current ping-pong chain.
+	 * @deprecated use getSourceTexture instead.
+	 */
+	@Deprecated
 	public Texture getSouceTexture () {
+		return texSrc;
+	}
+
+	/** @return the source texture of the current ping-pong chain. */
+	public Texture getSourceTexture () {
 		return texSrc;
 	}
 
