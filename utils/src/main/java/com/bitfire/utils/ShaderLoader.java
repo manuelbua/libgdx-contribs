@@ -18,6 +18,7 @@ package com.bitfire.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 
 public final class ShaderLoader {
 	public static String BasePath = "";
@@ -51,8 +52,7 @@ public final class ShaderLoader {
 		ShaderProgram shader = new ShaderProgram( defines + "\n" + vertex, defines + "\n" + fragment );
 
 		if( !shader.isCompiled() ) {
-			Gdx.app.error( "ShaderLoader", shader.getLog() );
-			System.exit( -1 );
+			throw new GdxRuntimeException( "shader compilation failed: " + shader.getLog() );
 		}
 
 		return shader;
