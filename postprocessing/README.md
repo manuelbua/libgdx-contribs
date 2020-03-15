@@ -3,7 +3,7 @@ A lightweight, GLES2-only library to ease development and inclusion of post-proc
 
 ## Usage
 
-It's usually simple to add post-processing effects to your own application but, depending on the complexity of your rendering stage and the rendering states you are using, you may be required to track state changes in some cases (see how the Bloom effect [saves](https://github.com/manuelbua/libgdx-contribs/blob/master/postprocessing/src/com/bitfire/postprocessing/effects/Bloom.java#L221) and [restores](https://github.com/manuelbua/libgdx-contribs/blob/master/postprocessing/src/com/bitfire/postprocessing/effects/Bloom.java#L235-237) the OpenGL blending state).
+It's usually simple to add post-processing effects to your own application but, depending on the complexity of your rendering stage and the rendering states you are using, you may be required to track state changes in some cases (see how the Bloom effect [saves](https://github.com/manuelbua/libgdx-contribs/blob/master/postprocessing/src/main/java/com/bitfire/postprocessing/effects/Bloom.java#L221) and [restores](https://github.com/manuelbua/libgdx-contribs/blob/master/postprocessing/src/main/java/com/bitfire/postprocessing/effects/Bloom.java#L235-237) the OpenGL blending state).
 
 ## Basic example
 Suppose you want to add a *bloom* effect to your libgdx application and that the following is your original source code (this is just an example, it will not compile!):
